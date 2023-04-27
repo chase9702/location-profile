@@ -13,8 +13,8 @@ project(":control-tower:frontend") {
     apply(plugin = "com.github.node-gradle.node")
 
     node {
-        version.set("10.16.0")
-        npmVersion.set("6.9.0")
+        version.set("20.0.0")
+        npmVersion.set("9.6.4")
     }
 
     tasks.clean {
@@ -57,8 +57,8 @@ project(":control-tower:backend") {
     }
 
     dependencies {
-        implementation("org.springframework.boot:spring-boot-starter-jdbc")
-        implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+//        implementation("org.springframework.boot:spring-boot-starter-jdbc")
+//        implementation("org.springframework.boot:spring-boot-starter-data-jpa")
         implementation("org.springframework.boot:spring-boot-starter-security")
         implementation("org.springframework.boot:spring-boot-starter-actuator")
         developmentOnly("org.springframework.boot:spring-boot-devtools")
