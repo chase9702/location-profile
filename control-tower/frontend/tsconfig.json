@@ -1,0 +1,27 @@
+{
+  "compilerOptions": {
+    "allowJs": true, // allow javascript compile
+    "baseUrl": ".",
+    "esModuleInterop": true,
+    "jsx": "react",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "noImplicitAny": false,
+    "outDir": "build",
+    "paths": {
+      "@src/*": [
+        "src/*"
+      ]
+    },
+    "resolveJsonModule": true,
+    "target": "es6"
+  },
+  "include": [
+    "src",
+    ".eslintrc.js"
+  ],
+  "exclude": [
+    "node_modules",
+    "build",
+  ]
+}
