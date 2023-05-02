@@ -5,10 +5,15 @@ import type {MenuProps} from 'antd';
 import Menus from "@src/layout/Menus";
 import Pages from "@src/layout/Pages";
 import SideMenus from "@src/layout/SideMenus";
+import { useSelector } from 'react-redux';
 
 const {Header, Content, Sider} = Layout;
+import {StoreState} from '@src/reducers';
 
 const App = () => {
+
+    // const myValue = useSelector(state:StoreState=>state.);
+
     return (
         <Router>
             <Layout style={{height: '100vh'}}>

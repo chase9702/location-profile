@@ -1,6 +1,13 @@
 import React from "react";
 import {Button} from "antd";
+import {useDispatch} from "react-redux";
+import {setSelectMenu} from "@src/actions/MenuSelectAction";
 const LocationProfileMap = (): JSX.Element => {
+
+    const dispatch = useDispatch();
+
+    dispatch(setSelectMenu('location-map'));
+
     return (
         <div>
             <Button>
