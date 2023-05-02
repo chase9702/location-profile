@@ -1,43 +1,14 @@
-import { combineReducers } from 'redux';
+import {combineReducers} from 'redux';
+
+import menuSelectReducer, {MenuSelectState} from "@src/reducers/MenuSelectReducer"
 
 export interface StoreState {
-    // auth: AuthState;
-    // segment: {
-    //     info: SegmentState;
-    //     panel: SegmentPanelState;
-    // };
-    // summary: SummaryState;
-    // funnel: FunnelMetaState;
-    // report: ReportState;
-    // admin: {
-    //     report: AdminReportState;
-    //     manage: AdminManageState;
-    // };
-    // crossUse: CrossUseState;
-    // auProfile: AuProfileState;
-    // auProfileDashBoard: AuProfileDashBoardState;
-    // page: PageState;
-    // userFlow: UserFlowState;
+    menuSelect: MenuSelectState;
+
 }
 
 const rootReducer = combineReducers<StoreState>({
-    // auth: authReducer,
-    // segment: combineReducers({
-    //     info: segmentReducer,
-    //     panel: segmentPanelReducer,
-    // }),
-    // summary: summaryReducer,
-    // funnel: funnelReducer,
-    // report: reportReducer,
-    // admin: combineReducers({
-    //     report: adminReportReducer,
-    //     manage: adminManageReducer,
-    // }),
-    // crossUse: crossUseReducer,
-    // auProfile: auProfileReducer,
-    // auProfileDashBoard: auProfileDashBoardReducer,
-    // page: pageReducer,
-    // userFlow: userFlowReducer,
+    menuSelect: menuSelectReducer,
 });
 
 export default rootReducer;
