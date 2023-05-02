@@ -1,19 +1,29 @@
 import React from "react";
-import { BrowserRouter as Router } from 'react-router-dom';
-import { Layout } from 'antd';
+import {BrowserRouter as Router} from 'react-router-dom';
+import {Layout, Menu} from 'antd';
+import type {MenuProps} from 'antd';
+import Menus from "@src/layout/Menus";
+import Pages from "@src/layout/Pages";
+import SideMenus from "@src/layout/SideMenus";
 
-const { Header, Content } = Layout;
+const {Header, Content, Sider} = Layout;
 
 const App = () => {
     return (
         <Router>
-            <Layout style={{ height: '100vh' }}>
+            <Layout style={{height: '100vh'}}>
                 <Header>
-                    <Menus />
+                    <Menus/>
                 </Header>
-                <Content style={{ padding: '10px 50px', overflow: 'auto' }}>
-                    <Pages />
-                </Content>
+                <Layout>
+                    <Sider width={200}>
+                        <SideMenus/>
+                    </Sider>
+                    <Content style={{padding: '10px 50px', overflow: 'auto'}}>
+                        <Pages/>
+                    </Content>
+                </Layout>
+
             </Layout>
         </Router>
     );

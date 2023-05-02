@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { notification, Typography } from 'antd';
+import {notification, Result, Typography} from 'antd';
 // import { NotificationPlacement, IconType } from 'antd/es/notification';
 
 export interface NotifyMessage {
@@ -80,3 +80,7 @@ export const NotifyError = (message: NotifyMessage | string, duration = 4.5, arg
         ...args,
     });
 };
+
+export const PageNotFound: React.FC = () => (
+    <Result status="404" title="페이지 없음" subTitle="존재하지 않는 페이지입니다." />
+);
