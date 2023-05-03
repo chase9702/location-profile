@@ -3,15 +3,16 @@ import {Link} from 'react-router-dom';
 import {Menu} from 'antd';
 import {HomeOutlined} from '@ant-design/icons';
 import RouteMenu from '@src/routes/RouteMenu';
+import {useDispatch} from "react-redux";
+import {setSelectMenu} from "@src/actions/MenuSelectAction";
 
-
-// import './menus.less';
 
 const {SubMenu} = Menu;
 
-
-
 const Menus = (): React.ReactElement => {
+    const dispatch = useDispatch();
+
+
     return (
         <div>
             <Menu
@@ -22,7 +23,7 @@ const Menus = (): React.ReactElement => {
                 // onClick={this.handleMenuChanged}
             >
                 <Menu.Item key="home">
-                    <HomeOutlined />
+                    <HomeOutlined/>
                     <Link to="/"/>
                 </Menu.Item>
                 {RouteMenu.map((menu) => {
@@ -33,7 +34,8 @@ const Menus = (): React.ReactElement => {
                                 menu.submenu.map((sub) => {
                                     return (
 
-                                        <Menu.Item key={sub.key}>
+                                        <Menu.Item key={sub.key}
+                                                   onClick={() => dispatch(setSelectMenu(sub.key))}>
                                             <span>{sub.name}</span>
                                             <Link to={sub.to}/>
                                         </Menu.Item>

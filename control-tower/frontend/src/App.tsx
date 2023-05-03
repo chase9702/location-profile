@@ -10,10 +10,12 @@ import { useSelector } from 'react-redux';
 const {Header, Content, Sider} = Layout;
 import {StoreState} from '@src/reducers';
 
+
 const App = () => {
 
-    // const myValue = useSelector(state:StoreState=>state.);
 
+    const myValue = useSelector((state:StoreState) => state.menuSelect.selectedMenu)
+    console.log(myValue)
     return (
         <Router>
             <Layout style={{height: '100vh'}}>

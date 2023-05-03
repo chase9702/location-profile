@@ -6,8 +6,6 @@ const LocationProfileMap = (): JSX.Element => {
 
     const dispatch = useDispatch();
 
-    dispatch(setSelectMenu('location-map'));
-
     return (
         <div>
             <Button>
