@@ -1,17 +1,22 @@
 import React from 'react';
 import {Button} from "antd";
+import {withRouter} from "react-router-dom";
 
 
-const Home = (): JSX.Element => {
-    return (
-        <div>
-           홈이다
-        </div>
-    )
+interface State {
+}
+
+interface Props {
+}
+
+const Home = (): React.ReactElement => {
+
+        return (
+            <div>
+                홈이다
+            </div>
+        )
+
 };
 
-export const HomeElement = React.createElement(
-    Home,
-);
-
-export default HomeElement
+export default withRouter(Home)

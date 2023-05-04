@@ -1,5 +1,5 @@
-import React from 'react';
-import {Link} from 'react-router-dom';
+import React, {Component} from 'react';
+import {Link, RouteComponentProps, withRouter} from 'react-router-dom';
 import {Menu} from 'antd';
 import {HomeOutlined} from '@ant-design/icons';
 import RouteMenu from '@src/routes/RouteMenu';
@@ -9,7 +9,9 @@ import {setSelectMenu} from "@src/actions/MenuSelectAction";
 
 const {SubMenu} = Menu;
 
+
 const Menus = (): React.ReactElement => {
+
     const dispatch = useDispatch();
 
 
@@ -49,7 +51,8 @@ const Menus = (): React.ReactElement => {
             </Menu>
         </div>
     );
+
 }
 
 
-export default Menus;
+export default withRouter(Menus);

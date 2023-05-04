@@ -11,7 +11,7 @@ export interface MenuInfo {
     readonly key: string;
     readonly desc?: string;
     readonly to?: string;
-    readonly component?:  React.ReactElement
+    readonly component?:  React.ComponentClass | ConnectedComponent<any, any>;
     readonly submenu?: MenuInfo[];
 }
 

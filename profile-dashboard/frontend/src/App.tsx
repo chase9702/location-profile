@@ -23,9 +23,9 @@ const App = () => {
                     <Menus/>
                 </Header>
                 <Layout>
-                    <Sider width={200}>
-                        <SideMenus/>
-                    </Sider>
+                    {/*<Sider width={200}>*/}
+                    {/*    <SideMenus/>*/}
+                    {/*</Sider>*/}
                     <Content style={{padding: '10px 50px', overflow: 'auto'}}>
                         <Pages/>
                     </Content>
