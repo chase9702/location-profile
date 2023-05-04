@@ -35,7 +35,7 @@ allprojects {
     }
 }
 
-configure(listOf(project(":control-tower:backend"))) {
+configure(listOf(project(":profile-dashboard:backend"))) {
     val junitVersion = "5.5.0"
     val mockitoVersion = "2.28.2"
     val kotestVersion = "5.1.0"

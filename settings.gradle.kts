@@ -5,7 +5,7 @@ pluginManagement {
     }
     
 }
-rootProject.name = "profile-location"
-include(":control-tower")
-include(":control-tower:backend")
-include(":control-tower:frontend")
+rootProject.name = "profile-server"
+include(":profile-dashboard")
+include(":profile-dashboard:backend")
+include(":profile-dashboard:frontend")

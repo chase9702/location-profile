@@ -34,4 +34,4 @@ out/
 ### HBase client log ###
 log4j-application.log
 
-control-tower/frontend/node_modules
+profile-dashboard/frontend/node_modules

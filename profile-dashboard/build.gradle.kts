@@ -5,8 +5,8 @@ plugins {
     id("com.github.node-gradle.node") version "3.2.0"
 }
 
-project(":control-tower:frontend") {
-    val dashboardDir = "${project.rootDir}/control-tower"
+project(":profile-dashboard:frontend") {
+    val dashboardDir = "${project.rootDir}/profile-dashboard"
     val frontendDir = "${dashboardDir}/frontend"
     val backendDir = "${dashboardDir}/backend"
 
@@ -44,7 +44,7 @@ project(":control-tower:frontend") {
     }
 }
 
-project(":control-tower:backend") {
+project(":profile-dashboard:backend") {
     val developmentOnly: Configuration by configurations.creating
 
     configurations {
@@ -71,7 +71,7 @@ project(":control-tower:backend") {
     }
 
     tasks.register("prodBuild") {
-        val frontendProdBuild = project(":control-tower:frontend").tasks["prodBuild"]
+        val frontendProdBuild = project(":profile-dashboard:frontend").tasks["prodBuild"]
         val clean = tasks["clean"]
         val build = tasks["build"]
 
