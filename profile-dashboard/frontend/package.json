@@ -23,7 +23,7 @@
     "axios": "^1.4.0",
     "css-loader": "^6.7.3",
     "dotenv-webpack": "^8.0.1",
-    "kepler.gl": "^2.4.0",
+    "kepler.gl": "^2.5.5",
     "less-loader": "^11.1.0",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
