@@ -2,21 +2,27 @@ import React from "react";
 import {Button} from "antd";
 import {useDispatch} from "react-redux";
 import {setSelectMenu} from "@src/actions/MenuSelectAction";
-const LocationProfileMap = (): JSX.Element => {
+import {withRouter} from "react-router-dom";
 
-    const dispatch = useDispatch();
+interface State {
+}
 
-    return (
-        <div>
-            <Button>
-                map버튼이다.
-            </Button>
-        </div>
-    )
+interface Props {
+}
+
+const LocationProfileMap = (): React.ReactElement => {
+
+
+
+        return (
+            <div>
+                <Button>
+                    map버튼이다.
+                </Button>
+            </div>
+        )
+
 };
 
-export const LocationProfileMapElement = React.createElement(
-    LocationProfileMap,
-);
 
-export default LocationProfileMapElement
+export default withRouter(LocationProfileMap)

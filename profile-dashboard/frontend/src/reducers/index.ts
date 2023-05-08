@@ -1,5 +1,6 @@
 import {combineReducers} from 'redux';
 
+import keplerGlReducer from 'kepler.gl/reducers';
 import menuSelectReducer, {MenuSelectState} from "@src/reducers/MenuSelectReducer"
 
 export interface StoreState {
@@ -7,7 +8,8 @@ export interface StoreState {
 
 }
 
-const rootReducer = combineReducers<StoreState>({
+const rootReducer = combineReducers({
+    keplerGl: keplerGlReducer,
     menuSelect: menuSelectReducer,
 });
 
