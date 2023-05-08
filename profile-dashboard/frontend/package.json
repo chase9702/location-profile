@@ -34,6 +34,7 @@
     "redux-devtools-extension": "^2.13.9",
     "redux-logger": "^3.0.6",
     "redux-thunk": "^2.4.2",
+    "request": "^2.88.2",
     "style-loader": "^3.3.2",
     "styled-components": "^5.1.1",
     "url": "^0.11.0"

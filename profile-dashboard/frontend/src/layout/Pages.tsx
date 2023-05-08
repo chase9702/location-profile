@@ -1,25 +1,20 @@
-import React, { Component } from 'react';
-import {withRouter, Route, Switch, RouteComponentProps} from 'react-router-dom';
+import React from 'react';
+import {Route, Switch, withRouter} from 'react-router-dom';
 import RouteMenu, {MenuInfo} from '@src/routes/RouteMenu';
 import Home from "@src/pages/Home";
-import LocationProfileDashBoard from "@src/pages/LocationProfileDashBoard";
-import LocationProfileMap from "@src/pages/LocationProfileMap";
-
 
 
 const Pages = (): React.ReactElement => {
-
+        const submenus: MenuInfo[] = [].concat(...RouteMenu.map((menu) => menu.submenu));
         return (
             <Switch>
-                <Route path={"/"}
-                       component={Home}
-                />
-                <Route path={"/location/dashboard"}
-                       component={LocationProfileDashBoard}
-                />
-                <Route path={"/location/map"}
-                       component={LocationProfileMap}
-                />
+                <Route exact={true} path={"/"}
+                >
+                        <Home />
+                </Route>
+                    {submenus.map((sub, key)=>(
+                        <Route key={key} exact={true} path={sub.to} component={sub.component}/>
+                    ))}
             </Switch>
         )
 

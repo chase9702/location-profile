@@ -13,7 +13,7 @@ const Home = (): React.ReactElement => {
 
         return (
             <div>
-                홈이다
+                홈이다 이거
             </div>
         )
 
