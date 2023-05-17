@@ -63,6 +63,8 @@ project(":profile-dashboard:backend") {
         implementation("org.springframework.boot:spring-boot-starter-actuator")
         developmentOnly("org.springframework.boot:spring-boot-devtools")
 
+        compileOnly("org.projectlombok:lombok")
+        annotationProcessor("org.projectlombok:lombok")
         annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
     }
 

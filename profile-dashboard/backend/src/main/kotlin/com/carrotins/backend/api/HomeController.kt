@@ -1,4 +1,4 @@
-package com.carrotins.backend.controller
+package com.carrotins.backend.api
 
 import org.springframework.web.bind.annotation.RestController
 
