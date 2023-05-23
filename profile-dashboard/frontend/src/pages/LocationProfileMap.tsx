@@ -46,6 +46,12 @@ const LocationProfileMap = (): React.ReactElement => {
         store.dispatch(updateMap({
             latitude: 37.5658, longitude: 126.9889, // 캐롯 좌표
         }))
+
+        /*
+        그냥 초기 데이터 보여주는건데.. 이게 또 없으면 그 add file이 팝업 되서..
+        이 부분은 팝업 안되고 내가 만든 조회 화면이 띄워지게 한다거나
+        아니면 그냥 디폴트 조회로 오늘날짜 기준 무언가를 보여준다거나 해야 할듯?
+         */
         store.dispatch(addDataToMap({
             datasets: {
                 info: {
