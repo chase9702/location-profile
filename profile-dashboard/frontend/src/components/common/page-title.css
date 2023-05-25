@@ -1,0 +1,16 @@
+.page-extra {
+    float: right;
+    line-height: 0.8;
+}
+
+.page-description {
+    font-size: 15px;
+    color: black;
+    font-weight: normal;
+    padding-bottom: 30px;
+}
+.page-extra-description{
+    font-size: 15px;
+    color: gray;
+    font-weight: normal;
+}

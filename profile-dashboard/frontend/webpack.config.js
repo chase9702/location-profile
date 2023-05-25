@@ -162,25 +162,24 @@ module.exports = (env, options) => {
         ];
 
         config.devServer = {
-            // hot: true,
-            // inline: true,
-            // contentBase: outputPath,
-            // host: 'local-cube.kakao.com',
+            static: {
+                directory: outputPath // 정적 파일 경로
+            },
+            host: 'localhost',
             port: 3000,
-            // publicPath: '/',
             // open: true,
-            // openPage: 'login',
             historyApiFallback: true,
-            // proxy: [{
-            //     context: ['/api', '/login', '/logout'],
-            //     target: 'http://local-cube.kakao.com:8080',
-            //     secure: false
-            // }],
+            proxy: [{
+                // context: ['/api', '/login', '/logout'],
+                context: ['/api'],
+                target: 'http://localhost:8080',
+                secure: false
+            }],
             headers: {
                 'Access-Control-Allow-Origin': '*',
                 'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, PATCH, OPTIONS',
                 'Access-Control-Allow-Headers': 'X-Requested-With, content-type, Authorization',
-                https: true
+                // https: true
             }
         };
         config.devtool = 'inline-source-map';

@@ -59,8 +59,9 @@ project(":profile-dashboard:backend") {
     dependencies {
 //        implementation("org.springframework.boot:spring-boot-starter-jdbc")
 //        implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-        implementation("org.springframework.boot:spring-boot-starter-security")
+//        implementation("org.springframework.boot:spring-boot-starter-security") // 로긴 필요할 경우에만 사용
         implementation("org.springframework.boot:spring-boot-starter-actuator")
+        implementation("org.apache.poi:poi-ooxml:4.1.1")
         developmentOnly("org.springframework.boot:spring-boot-devtools")
 
         compileOnly("org.projectlombok:lombok")

@@ -18,6 +18,7 @@ export const downloadFile = (blob: Blob, filename: string): void => {
 };
 
 export const downloadFileFromFrontendData = async (url: string, data): Promise<void> => {
+
     const response = await axios.post(url, data, {
         responseType: 'arraybuffer',
         headers: {
