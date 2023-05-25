@@ -10,7 +10,6 @@ import RouteMenu from '@src/routes/RouteMenu';
 const {SubMenu} = Menu;
 
 
-
 const items1: MenuProps['items'] = ['1', '2', '3'].map((key) => ({
     key,
     label: `nav ${key}`,
@@ -22,7 +21,7 @@ const SideMenus = (): React.ReactElement => {
                 mode="inline"
                 defaultSelectedKeys={['1']}
                 defaultOpenKeys={['sub1']}
-                style={{ height: '100%', borderRight: 0 }}
+                style={{height: '100%', borderRight: 0}}
                 items={items1}
             />
         </div>

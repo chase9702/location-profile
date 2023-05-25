@@ -16,11 +16,10 @@ interface ProfileDataView<T : ProfileFileData> {
         const val KEY_DATA = "data"
     }
 
-
     fun getExtension(): String
 
-    fun getFileData(model: Map<String, Any>): T? {
-        return model[KEY_DATA] as? T
+    fun getFileData(model: Map<String, Any>): T {
+        return (model[KEY_DATA] as? T)!!
     }
 
     @Throws(UnsupportedEncodingException::class)
