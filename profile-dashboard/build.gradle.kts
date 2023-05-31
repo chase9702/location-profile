@@ -45,11 +45,11 @@ project(":profile-dashboard:frontend") {
 }
 
 project(":profile-dashboard:backend") {
-    val developmentOnly: Configuration by configurations.creating
+    val developOnly: Configuration by configurations.creating
 
     configurations {
         runtimeClasspath {
-            extendsFrom(developmentOnly)
+            extendsFrom(developOnly)
         }
         compileOnly {
             extendsFrom(configurations.annotationProcessor.get())
@@ -60,13 +60,8 @@ project(":profile-dashboard:backend") {
 //        implementation("org.springframework.boot:spring-boot-starter-jdbc")
 //        implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 //        implementation("org.springframework.boot:spring-boot-starter-security") // 로긴 필요할 경우에만 사용
-        implementation("org.springframework.boot:spring-boot-starter-actuator")
         implementation("org.apache.poi:poi-ooxml:4.1.1")
-        developmentOnly("org.springframework.boot:spring-boot-devtools")
-
-        compileOnly("org.projectlombok:lombok")
-        annotationProcessor("org.projectlombok:lombok")
-        annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
+        developOnly("org.springframework.boot:spring-boot-devtools")
     }
 
     tasks.getByName<BootJar>("bootJar") {
