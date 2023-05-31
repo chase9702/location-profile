@@ -19,13 +19,13 @@ const RouteMenu: MenuInfo[] = [
         desc: 'Location Profile 제공.',
         submenu: [
             {
-                name: 'Dashboard',
+                name: 'Profile Dashboard',
                 key: 'location-dashboard',
                 to: '/location/dashboard',
                 component: LocationProfileDashBoard,
              },
             {
-                name: 'Location Map',
+                name: 'Profile Map',
                 key: 'location-map',
                 to: '/location/map',
                 component: LocationProfileMap,

@@ -1,10 +1,12 @@
 import React, {useEffect, useState} from "react";
-import {Button, Col, Row, Card, Collapse} from "antd";
+import {Button, Card, Col, Radio, Row, Select} from "antd";
+import {DeleteOutlined, SaveOutlined, SearchOutlined} from '@ant-design/icons';
 import {downloadFileFromFrontendData} from "@src/common/file-download";
 import {NotifyError} from "@src/components/common/Notification";
-import {Line} from '@ant-design/plots';
-import { LegendCfg } from '@antv/g2/src/interface';
+import {Line, Liquid, WordCloud} from '@ant-design/plots';
+import {LegendCfg} from '@antv/g2/src/interface';
 import PageTitle from "@src/components/common/PageTitle";
+import moment from 'moment';
 
 interface State {
 }
@@ -16,18 +18,29 @@ interface Props {
 const LocationProfileDashBoard = (props: Props): React.ReactElement => {
 
     const [data, setData] = useState([]);
+    const [wordData, setWordData] = useState([]);
     const [excelDownLoading, setExcelDownLoading] = useState(false);
-    const [tableColumns, setTableColumns] = useState([]);
-    const [tableData, setTableData] = useState([]);
+
 
     useEffect(() => {
         asyncFetch();
     }, []);
 
+    useEffect(() => {
+        asyncWordFetch();
+    }, []);
     const asyncFetch = () => {
         fetch('https://gw.alipayobjects.com/os/bmw-prod/e00d52f4-2fa6-47ee-a0d7-105dd95bde20.json')
             .then((response) => response.json())
             .then((json) => setData(json))
+            .catch((error) => {
+                console.log('fetch data failed', error);
+            });
+    };
+    const asyncWordFetch = () => {
+        fetch('https://gw.alipayobjects.com/os/antvdemo/assets/data/antv-keywords.json')
+            .then((response) => response.json())
+            .then((json) => setWordData(json))
             .catch((error) => {
                 console.log('fetch data failed', error);
             });
@@ -52,6 +65,50 @@ const LocationProfileDashBoard = (props: Props): React.ReactElement => {
             appear: {
                 animation: 'path-in',
                 duration: 5000,
+            },
+        },
+    };
+
+    const wordConfig = {
+        data: wordData,
+        wordField: 'name',
+        weightField: 'value',
+        colorField: 'name',
+        wordStyle: {
+            fontFamily: 'Verdana',
+            fontSize: [8, 32] as [number, number],
+            rotation: 0,
+        },
+        random: () => 0.5,
+    };
+
+    const liquidConfig = {
+        padding: [0, 120],
+        percent: 0.85,
+        outline: {
+            border: 4,
+            distance: 5,
+        },
+        wave: {
+            length: 128,
+        },
+        statistic: {
+            content: {
+                style: {
+                    fontSize: 32,
+                    fill: '#ffffff',
+                    opacity: 1,
+                    lineWidth: 2,
+                    shadowColor: '#000',
+                    shadowBlur: 10,
+                },
+                offsetY: 2,
+            },
+        },
+        pattern: {
+            type: 'dot',
+            cfg: {
+                size: 30,
             },
         },
     };
@@ -83,6 +140,44 @@ const LocationProfileDashBoard = (props: Props): React.ReactElement => {
         setExcelDownLoading(false);
     };
 
+
+    const renderSaveComponent = () => {
+        return (
+            <div>
+                <Row gutter={16}>
+                    <Col span={8}>
+
+                        <Select
+                            showSearch
+                            placeholder="Funnel 선택"
+                            optionFilterProp="children"
+                            // onChange={selectFunnelName}
+                            style={{width: '100%'}}
+                        >
+
+                        </Select>
+
+                    </Col>
+                    <Col span={9}>
+                        <Button icon={<SaveOutlined/>}>
+                            저장
+                        </Button>
+                        <Button icon={<SearchOutlined/>}>
+                            조회
+                        </Button>
+
+                    </Col>
+                    <Col span={4}>
+                        <Button style={{float: 'right'}} icon={<DeleteOutlined/>}
+                        >
+                            초기화
+                        </Button>
+                    </Col>
+                </Row>
+            </div>
+        );
+    };
+
     return (
         <div>
             <PageTitle
@@ -92,14 +187,40 @@ const LocationProfileDashBoard = (props: Props): React.ReactElement => {
                     '소비 특성 정보는 상대적인 소비 Score로 일반 유저(평균 0.5) 대비 소비 수준을 파악할 수 있습니다.',
                     '세그먼트를 선택하지 않으면 Active User(미인증&휴면 제외) 현황이 표시됩니다.',
                 ]}
+                extraDescription={
+                    <div>
+                        더 다양한 차트를 보려면&nbsp;
+                        <a
+                            href={'https://charts.ant.design/en/examples'}
+                            target={'_blank'}
+                            rel="noreferrer"
+                        >
+                            이곳에서
+                        </a>
+                        &nbsp;참고하세요.
+                    </div>
+                }
             />
+            <Card>
+                {renderSaveComponent()}
+            </Card>
             <Button
                 type={'primary'}
+                disabled={excelDownLoading}
                 onClick={handleClickExcelDownload}
             >
                 download
             </Button>
-            <Line {...config} />
+            <div>
+                <Line {...config} />
+            </div>
+            <div>
+                <WordCloud {...wordConfig}/>
+            </div>
+            <div>
+                <Liquid {...liquidConfig}/>
+            </div>
+
         </div>
     )
 

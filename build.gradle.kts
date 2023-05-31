@@ -1,7 +1,7 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    val kotlinVersion = "1.6.10"
+    val kotlinVersion = "1.7.20"
 
     kotlin("plugin.spring") version kotlinVersion
     kotlin("plugin.jpa") version kotlinVersion
@@ -10,7 +10,7 @@ plugins {
 }
 
 buildscript {
-    val springBootVersion = "2.1.6.RELEASE"
+    val springBootVersion = "2.7.4"
 
     repositories {
         mavenCentral()
@@ -26,7 +26,7 @@ allprojects {
     apply(plugin = "idea")
     apply(plugin = "kotlin")
 
-    group = "com.carrotins.location"
+    group = "com.carrotins.profile"
     version = "0.0.1-SNAPSHOT"
 
     repositories {
@@ -51,18 +51,17 @@ configure(listOf(project(":profile-dashboard:backend"))) {
 
     dependencies {
         implementation("org.springframework.boot:spring-boot-starter-web")
-
-        implementation("io.springfox:springfox-swagger2:2.9.2")
-        implementation("io.springfox:springfox-swagger-ui:2.9.2")
-
-
+        implementation("org.springframework.boot:spring-boot-starter-actuator")
+        implementation("org.springframework.boot:spring-boot-starter-aop")
+        implementation("org.springdoc:springdoc-openapi-ui:1.6.11")
 
         implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
         implementation("org.jetbrains.kotlin:kotlin-reflect")
         implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
-        compileOnly("org.projectlombok:lombok:1.18.8")
-        annotationProcessor("org.projectlombok:lombok:1.18.8")
+        compileOnly("org.projectlombok:lombok")
+        annotationProcessor("org.projectlombok:lombok")
+        annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
 
         testImplementation("org.springframework.boot:spring-boot-starter-test")
         testImplementation("org.junit.jupiter:junit-jupiter:$junitVersion")
