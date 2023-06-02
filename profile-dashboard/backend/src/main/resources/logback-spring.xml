@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+    <property name="LOG_PATTERN" value="[%-5level:%X{REQUEST_CUSTOM_ID}] [${HOSTNAME}:%d{yyyy-MM-dd HH:mm:ss.SSS}] [%thread] [%logger{5}:%method:%L] %msg%n"/>
+
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${LOG_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${application.log.dir:-logs}/application_${HOSTNAME}_${SERVER_PORT:-default}.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <fileNamePattern>${application.log.dir:-logs}/application_${HOSTNAME}_${SERVER_PORT:-default}.log.%i.%d{yyyy-MM-dd}.gz</fileNamePattern>
+            <!-- Each file should be at most 1GC, keep 30 days worth of history, but at most 30GB -->
+            <maxFileSize>1GB</maxFileSize>
+            <maxHistory>30</maxHistory>
+            <totalSizeCap>30GB</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <Pattern>${LOG_PATTERN}</Pattern>
+        </encoder>
+    </appender>
+
+    <springProfile name="local, default">
+        <root level="DEBUG">
+            <appender-ref ref="CONSOLE"/>
+        </root>
+    </springProfile>
+
+    <springProfile name="develop, production">
+        <root level="INFO">
+            <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="FILE"/>
+        </root>
+    </springProfile>
+
+</configuration>

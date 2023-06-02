@@ -1,0 +1,11 @@
+spring:
+  profiles:
+    active: local
+
+springdoc:
+  paths-to-match: "/api/**"
+
+logging:
+  level:
+    root: INFO
+    com.carrotins.backend: DEBUG
