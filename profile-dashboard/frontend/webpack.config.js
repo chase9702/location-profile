@@ -6,6 +6,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 const theme = require('./theme');
+const {ProvidePlugin} = require("webpack");
 
 module.exports = (env, options) => {
     const outputPath = path.resolve(__dirname, 'build');
@@ -149,6 +150,9 @@ module.exports = (env, options) => {
             new HtmlWebpackPlugin({
                 template: './public/index.html',
                 filename: path.resolve(outputPath, 'index.html')
+            }),
+            new ProvidePlugin({
+                process: 'process/browser',
             }),
         ],
     };
