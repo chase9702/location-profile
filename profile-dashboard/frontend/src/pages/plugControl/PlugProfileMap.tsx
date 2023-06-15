@@ -12,15 +12,16 @@ interface State {
 interface Props {
 }
 
-const LocationProfileMap = (): React.ReactElement => {
+const PlugProfileMap = (): React.ReactElement => {
     const dispatch = useDispatch();
     const keplerGlRef = useRef(null);
 
     const [height, setHeight] = useState(window.innerHeight);
 
     useEffect(() => {
-        const handleResize = () => setHeight(window.innerHeight);
+        const handleResize = () => setHeight(window.innerHeight-100);
         window.addEventListener('resize', handleResize);
+        setHeight(window.innerHeight-100);
         return () => window.removeEventListener('resize', handleResize);
     }, []);
 
@@ -55,44 +56,14 @@ const LocationProfileMap = (): React.ReactElement => {
         store.dispatch(addDataToMap({
             datasets: {
                 info: {
-                    label: 'Seoul City',
-                    id: 'test_data'
+                    label: 'Seoul City CSV',
+                    id: 'test_data_csv'
                 },
-                data: sampleTripData2
+                data: processCsvData(testData)
             }
         }));
 
     }, []);
-
-
-
-    const sampleTripData = {
-        fields: [
-            {name: 'tpep_pickup_datetime', format: 'YYYY-M-D H:m:s', type: 'timestamp'},
-            {name: 'pickup_longitude', format: '', type: 'real'},
-            {name: 'pickup_latitude', format: '', type: 'real'}
-        ],
-        rows: [
-            ['2015-01-15 19:05:39 +00:00', -73.99389648, 40.75011063],
-            ['2015-01-15 19:05:39 +00:00', -73.97642517, 40.73981094],
-            ['2015-01-15 19:05:40 +00:00', -73.96870422, 40.75424576]
-        ]
-    };
-
-
-
-    const handleDataUpdate = () => {
-        store.dispatch(addDataToMap({
-            datasets: {
-                info: {
-                    label: 'Sample Taxi Trips in New York City',
-                    id: 'test_trip_data'
-                },
-                data: sampleTripData
-            }
-        }));
-    };
-
 
     const sampleTripData2 = {
         fields: [
@@ -105,19 +76,6 @@ const LocationProfileMap = (): React.ReactElement => {
             ['2015-01-15 19:05:39 +00:00',126.6226323, 34.4076622],
             ['2015-01-15 19:05:40 +00:00', 126.6226323, 34.4156622]
         ]
-    };
-
-    const handleAddDataToMap = () => {
-
-        store.dispatch(addDataToMap({
-            datasets: {
-                info: {
-                    label: 'Seoul City',
-                    id: 'test_data'
-                },
-                data: sampleTripData2
-            }
-        }));
     };
 
     const testData = `no,eid,source,target,tunnel,geometry,source_lt,source_ln,target_lt,target_ln,length,reversed,eid_idx
@@ -181,9 +139,6 @@ const LocationProfileMap = (): React.ReactElement => {
 72935,724117267,6791116742,6791116741,yes,"LINESTRING (126.5504442000000012 34.4652474999999967, 126.5507056000000006 34.4652091000000027)",34.4652475,126.5504442,34.4652091,126.5507056,24.342,True,724117267
 72936,724117267,6791116741,6791116742,yes,"LINESTRING (126.5507056000000006 34.4652091000000027, 126.5504442000000012 34.4652474999999967)",34.4652091,126.5507056,34.4652475,126.5504442,24.342,False,724117267
 74039,724310983,6792799874,6792799873,yes,"LINESTRING (126.5451546999999977 34.5119806000000011, 126.5448200000000014 34.5122495999999970)",34.5119806,126.5451547,34.5122496,126.54482,42.839,True,724310983`
-
-
-
     const handleAddDataToMap2 = () => {
 
         store.dispatch(addDataToMap({
@@ -197,53 +152,18 @@ const LocationProfileMap = (): React.ReactElement => {
         }));
     };
 
-
-    const geojson = {
-        "type" : "FeatureCollection",
-        "features" : [{
-            "type" : "Feature",
-            "properties" : {
-                "capacity" : "10",
-                "type" : "U-Rack"
-            },
-            "geometry" : {
-                "type" : "Point",
-                "coordinates" : [ -71.073283, 42.417500 ]
-            }
-        }]
-    };
-
-    const handleAddDataToMap3 = () => {
-
-        store.dispatch(addDataToMap({
-            datasets: {
-                info: {
-                    label: 'Seoul City geojson',
-                    id: 'test_data_geojson'
-                },
-                data: processGeojson(geojson)
-            }
-        }));
-    };
-
-
     return (
         <div>
-            <button onClick={handleDataUpdate}>Add Data1</button>
-            <button onClick={handleAddDataToMap}>Add Data2</button>
-            <button onClick={handleAddDataToMap2}>Add Data3</button>
-            <button onClick={handleAddDataToMap3}>Add Data4</button>
             <KeplerGl
-                id="map"
+                id="plugMap"
                 width={"100%"}
                 height={height}
                 mapboxApiAccessToken={process.env.REACT_APP_MAPBOX_TOKEN}
                 // 초기 데이터를 props로 전달
-
             />
         </div>
     )
 };
 
+export default withRouter(PlugProfileMap)
 
-export default withRouter(LocationProfileMap)
