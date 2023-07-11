@@ -25,7 +25,7 @@ kerberos:
   jaas: "src/main/resources/kerberos/jaas.conf"
   krb5: "src/main/resources/kerberos/krb5.conf"
 
-log.config.path: "/data/log"
+log.config.path: "/data/log/profile"
 
 logging:
   level:
