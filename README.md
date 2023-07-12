@@ -12,7 +12,9 @@ Spring boot 로 구성한 백엔드 프로젝트
 React(Typescript) 로 구성한 프론트엔드 프로젝트
 * React 17.0.3
 * Typescript 5.0.4
-  개발 시에는 backend와 frontend 프로젝트를 각각 띄워서 사용하고, 배포 시에는 하나의 jar 파일로 빌드하여 배포
+  
+
+**개발 시에는 backend와 frontend 프로젝트를 각각 띄워서 사용하고, 배포 시에는 하나의 jar 파일로 빌드하여 배포**
 ## Development
 profile-dashboard 프로젝트는 frontend 프로젝트와 backend 프로젝트를 각각 띄워서 개발하도록 구성되어 있다. backend는 일반적인 Spring Boot 프로젝트이므로 실행하면 바로 서버가 실행된다. frontend 프로젝트는 [webpack-dev-server](https://github.com/webpack/webpack-dev-server) proxy를 이용해 들어오는 모든 요청을 backend([http://127.0.0.1:8080](http://127.0.0.1:8080))로 넘기도록 설정되어 있다.
 따라서, 각각 실행하고 [http://127.0.0.1:3000](http://127.0.0.1:3000)으로 접속하면 개발을 시작할 수 있다
@@ -34,7 +36,7 @@ profile-dashboard 프로젝트는 frontend 프로젝트와 backend 프로젝트�
     cd frontend
     npm start # or npm run dev
     ```
-3. frontend 접속 정보 [http://local-cube.kakao.com:3000](http://local-cube.kakao.com:3000) 로 접속
+3. frontend 접속 정보 [http://localhost.com:3000](http://localhost.com:3000) 로 접속
 ### frontend bundle analyzer
 * [webpack-bundle-analyzer](https://github.com/webpack-contrib/webpack-bundle-analyzer) 를 설치해둬서 웹팩을 이용해 번들링되는 모듈들은 분석화면으로 확인할 수 있음
 * webpack-dev-server가 뜨면 8888번 포트로 접속하면 확인할 수 있음
