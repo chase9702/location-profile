@@ -1,6 +1,7 @@
 import React from "react";
-import LocationProfileDashBoard from "@src/pages/LocationProfileDashBoard";
-import LocationProfileMap from "@src/pages/LocationProfileMap";
+import LocationProfileDashBoard from "@src/pages/locationProfile/LocationProfileDashBoard";
+import PlugProfileDashBoard from "@src/pages/plugControl/PlugProfileDashBoard";
+
 
 
 export interface MenuInfo {
@@ -14,22 +15,29 @@ export interface MenuInfo {
 
 const RouteMenu: MenuInfo[] = [
     {
+        name: 'Plug Profile',
+        key: 'plug',
+        desc: 'plug Profile 제공.',
+        submenu: [
+            {
+                name: 'Plug Dashboard',
+                key: 'plug-dashboard',
+                to: '/plug/dashboard',
+                component: PlugProfileDashBoard,
+            }
+        ],
+    },
+    {
         name: 'Location Profile',
         key: 'location',
         desc: 'Location Profile 제공.',
         submenu: [
             {
-                name: 'Profile Dashboard',
+                name: 'Location Dashboard',
                 key: 'location-dashboard',
                 to: '/location/dashboard',
                 component: LocationProfileDashBoard,
-             },
-            {
-                name: 'Profile Map',
-                key: 'location-map',
-                to: '/location/map',
-                component: LocationProfileMap,
-            }
+             }
         ],
     }
 ];

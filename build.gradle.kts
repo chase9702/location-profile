@@ -55,6 +55,11 @@ configure(listOf(project(":profile-dashboard:backend"))) {
         implementation("org.springframework.boot:spring-boot-starter-aop")
         implementation("org.springdoc:springdoc-openapi-ui:1.6.11")
 
+        //하둡 버전 맞춰야 함
+        implementation("org.apache.hadoop:hadoop-common:3.3.1"){
+            exclude("org.slf4j","slf4j-log4j12")
+        }
+
         implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
         implementation("org.jetbrains.kotlin:kotlin-reflect")
         implementation("com.fasterxml.jackson.module:jackson-module-kotlin")

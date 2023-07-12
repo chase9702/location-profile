@@ -5,7 +5,29 @@ spring:
 springdoc:
   paths-to-match: "/api/**"
 
+log.config.path: "/Users/alvin/Desktop/data"
+
+
 logging:
   level:
     root: INFO
     com.carrotins.backend: DEBUG
+
+
+---
+spring:
+  config:
+    activate:
+      on-profile: production
+
+
+kerberos:
+  jaas: "src/main/resources/kerberos/jaas.conf"
+  krb5: "src/main/resources/kerberos/krb5.conf"
+
+log.config.path: "/data/log/profile"
+
+logging:
+  level:
+    root: INFO
+    com.carrotins.backend: INFO

@@ -1,124 +1,27 @@
-import React, {useEffect, useRef, useState} from "react";
-import {withRouter} from "react-router-dom";
-import {KeplerGl} from 'kepler.gl';
-import {addDataToMap, updateMap, updateVisData} from 'kepler.gl/actions';
+import React, {useEffect, useState} from "react";
+import {Button, Card, Col, Row, Select} from "antd";
+import {DeleteOutlined, SaveOutlined, SearchOutlined} from '@ant-design/icons';
+import {downloadFileFromFrontendData} from "@src/common/file-download";
+import {NotifyError} from "@src/components/common/Notification";
+import PageTitle from "@src/components/common/PageTitle";
 import {store} from '@src/index';
-import {useDispatch} from "react-redux";
-import {processCsvData, processGeojson} from 'kepler.gl/processors';
+import {addDataToMap, updateMap, wrapTo} from "kepler.gl/actions";
+import {processCsvData} from "kepler.gl/processors";
+import CustomKeplerMap from "@src/components/common/CustomKeplerMap";
+
 
 interface State {
 }
 
 interface Props {
+
 }
 
-const LocationProfileMap = (): React.ReactElement => {
-    const dispatch = useDispatch();
-    const keplerGlRef = useRef(null);
+const PlugProfileDashBoard = (props: Props): React.ReactElement => {
 
-    const [height, setHeight] = useState(window.innerHeight);
+    const [data, setData] = useState([]);
+    const [excelDownLoading, setExcelDownLoading] = useState(false);
 
-    useEffect(() => {
-        const handleResize = () => setHeight(window.innerHeight);
-        window.addEventListener('resize', handleResize);
-        return () => window.removeEventListener('resize', handleResize);
-    }, []);
-
-
-    const sampleConfig = {
-        visState: {
-            filters: [
-                {
-                    id: 'me',
-                    dataId: 'test_trip_data',
-                    name: 'tpep_pickup_datetime',
-                    type: 'timeRange',
-                    view: 'enlarged'
-                }
-            ]
-        }
-    };
-
-    /*
-    맵 최초 위치 설정
-     */
-    useEffect(() => {
-        store.dispatch(updateMap({
-            latitude: 37.5658, longitude: 126.9889, // 캐롯 좌표
-        }))
-
-        /*
-        그냥 초기 데이터 보여주는건데.. 이게 또 없으면 그 add file이 팝업 되서..
-        이 부분은 팝업 안되고 내가 만든 조회 화면이 띄워지게 한다거나
-        아니면 그냥 디폴트 조회로 오늘날짜 기준 무언가를 보여준다거나 해야 할듯?
-         */
-        store.dispatch(addDataToMap({
-            datasets: {
-                info: {
-                    label: 'Seoul City',
-                    id: 'test_data'
-                },
-                data: sampleTripData2
-            }
-        }));
-
-    }, []);
-
-
-
-    const sampleTripData = {
-        fields: [
-            {name: 'tpep_pickup_datetime', format: 'YYYY-M-D H:m:s', type: 'timestamp'},
-            {name: 'pickup_longitude', format: '', type: 'real'},
-            {name: 'pickup_latitude', format: '', type: 'real'}
-        ],
-        rows: [
-            ['2015-01-15 19:05:39 +00:00', -73.99389648, 40.75011063],
-            ['2015-01-15 19:05:39 +00:00', -73.97642517, 40.73981094],
-            ['2015-01-15 19:05:40 +00:00', -73.96870422, 40.75424576]
-        ]
-    };
-
-
-
-    const handleDataUpdate = () => {
-        store.dispatch(addDataToMap({
-            datasets: {
-                info: {
-                    label: 'Sample Taxi Trips in New York City',
-                    id: 'test_trip_data'
-                },
-                data: sampleTripData
-            }
-        }));
-    };
-
-
-    const sampleTripData2 = {
-        fields: [
-            {name: 'datetime', format: 'YYYY-M-D H:m:s', type: 'timestamp'},
-            {name: 'trip_longitude', format: '', type: 'real'},
-            {name: 'trip_latitude', format: '', type: 'real'}
-        ],
-        rows: [
-            ['2015-01-15 19:05:39 +00:00', 126.6218273, 34.4071537],
-            ['2015-01-15 19:05:39 +00:00',126.6226323, 34.4076622],
-            ['2015-01-15 19:05:40 +00:00', 126.6226323, 34.4156622]
-        ]
-    };
-
-    const handleAddDataToMap = () => {
-
-        store.dispatch(addDataToMap({
-            datasets: {
-                info: {
-                    label: 'Seoul City',
-                    id: 'test_data'
-                },
-                data: sampleTripData2
-            }
-        }));
-    };
 
     const testData = `no,eid,source,target,tunnel,geometry,source_lt,source_ln,target_lt,target_ln,length,reversed,eid_idx
 7106,342885007,436745716,436745711,yes,"LINESTRING (126.6218273000000067 34.4071537000000021, 126.6226323000000065 34.4076621999999972)",34.4071537,126.6218273,34.4076622,126.6226323,93.011,False,342885007
@@ -181,11 +84,16 @@ const LocationProfileMap = (): React.ReactElement => {
 72935,724117267,6791116742,6791116741,yes,"LINESTRING (126.5504442000000012 34.4652474999999967, 126.5507056000000006 34.4652091000000027)",34.4652475,126.5504442,34.4652091,126.5507056,24.342,True,724117267
 72936,724117267,6791116741,6791116742,yes,"LINESTRING (126.5507056000000006 34.4652091000000027, 126.5504442000000012 34.4652474999999967)",34.4652091,126.5507056,34.4652475,126.5504442,24.342,False,724117267
 74039,724310983,6792799874,6792799873,yes,"LINESTRING (126.5451546999999977 34.5119806000000011, 126.5448200000000014 34.5122495999999970)",34.5119806,126.5451547,34.5122496,126.54482,42.839,True,724310983`
+    useEffect(() => {
+        store.dispatch(updateMap({
+            latitude: 37.5658, longitude: 126.9889, // 캐롯 좌표
+        }))
 
-
-
-    const handleAddDataToMap2 = () => {
-
+        /*
+        그냥 초기 데이터 보여주는건데.. 이게 또 없으면 그 add file이 팝업 되서..
+        이 부분은 팝업 안되고 내가 만든 조회 화면이 띄워지게 한다거나
+        아니면 그냥 디폴트 조회로 오늘날짜 기준 무언가를 보여준다거나 해야 할듯?
+         */
         store.dispatch(addDataToMap({
             datasets: {
                 info: {
@@ -195,55 +103,156 @@ const LocationProfileMap = (): React.ReactElement => {
                 data: processCsvData(testData)
             }
         }));
-    };
 
+    }, []);
 
-    const geojson = {
-        "type" : "FeatureCollection",
-        "features" : [{
-            "type" : "Feature",
-            "properties" : {
-                "capacity" : "10",
-                "type" : "U-Rack"
-            },
-            "geometry" : {
-                "type" : "Point",
-                "coordinates" : [ -71.073283, 42.417500 ]
+    const handleClickExcelDownload = async () => {
+        setExcelDownLoading(true);
+        // const columns = data.map((data) => {
+        //     return data.;
+        // });
+
+        const values = data.map((data) => {
+            const tmpList = [];
+            for (const [key, value] of Object.entries(data)) {
+                tmpList.push(value);
             }
-        }]
+            return tmpList;
+        });
+
+        try {
+            await downloadFileFromFrontendData(`/api/file/location/data`, {
+                chartName: "test_chart",
+                columns: ["name", "year", "gdp"],
+                values: values
+            });
+        } catch (e) {
+            NotifyError(e);
+        }
+
+        setExcelDownLoading(false);
     };
 
-    const handleAddDataToMap3 = () => {
+    const sampleTripData2 = {
+        fields: [
+            {name: 'datetime', format: 'YYYY-M-D H:m:s', type: 'timestamp'},
+            {name: 'trip_longitude', format: '', type: 'real'},
+            {name: 'trip_latitude', format: '', type: 'real'}
+        ],
+        rows: [
+            ['2015-01-15 19:05:39 +00:00', 126.6218273, 34.4071537],
+            ['2015-01-15 19:05:39 +00:00', 126.6226323, 34.4076622],
+            ['2015-01-15 19:05:40 +00:00', 126.6226323, 34.4156622]
+        ]
+    };
 
-        store.dispatch(addDataToMap({
+
+    const linkToPlugMap2 = () => {
+        store.dispatch(wrapTo('plugMap', addDataToMap({
             datasets: {
                 info: {
-                    label: 'Seoul City geojson',
-                    id: 'test_data_geojson'
+                    label: 'TTT City',
+                    id: 'test_data'
                 },
-                data: processGeojson(geojson)
+                data: sampleTripData2
             }
-        }));
+        })));
+
+        const tableContainer = document.querySelector('.ant-layout-content');
+        if (tableContainer) {
+            tableContainer.scrollTo({top: 0, behavior: 'smooth'});
+        }
     };
 
+    const renderSaveComponent = () => {
+        return (
+            <div>
+                <Row gutter={16}>
+                    <Col span={8}>
+
+                        <Select
+                            showSearch
+                            placeholder="Funnel 선택"
+                            optionFilterProp="children"
+                            // onChange={selectFunnelName}
+                            style={{width: '100%'}}
+                        >
+
+                        </Select>
+
+                    </Col>
+                    <Col span={9}>
+                        <Button icon={<SaveOutlined/>}>
+                            저장
+                        </Button>
+                        <Button icon={<SearchOutlined/>}>
+                            조회
+                        </Button>
+
+                    </Col>
+                    <Col span={4}>
+                        <Button style={{float: 'right'}} icon={<DeleteOutlined/>}
+                        >
+                            초기화
+                        </Button>
+                    </Col>
+                </Row>
+            </div>
+        );
+    };
 
     return (
         <div>
-            <button onClick={handleDataUpdate}>Add Data1</button>
-            <button onClick={handleAddDataToMap}>Add Data2</button>
-            <button onClick={handleAddDataToMap2}>Add Data3</button>
-            <button onClick={handleAddDataToMap3}>Add Data4</button>
-            <KeplerGl
-                id="map"
-                width={"100%"}
-                height={height}
-                mapboxApiAccessToken={process.env.REACT_APP_MAPBOX_TOKEN}
-                // 초기 데이터를 props로 전달
+            <PageTitle
+                title="Plug Profile DashBoard"
+                description={[
+                    'Plug 관제 정보를 확인 할 수 있습니다.',
+                ]}
 
             />
+
+            <CustomKeplerMap
+                heightRatio={70}
+                id={"plugMap"}
+            />
+            <Card>
+                {renderSaveComponent()}
+            </Card>
+            <Button
+                type={'primary'}
+                disabled={excelDownLoading}
+                onClick={handleClickExcelDownload}
+            >
+                download
+            </Button>
+
+            <Button onClick={() => linkToPlugMap2()}>
+                지도 화면으로 이동2
+            </Button>
+
+            <Card>
+                {renderSaveComponent()}
+            </Card>
+            <Card>
+                {renderSaveComponent()}
+            </Card>
+            <Card>
+                {renderSaveComponent()}
+            </Card>
+            <Card>
+                {renderSaveComponent()}
+            </Card>
+            <Card>
+                {renderSaveComponent()}
+            </Card>
+            <Card>
+                {renderSaveComponent()}
+            </Card>
+
+
         </div>
     )
 };
 
+export default PlugProfileDashBoard;
 
-export default withRouter(LocationProfileMap)

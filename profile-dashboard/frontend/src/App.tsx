@@ -4,7 +4,7 @@ import {Layout} from 'antd';
 import Menus from "@src/layout/Menus";
 import Pages from "@src/layout/Pages";
 
-const {Header, Content, Sider} = Layout;
+const {Header, Content} = Layout;
 
 
 const App = () => {
