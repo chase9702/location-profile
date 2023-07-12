@@ -30,7 +30,7 @@ profile-dashboard 프로젝트는 frontend 프로젝트와 backend 프로젝트�
     ```bash
     ./gradlew [clean] bootRun
     ```
-   :전구: 이전에 `prodBuild`를 수행했다면 backend 프로젝트에 frontend를 빌드한 *static* 파일들이 남아있을 것이므로, `clean`을 같이 써줘야 할 때도 있음
+   이전에 `prodBuild`를 수행했다면 backend 프로젝트에 frontend를 빌드한 *static* 파일들이 남아있을 것이므로, `clean`을 같이 써줘야 할 때도 있음
 2. **frontend**: webpack-dev-server 실행
     ```bash
     cd frontend
