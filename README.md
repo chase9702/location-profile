@@ -40,7 +40,7 @@ profile-dashboard 프로젝트는 frontend 프로젝트와 backend 프로젝트�
 ### frontend bundle analyzer
 * [webpack-bundle-analyzer](https://github.com/webpack-contrib/webpack-bundle-analyzer) 를 설치해둬서 웹팩을 이용해 번들링되는 모듈들은 분석화면으로 확인할 수 있음
 * webpack-dev-server가 뜨면 8888번 포트로 접속하면 확인할 수 있음
-    * [http://local-cube.kakao.com:8888](http://local-cube.kakao.com:8888)
+    * [http://localhost:8888](http://local-cube.kakao.com:8888)
 ### Swagger UI
 * Local URL: [http://localhost:8080/swagger-ui/index.html#/](http://localhost:8080/swagger-ui/index.html#/)
 ## profile-dashboard 프로젝트 Product build
