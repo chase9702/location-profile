@@ -1,25 +1,23 @@
-//package com.carrotins.backend.config
-//
+package com.carrotins.backend.config
+
 //import org.apache.hadoop.security.UserGroupInformation
-//import org.springframework.beans.factory.annotation.Qualifier
-//import org.springframework.beans.factory.annotation.Value
-//import org.springframework.boot.context.properties.ConfigurationProperties
-//import org.springframework.boot.jdbc.DataSourceBuilder
-//import org.springframework.context.annotation.Bean
-//import org.springframework.context.annotation.Configuration
-//import org.springframework.context.annotation.Primary
-//import org.springframework.jdbc.core.JdbcTemplate
-//import org.springframework.jdbc.datasource.DriverManagerDataSource
-//import java.util.*
-//import javax.annotation.PostConstruct
-//import javax.sql.DataSource
-//
-//
-///**
-// * Created by alvin on 2023/05/30.
-// */
-//@Configuration
-//class DataSourceConfig (
+import org.springframework.beans.factory.annotation.Qualifier
+import org.springframework.beans.factory.annotation.Value
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.Primary
+import org.springframework.jdbc.core.JdbcTemplate
+import org.springframework.jdbc.datasource.DriverManagerDataSource
+import org.springframework.jmx.export.MBeanExporter
+import java.util.*
+import javax.sql.DataSource
+
+
+/**
+ * Created by alvin on 2023/05/30.
+ */
+@Configuration
+class DataSourceConfig(
 //    @Value("\${kerberos.jaas}")
 //    private val jaasConf: String,
 //
@@ -34,10 +32,16 @@
 //
 //    @Value("\${kerberos.krb5}")
 //    private val keytab: String,
-//
-//    ) {
-//
-//    @PostConstruct
+
+    @Value("\${ext.datasource.hive.jdbc-url}")
+    private val jdbcUrl: String,
+    @Value("\${ext.datasource.hive.driver-class-name}")
+    private val driverName: String,
+
+
+    ) {
+
+    //    @PostConstruct
 //    fun initKerberos() {
 //        val hadoopConf = org.apache.hadoop.conf.Configuration()
 //
@@ -54,32 +58,45 @@
 //
 //        val user = UserGroupInformation.getCurrentUser()
 //    }
-//
+    @Bean
+    fun exporter(): MBeanExporter? {
+        val exporter = MBeanExporter()
+        exporter.setExcludedBeans(
+            "hiveDataSource"
+        )
+        return exporter
+    }
+
 //    @Bean
 //    @ConfigurationProperties(prefix = "ext.datasource.hive")
 //    fun getProperties(): Properties {
 //        return Properties()
 //    }
-//
-//    @Primary
-//    @Bean(name = ["hiveDataSource"])
-//    fun hiveDataSource(): DataSource {
+
+    @Primary
+    @Bean(name = ["hiveDataSource"])
+    fun hiveDataSource(): DataSource {
 //        val prop = getProperties()
 //        val url = prop.getProperty("jdbc-url")
 //        val driver = prop.getProperty("driver-class-name")
 //        val ds = DataSourceBuilder.create().type(DriverManagerDataSource::class.java).url(url).driverClassName(driver)
 //            .build()
 //        ds.connectionProperties = prop
-//        return ds
-//    }
-//
-//
-//    @Bean(name = ["hiveJdbcTemplate"])
-//    fun hiveJdbcTemplate(
-//        @Qualifier("hiveDataSource") hiveDataSource: DataSource?
-//    ): JdbcTemplate? {
-//        return JdbcTemplate(hiveDataSource!!)
-//    }
-//
-//
-//}
+
+        val ds = DriverManagerDataSource()
+        ds.setDriverClassName(driverName)
+        ds.username = "hadoop"
+        ds.password = "1234"
+        ds.url = jdbcUrl
+        return ds
+    }
+
+    @Bean(name = ["hiveJdbcTemplate"])
+    fun hiveJdbcTemplate(
+        @Qualifier("hiveDataSource") hiveDataSource: DataSource?
+    ): JdbcTemplate? {
+        return JdbcTemplate(hiveDataSource!!)
+    }
+
+
+}

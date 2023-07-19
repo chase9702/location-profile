@@ -8,6 +8,7 @@ import {store} from '@src/index';
 import {addDataToMap, updateMap, wrapTo} from "kepler.gl/actions";
 import {processCsvData} from "kepler.gl/processors";
 import CustomKeplerMap from "@src/components/common/CustomKeplerMap";
+import {get} from "@src/api";
 
 
 interface State {
@@ -105,6 +106,20 @@ const PlugProfileDashBoard = (props: Props): React.ReactElement => {
         }));
 
     }, []);
+
+    const handleGetTestData = () => {
+
+        get<[]>("/api/plug/test")
+            .then((jsonData) => {
+                console.log(jsonData)
+            })
+            .catch((e) => {
+                NotifyError(e);
+            });
+    };
+    useEffect(()=>{
+        handleGetTestData()
+    });
 
     const handleClickExcelDownload = async () => {
         setExcelDownLoading(true);

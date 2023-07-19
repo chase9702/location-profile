@@ -57,7 +57,29 @@ project(":profile-dashboard:backend") {
     }
 
     dependencies {
-//        implementation("org.springframework.boot:spring-boot-starter-jdbc")
+        implementation("org.springframework.boot:spring-boot-starter-jdbc")
+        //하둡 버전 맞춰야 함s
+//        implementation("org.apache.hadoop:hadoop-common:2.10.1"){
+//            exclude("org.slf4j","slf4j-log4j12")
+//        }
+        implementation("org.apache.hadoop:hadoop-common:2.7.3"){
+            exclude("org.slf4j","slf4j-log4j12")
+        }
+        compileOnly("javax.servlet:javax.servlet-api:4.0.1")
+
+        //hive 버전 맞춰야 함
+//        implementation("org.apache.hive:hive-jdbc:1.2.1"){
+//            exclude("org.slf4j","slf4j-log4j12")
+//        }
+        implementation("org.apache.hive:hive-jdbc:2.3.9"){
+            exclude("org.slf4j","slf4j-log4j12")
+            exclude("org.apache.logging.log4j","log4j-slf4j-impl")
+            exclude("org.eclipse.jetty.aggregate","jetty-all")
+        }
+
+
+
+
 //        implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 //        implementation("org.springframework.boot:spring-boot-starter-security") // 로긴 필요할 경우에만 사용
         implementation("org.apache.poi:poi-ooxml:4.1.1")

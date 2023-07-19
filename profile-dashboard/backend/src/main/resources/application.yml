@@ -8,6 +8,13 @@ springdoc:
 log.config.path: "/Users/alvin/Desktop/data"
 
 
+ext:
+  datasource:
+    hive:
+      driver-class-name: org.apache.hive.jdbc.HiveDriver
+      jdbc-url: jdbc:hive2://localhost:10000/test;
+
+
 logging:
   level:
     root: INFO
@@ -20,7 +27,7 @@ spring:
     activate:
       on-profile: production
 
-
+#
 kerberos:
   jaas: "src/main/resources/kerberos/jaas.conf"
   krb5: "src/main/resources/kerberos/krb5.conf"

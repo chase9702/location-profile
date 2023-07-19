@@ -32,7 +32,7 @@ class LoggingAspect {
         val paramMap = request.parameterMap
         var params = ""
         if (paramMap.isNotEmpty()) {
-            params = " [" + paramMapToString(paramMap) + "]"
+            params = " [" + paramMapToString(paramMap as Map<String, Array<String>>) + "]"
         }
 
         val start = System.currentTimeMillis()

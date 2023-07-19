@@ -29,6 +29,9 @@ allprojects {
     group = "com.carrotins.profile"
     version = "0.0.1-SNAPSHOT"
 
+    //모든 디펜던시 확인
+    tasks.register("printAllDependencies", DependencyReportTask::class)
+
     repositories {
         mavenCentral()
 
@@ -54,11 +57,6 @@ configure(listOf(project(":profile-dashboard:backend"))) {
         implementation("org.springframework.boot:spring-boot-starter-actuator")
         implementation("org.springframework.boot:spring-boot-starter-aop")
         implementation("org.springdoc:springdoc-openapi-ui:1.6.11")
-
-        //하둡 버전 맞춰야 함
-        implementation("org.apache.hadoop:hadoop-common:3.3.1"){
-            exclude("org.slf4j","slf4j-log4j12")
-        }
 
         implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
         implementation("org.jetbrains.kotlin:kotlin-reflect")
