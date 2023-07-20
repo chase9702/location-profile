@@ -34,6 +34,13 @@ kerberos:
 
 log.config.path: "/data/log/profile"
 
+ext:
+  datasource:
+    hive:
+      driver-class-name: org.apache.hive.jdbc.HiveDriver
+      jdbc-url: jdbc:hive2://cgiprddatalake-cluster.azurehdinsight.net:443/default;transportMode=http;ssl=true;httpPath=/hive2;
+
+
 logging:
   level:
     root: INFO

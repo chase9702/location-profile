@@ -12,12 +12,8 @@ class PlugProfileService(
     private val hiveTestRepository: HiveTestRepository
 ) {
 
-
     fun getTest():List<HiveDataTable>{
-
-        val list = hiveTestRepository.getTestData()
-
-        return list
+        return hiveTestRepository.getTestData()
     }
 
 }

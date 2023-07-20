@@ -67,26 +67,11 @@ class DataSourceConfig(
         return exporter
     }
 
-//    @Bean
-//    @ConfigurationProperties(prefix = "ext.datasource.hive")
-//    fun getProperties(): Properties {
-//        return Properties()
-//    }
-
     @Primary
     @Bean(name = ["hiveDataSource"])
     fun hiveDataSource(): DataSource {
-//        val prop = getProperties()
-//        val url = prop.getProperty("jdbc-url")
-//        val driver = prop.getProperty("driver-class-name")
-//        val ds = DataSourceBuilder.create().type(DriverManagerDataSource::class.java).url(url).driverClassName(driver)
-//            .build()
-//        ds.connectionProperties = prop
-
         val ds = DriverManagerDataSource()
         ds.setDriverClassName(driverName)
-        ds.username = "hadoop"
-        ds.password = "1234"
         ds.url = jdbcUrl
         return ds
     }
