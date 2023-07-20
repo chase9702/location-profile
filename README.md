@@ -34,6 +34,7 @@ profile-dashboard 프로젝트는 frontend 프로젝트와 backend 프로젝트�
 2. **frontend**: webpack-dev-server 실행
     ```bash
     cd frontend
+   # 최초 실행시에는 npm install 로 npm moudle을 설치 해야 함
     npm start # or npm run dev
     ```
 3. frontend 접속 정보 [http://localhost.com:3000](http://localhost.com:3000) 로 접속
@@ -54,3 +55,92 @@ profile-dashboard 프로젝트는 frontend 프로젝트와 backend 프로젝트�
 2. `moveBuild`: *frontend/build*에 생성된 frontend 프로젝트 결과물을 *backend/src/main/resources/static* 디렉터리로 이동
 2. `clean`: backend 프로젝트 clean
 3. `build`: frontend 결과를 포함한 backend 프로젝트를 빌드 *profile-location-0.0.1-SNAPSHOT.jar* 파일 생성
+
+
+
+
+### 로컬에서 Hive 설정하기 (feat. docker)
+
+* **도커 설치와 실행을 로컬pc에 진행 후 아래 단계를 진행**
+
+1. docker hive(하둡) 이미지 파일을 압축한 hive.tar파일(3.7gb)을 공용폴더(172.30.100.100)에서 받음
+2. tar 파일을 docker 이미지로 load
+```bash
+docker load -i hive.tar
+```
+3. 도커 이미지 파일 실행 및 접속
+```bash
+docker run -d -p 10000:10000 -p 10001:10001 -p 10002:10002 -p 8088:8088 --name hive1 -it --privileged=true ddong4753/hive:latest /sbin/init
+docker exec -it -u 0 hive1 /bin/bash
+```
+4. 도커 컨테이너 ssh 22 포트 개방
+```bash
+#파일 가운데의 PermitRootLogin을 yes로 바꿈
+vi /etc/ssh/sshd_config #vim 사용법은 인터넷에서 확인
+service ssh start
+```
+
+5. hosts 파일 및 hostname 변경
+```bash
+vi /etc/hosts         #  마지막 줄 host 정보를 namenode로 변경 후 저장
+vi /etc/hostname      #  host 정보를 namenode 로 변경 후 저장
+hostnamectl set-hostname namenode
+# hostname 처서 namenode 나오면됨 
+```
+6. **시스템 계정 변경**
+```bash
+su - hadoop 
+```
+7. 새로 컨테이너 시작했기 때문에 bashrc 변경내용 적용
+```bash
+cd ~
+source .bashrc
+```
+8. 하둡 실행
+```bash
+start-all.sh
+#실행 쉘스크립트 실행 후 
+jps
+#jps 입력 결과가 아래와 같이 나오면 성공 (DataNode가 나오는지 확인 필수) 
+Jps
+NodeManager
+SecondaryNameNode
+NameNode
+ResourceManager
+DataNode
+```
+* **datanode 실행 안되면 datanode/current 폴더 삭제**
+```bash
+sudo rm -rf /home/hadoop/hdfs/datanode/current 
+#sudo 비밀번호 : 1234
+```
+
+9. 하둡 폴더 생성
+```bash
+hdfs dfs -mkdir /tmp
+hdfs dfs -mkdir -p /user/hive/warehouse
+hdfs dfs -chmod g+w /tmp
+hdfs dfs -chmod -R g+w /user
+
+#명령어 실행 후 
+hdfs dfs -ls / #폴더 생성되었는지 확인 
+```
+
+10. hiveserver 실행
+```bash
+hive --service metastore &
+ #화면에 로그 더 이상 나오지 않는것 확인 후 ctrl+c로 나와서 
+hive --service hiveserver2 & 
+```
+
+11. 테이블 생성 및 테스트 
+```bash
+hive 
+#hive로 하이브 쉘 실행
+#원하는 디비 생성 및 테이블 생성하고 난 후 테스트 진행 
+```
+
+* 로그 확인
+```bash
+cat -t /tmp/hadoop/hive.log
+```

@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.RestController
  */
 @RestController
 class HealthCheckController {
-
     @RequestMapping("/api/ping")
     fun ping(): String {
         return "OK"
