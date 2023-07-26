@@ -39,9 +39,9 @@ allprojects {
 }
 
 configure(listOf(project(":profile-dashboard:backend"))) {
-    val junitVersion = "5.5.0"
-    val mockitoVersion = "2.28.2"
-    val kotestVersion = "5.1.0"
+//    val junitVersion = "5.5.0"
+//    val mockitoVersion = "2.28.2"
+    val kotestVersion = "5.4.2"
     val mockkVersion = "1.12.2"
 
     apply(plugin = "org.springframework.boot")
@@ -67,13 +67,14 @@ configure(listOf(project(":profile-dashboard:backend"))) {
         annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
 
         testImplementation("org.springframework.boot:spring-boot-starter-test")
-        testImplementation("org.junit.jupiter:junit-jupiter:$junitVersion")
-        testImplementation("org.mockito:mockito-junit-jupiter:$mockitoVersion")
-        testImplementation("org.mockito:mockito-core:$mockitoVersion")
+//        testImplementation("org.junit.jupiter:junit-jupiter:$junitVersion")
+//        testImplementation("org.mockito:mockito-junit-jupiter:$mockitoVersion")
+//        testImplementation("org.mockito:mockito-core:$mockitoVersion")
 
         testImplementation("io.kotest:kotest-runner-junit5:$kotestVersion")
         testImplementation("io.kotest:kotest-assertions-core:$kotestVersion")
         testImplementation("io.kotest:kotest-property:$kotestVersion")
+        testImplementation("io.kotest.extensions:kotest-extensions-spring:1.1.2")
         testImplementation("io.mockk:mockk:$mockkVersion")
         testImplementation("org.glassfish:javax.el:3.0.0")
     }
@@ -85,7 +86,7 @@ configure(listOf(project(":profile-dashboard:backend"))) {
         }
     }
 
-    tasks.withType<Test> {
+    tasks.withType<Test>().configureEach {
         useJUnitPlatform()
     }
 }

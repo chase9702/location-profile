@@ -8,8 +8,35 @@ export interface StoreState {
 
 }
 
+
+
+const mapStyles = {
+    voyager: {
+        id: 'voyager',
+        label: 'Voyager',
+        url: 'https://api.maptiler.com/maps/voyager/style.json?key=ySQ0fIYn7eSl3ppOeEJd'
+        // url: 'http://localhost:8081/kkk.json',
+        // icon: 'https://api.maptiler.com/maps/voyager/256/0/0/0.png?key=ySQ0fIYn7eSl3ppOeEJd'
+    },
+    terrain: {
+        id: 'terrain',
+        label: 'Outdoor',
+        url: 'https://api.maptiler.com/maps/outdoor/style.json?key=ySQ0fIYn7eSl3ppOeEJd'
+        // url: 'http://localhost:8081/test-style.json?key=ySQ0fIYn7eSl3ppOeEJd',
+        // icon: 'https://openmaptiles.org/img/styles/terrain.jpg',
+    }
+};
+const customizedKeplerGlReducer = keplerGlReducer.initialState({
+    mapStyle: {
+        mapStyles,
+        styleType: 'voyager'
+    }
+});
+
+
+
 const rootReducer = combineReducers({
-    keplerGl: keplerGlReducer,
+    keplerGl: customizedKeplerGlReducer,
     menuSelect: menuSelectReducer,
 });
 
