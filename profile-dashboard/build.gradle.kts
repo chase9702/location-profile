@@ -68,14 +68,16 @@ project(":profile-dashboard:backend") {
         compileOnly("javax.servlet:javax.servlet-api:4.0.1")
 
         //hive 버전 맞춰야 함
-//        implementation("org.apache.hive:hive-jdbc:1.2.1"){
-//            exclude("org.slf4j","slf4j-log4j12")
-//        }
-        implementation("org.apache.hive:hive-jdbc:2.3.9"){
+        implementation("org.apache.hive:hive-jdbc:1.2.1"){
             exclude("org.slf4j","slf4j-log4j12")
             exclude("org.apache.logging.log4j","log4j-slf4j-impl")
             exclude("org.eclipse.jetty.aggregate","jetty-all")
         }
+//        implementation("org.apache.hive:hive-jdbc:2.3.9"){
+//            exclude("org.slf4j","slf4j-log4j12")
+//            exclude("org.apache.logging.log4j","log4j-slf4j-impl")
+//            exclude("org.eclipse.jetty.aggregate","jetty-all")
+//        }
 
 
 
