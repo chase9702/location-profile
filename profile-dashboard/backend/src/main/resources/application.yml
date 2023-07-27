@@ -5,7 +5,7 @@ spring:
 springdoc:
   paths-to-match: "/api/**"
 
-log.config.path: "/Users/alvin/Desktop/data"
+log.config.path: "logs"
 
 
 ext:
