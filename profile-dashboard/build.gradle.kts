@@ -62,7 +62,7 @@ project(":profile-dashboard:backend") {
         implementation("org.apache.hadoop:hadoop-common:2.7.3"){
             exclude("org.slf4j","slf4j-log4j12")
         }
-        compileOnly("javax.servlet:javax.servlet-api:4.0.1")
+        implementation("javax.servlet:javax.servlet-api:4.0.1")
 
         //hive 버전 맞춰야 함
         implementation("org.apache.hive:hive-jdbc:1.2.1"){

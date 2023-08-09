@@ -39,4 +39,4 @@ profile-dashboard/backend/src/main/resources/static
 .DS_Store
 profile-dashboard/.DS_Store
 profile-dashboard/backend/.DS_Store
-
+*.log

@@ -8,28 +8,33 @@ export interface StoreState {
 
 }
 
+const styleURL =
+    process.env.NODE_ENV === 'production'
+        ? process.env.REACT_APP_STYLE_JSON_PRODUCTION
+        : process.env.REACT_APP_STYLE_JSON_DEVELOPMENT;
 
 
 const mapStyles = {
-    voyager: {
-        id: 'voyager',
+    local: {
+        id: 'local',
         label: 'Voyager',
-        // url: 'https://api.maptiler.com/maps/voyager/style.json?key=ySQ0fIYn7eSl3ppOeEJd'
-        url: 'http://localhost:8081/kkk.json',
-        // icon: 'https://api.maptiler.com/maps/voyager/256/0/0/0.png?key=ySQ0fIYn7eSl3ppOeEJd'
+        url: 'https://api.maptiler.com/maps/voyager/style.json?key=ySQ0fIYn7eSl3ppOeEJd',
     },
-    terrain: {
-        id: 'terrain',
-        label: 'Outdoor',
-        // url: 'https://api.maptiler.com/maps/outdoor/style.json?key=ySQ0fIYn7eSl3ppOeEJd'
-        url: 'http://localhost:8081/test-style.json',
-        // icon: 'https://openmaptiles.org/img/styles/terrain.jpg',
+    white: {
+        id: 'terrain1',
+        label: 'white',
+        url: 'http://localhost:8081/style.json',
+    },
+    map: {
+        id: 'maptile',
+        label: 'map',
+        url: styleURL,
     }
 };
 const customizedKeplerGlReducer = keplerGlReducer.initialState({
     mapStyle: {
         mapStyles,
-        styleType: 'terrain'
+        styleType: 'maptile'
     }
 });
 

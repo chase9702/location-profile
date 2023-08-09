@@ -50,7 +50,7 @@ configure(listOf(project(":profile-dashboard:backend"))) {
     apply(plugin = "kotlin-spring")
     apply(plugin = "kotlin-jpa")
 
-    java.sourceCompatibility = JavaVersion.VERSION_1_8
+    java.sourceCompatibility = JavaVersion.VERSION_11
 
     dependencies {
         implementation("org.springframework.boot:spring-boot-starter-web")
