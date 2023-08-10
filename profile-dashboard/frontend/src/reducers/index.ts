@@ -15,16 +15,16 @@ const styleURL =
 
 
 const mapStyles = {
-    local: {
-        id: 'local',
-        label: 'Voyager',
-        url: 'https://api.maptiler.com/maps/voyager/style.json?key=ySQ0fIYn7eSl3ppOeEJd',
-    },
-    white: {
-        id: 'terrain1',
-        label: 'white',
-        url: 'http://localhost:8081/style.json',
-    },
+    // local: {
+    //     id: 'local',
+    //     label: 'Voyager',
+    //     url: 'https://api.maptiler.com/maps/voyager/style.json?key=ySQ0fIYn7eSl3ppOeEJd',
+    // },
+    // white: {
+    //     id: 'terrain1',
+    //     label: 'white',
+    //     url: 'http://localhost:8081/style.json',
+    // },
     map: {
         id: 'maptile',
         label: 'map',
