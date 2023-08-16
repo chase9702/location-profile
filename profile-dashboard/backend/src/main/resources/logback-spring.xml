@@ -2,7 +2,7 @@
 <configuration>
 
     <springProperty name = "LOG_DIR" source= "log.config.path"/>
-    <property name="LOG_PATTERN" value="[%-5level:%X{REQUEST_CUSTOM_ID}] [${HOSTNAME}:%d{yyyy-MM-dd HH:mm:ss.SSS}] [%thread] [%logger{5}:%method:%L] %msg%n"/>
+    <property name="LOG_PATTERN" value="[%X{request_id:-startup}] [%-5level:%X{REQUEST_CUSTOM_ID}] [${HOSTNAME}:%d{yyyy-MM-dd HH:mm:ss.SSS}] [%thread] [%logger{5}:%method:%L] %msg%n"/>
 
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>

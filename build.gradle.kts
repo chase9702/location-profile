@@ -56,21 +56,26 @@ configure(listOf(project(":profile-dashboard:backend"))) {
         implementation("org.springframework.boot:spring-boot-starter-web")
         implementation("org.springframework.boot:spring-boot-starter-actuator")
         implementation("org.springframework.boot:spring-boot-starter-aop")
-        implementation("org.springdoc:springdoc-openapi-ui:1.6.11")
+        implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
+        implementation("org.springframework.boot:spring-boot-starter-security")
+        implementation("org.springframework.boot:spring-boot-starter-jdbc")
+//        implementation("org.rspringframework.boot:spring-boot-starter-data-jpa")
 
         implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
         implementation("org.jetbrains.kotlin:kotlin-reflect")
         implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
+        implementation("org.springdoc:springdoc-openapi-ui:1.6.11")
         compileOnly("org.projectlombok:lombok")
         annotationProcessor("org.projectlombok:lombok")
         annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
 
-        testImplementation("org.springframework.boot:spring-boot-starter-test")
+
 //        testImplementation("org.junit.jupiter:junit-jupiter:$junitVersion")
 //        testImplementation("org.mockito:mockito-junit-jupiter:$mockitoVersion")
 //        testImplementation("org.mockito:mockito-core:$mockitoVersion")
 
+        testImplementation("org.springframework.boot:spring-boot-starter-test")
         testImplementation("io.kotest:kotest-runner-junit5:$kotestVersion")
         testImplementation("io.kotest:kotest-assertions-core:$kotestVersion")
         testImplementation("io.kotest:kotest-property:$kotestVersion")
