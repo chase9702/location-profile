@@ -174,8 +174,8 @@ module.exports = (env, options) => {
             // open: true,
             historyApiFallback: true,
             proxy: [{
-                // context: ['/api', '/login', '/logout'],
-                context: ['/api'],
+                context: ['/api', '/login', '/logout'],
+                // context: ['/api'],
                 target: 'http://localhost:8080',
                 secure: false
             }],
