@@ -104,7 +104,12 @@ export const authPost = async <T>(url: string, body: any): Promise<T> => {
 
 export const authPut = async <T>(url: string, body: any): Promise<T> => {
     try {
-        const response: AxiosResponse<T> = await authApi.put(url, body);
+        let response: AxiosResponse<T>;
+        if(body === null){
+            response = await authApi.put(url);
+        }else {
+            response = await authApi.put(url, body);
+        }
         return response.data;
     } catch (e) {
         const error = e as AxiosError<T>;

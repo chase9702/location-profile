@@ -3,14 +3,12 @@ import {BrowserRouter as Router} from 'react-router-dom';
 import {Layout} from 'antd';
 import Menus from "@src/layout/Menus";
 import Pages from "@src/layout/Pages";
-import AuthProvider from "@src/common/AuthProvider";
+import AuthProvider from "@src/common/auth/AuthProvider";
 
 const {Header, Content} = Layout;
 
 
 const App = () => {
-    // const myValue = useSelector((state: StoreState) => state.menuSelect.selectedMenu)
-    // console.log(myValue)
     return (
         <AuthProvider>
             <Router>
