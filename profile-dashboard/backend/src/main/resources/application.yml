@@ -12,8 +12,9 @@ ext:
   datasource:
     hive:
       driver-class-name: org.apache.hive.jdbc.HiveDriver
-      jdbc-url: jdbc:hive2://localhost:10000/test;
-
+      jdbc-url: jdbc:hive2://127.0.0.1:10000/test;
+      username: admin
+      password: qweQWE123!@#
 
 logging:
   level:
@@ -38,7 +39,12 @@ ext:
   datasource:
     hive:
       driver-class-name: org.apache.hive.jdbc.HiveDriver
-      jdbc-url: jdbc:hive2://cgiprddatalake-cluster.azurehdinsight.net:443/default;transportMode=http;ssl=true;httpPath=/hive2;
+      jdbc-url: jdbc:hive2://10.4.30.15:443/default;transportMode=http;ssl=true;httpPath=/hive2;
+      username: admin
+      password: qweQWE123!@#
+#      jdbc-url: jdbc:hive2://10.4.130.6:443/default;transportMode=http;ssl=true;httpPath=/hive2;
+#      username: hdadmin@CARROTINS-DL.COM
+#      password: rlaskadbs2@
 
 
 logging:
