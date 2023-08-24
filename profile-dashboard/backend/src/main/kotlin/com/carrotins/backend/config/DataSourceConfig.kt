@@ -37,6 +37,11 @@ class DataSourceConfig(
     private val jdbcUrl: String,
     @Value("\${ext.datasource.hive.driver-class-name}")
     private val driverName: String,
+    @Value("\${ext.datasource.hive.username}")
+    private val username: String,
+    @Value("\${ext.datasource.hive.password}")
+    private val password: String,
+
 
 
     ) {
@@ -73,6 +78,8 @@ class DataSourceConfig(
         val ds = DriverManagerDataSource()
         ds.setDriverClassName(driverName)
         ds.url = jdbcUrl
+        ds.username = username
+        ds.password = password
         return ds
     }
 

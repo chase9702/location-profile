@@ -15,17 +15,17 @@ class HiveTestRepository(
     ): List<HiveDataTable> {
         val query: String = """
              SELECT 
-                 COL1,
-                 COL2
-             FROM `test`.`tab1`
+                 divc_no,
+                 dvc_gb
+             FROM `dw`.`li_plug_profile_100`
              WHERE 1=1
              LIMIT 100
         """.trimIndent()
 
         return hiveJdbcTemplate.query(query){ rs, _ ->
             HiveDataTable(
-                col = rs.getInt("COL1"),
-                type = rs.getString("COL2"),
+                col = rs.getString("divc_no"),
+                type = rs.getString("dvc_gb"),
             )
         }
     }
@@ -44,8 +44,8 @@ class HiveTestRepository(
 
         return hiveJdbcTemplate.query(query){ rs, _ ->
             HiveDataTable(
-                col = rs.getInt("ctmno"),
-                type = rs.getString("ctm_dscno"),
+                col = rs.getString("a"),
+                type = rs.getString("b"),
             )
         }
     }
