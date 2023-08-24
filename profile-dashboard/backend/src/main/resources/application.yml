@@ -14,6 +14,18 @@ ext:
       driver-class-name: org.apache.hive.jdbc.HiveDriver
       jdbc-url: jdbc:hive2://localhost:10000/test;
 
+jwt:
+  white-ip-list:
+    - 127.0.0.1
+    - 0:0:0:0:0:0:0:1
+    - 10.90.0.0/16
+    - 10.80.0.0/16
+  any-url-list:
+    - /actuator/**
+    - /v3/api-docs/**
+    - /swagger-ui/**
+  jwk:
+    url: http://predev-imbauth.carrotins.com:9005/api/bauth/v1/backend/auth/key/retrieve
 
 logging:
   level:
@@ -40,6 +52,9 @@ ext:
       driver-class-name: org.apache.hive.jdbc.HiveDriver
       jdbc-url: jdbc:hive2://cgiprddatalake-cluster.azurehdinsight.net:443/default;transportMode=http;ssl=true;httpPath=/hive2;
 
+jwt:
+  jwk:
+    url: https://auth.carrotins.com:8088/api/bauth/v1/backend/auth/key/retrieve
 
 logging:
   level:

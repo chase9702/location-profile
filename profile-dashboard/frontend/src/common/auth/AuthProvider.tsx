@@ -10,8 +10,6 @@ import {profileRedirectUrl} from "@src/common/auth/constantValue";
 const AuthProvider = ({children}) => {
 
     const dispatch = useDispatch();
-    const userName = useSelector((state: StoreState) => state.auth.userName)
-    const userRole = useSelector((state: StoreState) => state.auth.userName)
     const ssoId = useSelector((state: StoreState) => state.auth.userName)
     const accessToken = useSelector((state: StoreState) => state.auth.accessToken)
     const refreshToken = useSelector((state: StoreState) => state.auth.refreshToken)
@@ -61,8 +59,8 @@ const AuthProvider = ({children}) => {
         dispatch(setAccessToken(response.access_token))
         dispatch(setRefreshToken(response.refresh_token))
 
-        window.localStorage.setItem("cxmAccessToken", accessToken);
-        window.localStorage.setItem("cxmRefreshToken", refreshToken);
+        window.localStorage.setItem("profileAccessToken", accessToken);
+        window.localStorage.setItem("profileRefreshToken", refreshToken);
 
         const jwtObj: any = JwtDecode(accessToken);
 
@@ -72,35 +70,29 @@ const AuthProvider = ({children}) => {
         }))
 
     }
-
-    const logout =  () => {
-        window.localStorage.removeItem("cxmAccessToken");
-        window.localStorage.removeItem("cxmRefreshToken");
+//TODO 이 로그아웃은 다른곳으로 빼야 할듯?
+    const logout = () => {
         authPut<any>("/auth/sso/logout", null)
-            .then((jsonData)=>{
+            .then((jsonData) => {
                 if (jsonData.redirectUrl === undefined) {
                     return;
+                } else {
+                    setLogout();
+                    window.location.href = jsonData.redirectUrl
                 }
-            }).catch((e)=>{
-                NotifyError(e);
+            }).catch((e) => {
+            NotifyError(e);
         });
-
-
-
-        this.setAccessToken(undefined);
-        this.setRefreshToken(undefined);
-
-        Agent.superagent
-            .get(response.redirectUrl)
-            .withCredentials()
-            .then(() => {
-            })
-            .finally(() => {
-                window.location.href = `${REACT_APP_HISTORY_PREFIX}/`;
-            });
     }
 
-    const init =  () => {
+    const setLogout = () => {
+        window.localStorage.removeItem("profileAccessToken");
+        window.localStorage.removeItem("profileRefreshToken");
+        dispatch(setAccessToken(undefined))
+        dispatch(setRefreshToken(undefined))
+    }
+
+    const init = () => {
         //sso login
         ssoLogin();
         //jwt login
@@ -108,36 +100,15 @@ const AuthProvider = ({children}) => {
     };
 
     // 로컬 환경 테스트 용도
-    const localInit =  () => {
+    const localInit = () => {
         try {
             // window.localStorage.removeItem("cxmAccessToken");
             // window.localStorage.removeItem("cxmRefreshToken");
             // JWT 로그인 시도
-
-
-            jwtLogin();
-
-            UserStore.pullUser(AuthStore.getAccessToken);
-            UserStore.initHistory();
-        } catch (err) {
-            switch (err.status) {
-                case 400:
-                    err.display = "잘못된 요청입니다 확인 후 다시 이용해주세요.";
-                    break;
-                case 401:
-                    err.display = "허용되지 않은 요청입니다 확인 후 다시 이용해주세요.";
-                    break;
-                case 403:
-                    err.display = "허용되지 않은 IP 입니다 확인 후 다시 이용해주세요.";
-                    break;
-                case 500:
-                    err.display = "서버 오류입니다 잠시 후 다시 이용해주세요.";
-                    break;
-                default:
-                    err.display = "서버와의 연결이 원활하지 않습니다 잠시 후 다시 이용해주세요.";
-                    break;
-            }
-            throw err;
+            // jwtLogin();
+            // UserStore.pullUser(AuthStore.getAccessToken);
+        } catch (e) {
+            NotifyError(e);
         }
     };
 

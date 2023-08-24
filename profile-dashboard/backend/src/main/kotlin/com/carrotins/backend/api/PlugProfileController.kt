@@ -3,6 +3,7 @@ package com.carrotins.backend.api
 import com.carrotins.backend.repository.HiveDataTable
 import com.carrotins.backend.service.PlugProfileService
 import io.swagger.v3.oas.annotations.tags.Tag
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController
 @Tag(name = "Plug controller")
 @RestController
 @RequestMapping("/api/plug")
+@PreAuthorize("hasAnyAuthority('ROLE_DASH')")
 class PlugProfileController(
     private val plugProfileService: PlugProfileService
 ) {

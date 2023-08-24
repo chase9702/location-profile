@@ -1,14 +1,35 @@
-import axios, {AxiosResponse, AxiosError} from 'axios';
-import {store} from '@src/index';
+import axios, {AxiosError, AxiosResponse} from 'axios';
+import {NotifyError} from "@src/components/common/Notification";
 
 const authUrl =
     process.env.NODE_ENV === 'production'
         ? process.env.REACT_APP_AUTH_BASE_URL_PRODUCTION
         : process.env.REACT_APP_AUTH_BASE_URL_DEVELOPMENT;
 
-// 인터셉터 생성
+const baseUrl =
+    process.env.NODE_ENV === 'production'
+        ? process.env.REACT_APP_AUTH_REDIRECT_URL_PRODUCTION
+        : process.env.REACT_APP_AUTH_REDIRECT_URL_DEVELOPMENT;
+
+//response 인터셉터
+axios.interceptors.response.use(
+    (response) => {
+        return response;
+    },
+    (error) => {
+        if (error.response.status === 401) {
+            window.location.href = baseUrl
+        } else if (error.response.status === 400) {
+            NotifyError(error.response.data);
+        }
+
+        return Promise.reject(error);
+    }
+);
+
+//request용 인터셉터
 const tokenInterceptor = (config) => {
-    const accessToken = localStorage.getItem('accessToken');
+    const accessToken = localStorage.getItem('profileAccessToken');
     if (accessToken) {
         config.headers['Authorization'] = `Bearer ${accessToken}`;
         // 기타 헤더 설정 가능
@@ -27,7 +48,7 @@ const authApi = axios.create({
     withCredentials: true, // 필요한 경우에만 설정
 });
 
-// 인터셉터 등록
+// request 인터셉터 등록
 api.interceptors.request.use(tokenInterceptor);
 authApi.interceptors.request.use(tokenInterceptor);
 
@@ -105,9 +126,9 @@ export const authPost = async <T>(url: string, body: any): Promise<T> => {
 export const authPut = async <T>(url: string, body: any): Promise<T> => {
     try {
         let response: AxiosResponse<T>;
-        if(body === null){
+        if (body === null) {
             response = await authApi.put(url);
-        }else {
+        } else {
             response = await authApi.put(url, body);
         }
         return response.data;
