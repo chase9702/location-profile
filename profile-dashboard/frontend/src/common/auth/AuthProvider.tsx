@@ -10,22 +10,26 @@ import {profileRedirectUrl} from "@src/common/auth/constantValue";
 const AuthProvider = ({children}) => {
 
     const dispatch = useDispatch();
-    const ssoId = useSelector((state: StoreState) => state.auth.userName)
+    const ssoId = useSelector((state: StoreState) => state.auth.ssoId)
     const accessToken = useSelector((state: StoreState) => state.auth.accessToken)
     const refreshToken = useSelector((state: StoreState) => state.auth.refreshToken)
 
     const [resultCode, setResultCode] = useState(null)
 
     const ssoLogin = () => {
+        console.log("try sso login:")
+        console.log("ssoId:"+ssoId)
         if (ssoId === 'UNKNOWN' || ssoId === "") {
             // SSO 로그인 시도
             authPost<any>("/auth/sso/login", {
                 redirectUrl: profileRedirectUrl,
             }).then((jsonData) => {
-
-                if (jsonData.redirectUrl) {
-                    window.location.href = jsonData.redirectUrl
-                }
+                console.log(jsonData)
+                console.log("sso login response:"+ jsonData.redirectUrl)
+                window.location.href = jsonData.redirectUrl
+                // if (jsonData.redirectUrl) {
+                //     window.location.href = jsonData.redirectUrl
+                // }
                 setSSOLoginInfo(jsonData)
 
             }).catch((e) => {
@@ -34,6 +38,7 @@ const AuthProvider = ({children}) => {
         }
     }
     const setSSOLoginInfo = (response: any) => {
+        console.log(response)
         dispatch(setSSOId(response.ssoId ? response.ssoId : ""))
         setResultCode(response.resultCode ? response.resultCode : "");
     }
@@ -93,6 +98,7 @@ const AuthProvider = ({children}) => {
     }
 
     const init = () => {
+        console.log("************************init*****************")
         //sso login
         ssoLogin();
         //jwt login
@@ -101,12 +107,9 @@ const AuthProvider = ({children}) => {
 
     // 로컬 환경 테스트 용도
     const localInit = () => {
+        console.log("************************localInit*****************")
         try {
-            // window.localStorage.removeItem("cxmAccessToken");
-            // window.localStorage.removeItem("cxmRefreshToken");
-            // JWT 로그인 시도
-            // jwtLogin();
-            // UserStore.pullUser(AuthStore.getAccessToken);
+
         } catch (e) {
             NotifyError(e);
         }

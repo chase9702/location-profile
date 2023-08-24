@@ -1,15 +1,7 @@
 import axios, {AxiosError, AxiosResponse} from 'axios';
 import {NotifyError} from "@src/components/common/Notification";
+import {authUrl, baseUrl} from "@src/common/auth/constantValue";
 
-const authUrl =
-    process.env.NODE_ENV === 'production'
-        ? process.env.REACT_APP_AUTH_BASE_URL_PRODUCTION
-        : process.env.REACT_APP_AUTH_BASE_URL_DEVELOPMENT;
-
-const baseUrl =
-    process.env.NODE_ENV === 'production'
-        ? process.env.REACT_APP_AUTH_REDIRECT_URL_PRODUCTION
-        : process.env.REACT_APP_AUTH_REDIRECT_URL_DEVELOPMENT;
 
 //response 인터셉터
 axios.interceptors.response.use(
@@ -17,7 +9,7 @@ axios.interceptors.response.use(
         return response;
     },
     (error) => {
-        if (error.response.status === 401) {
+        if (error.response.status === 401 || error.response.status === 302) {
             window.location.href = baseUrl
         } else if (error.response.status === 400) {
             NotifyError(error.response.data);
