@@ -16,16 +16,17 @@ ext:
       username: admin
       password: qweQWE123!@#
 
+white-list:
+  127.0.0.1,
+  0:0:0:0:0:0:0:1,
+  10.90.0.0/16,
+  10.80.0.0/16
+any-list:
+  /actuator/**,
+  /v3/api-docs/**,
+  /swagger-ui/**
+
 jwt:
-  white-ip-list:
-    - 127.0.0.1
-    - 0:0:0:0:0:0:0:1
-    - 10.90.0.0/16
-    - 10.80.0.0/16
-  any-url-list:
-    - /actuator/**
-    - /v3/api-docs/**
-    - /swagger-ui/**
   jwk:
     url: http://predev-imbauth.carrotins.com:9005/api/bauth/v1/backend/auth/key/retrieve
 
@@ -58,6 +59,16 @@ ext:
 #      jdbc-url: jdbc:hive2://10.4.130.6:443/default;transportMode=http;ssl=true;httpPath=/hive2;
 #      username: hdadmin@CARROTINS-DL.COM
 #      password: rlaskadbs2@
+
+white-list:
+  127.0.0.1,
+  0:0:0:0:0:0:0:1,
+  10.90.0.0/16,
+  10.80.0.0/16
+any-list:
+  /actuator/**,
+  /v3/api-docs/**,
+  /swagger-ui/**
 
 jwt:
   jwk:

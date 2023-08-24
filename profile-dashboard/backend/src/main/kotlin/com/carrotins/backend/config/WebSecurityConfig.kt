@@ -20,20 +20,20 @@ import java.util.stream.Collectors
  */
 @EnableWebSecurity
 class WebSecurityConfig(
-    @Value("\${jwt.jwk.url}")
-    private val jwkUrl: String,
-    @Value("\${jwt.white-ip-list}")
-    private val whiteIpList: List<String> = listOf(),
-    @Value("\${jwt.any-url-list}")
-    private val anyUrlList: List<String> = listOf(),
     private val restAuthenticationEntryPoint: RestAuthenticationEntryPoint,
     private val restAccessDeniedHandler: RestAccessDeniedHandler,
 ) {
-
+    @Value("\${jwt.jwk.url}")
+    private val jwkUrl: String = ""
+    @Value("\${white-list}")
+    private val whiteIpList: List<String> = listOf()
+    @Value("\${any-list}")
+    private val anyUrlList: List<String> = listOf()
 
     @Bean
     @Throws(Exception::class)
     fun filterChain(http: HttpSecurity): SecurityFilterChain {
+
         val anyUrlList = anyUrlList.toTypedArray()
         http
             .authorizeRequests()
