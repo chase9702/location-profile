@@ -10,6 +10,8 @@ import {addDataToMap, updateMap} from "kepler.gl/actions";
 import {store} from "@src/index";
 import {processCsvData} from "kepler.gl/processors";
 import CustomKeplerMap from "@src/components/common/CustomKeplerMap";
+import {Column} from "@ant-design/plots";
+import {get} from "@src/api"
 
 interface State {
 }
@@ -23,6 +25,7 @@ const LocationProfileDashBoard = (props: Props): React.ReactElement => {
     const [data, setData] = useState([]);
     const [wordData, setWordData] = useState([]);
     const [excelDownLoading, setExcelDownLoading] = useState(false);
+    const [hiveData, sethiveData] = useState([])
 
     const testData = `no,eid,source,target,tunnel,geometry,source_lt,source_ln,target_lt,target_ln,length,reversed,eid_idx
 7106,342885007,436745716,436745711,yes,"LINESTRING (126.6218273000000067 34.4071537000000021, 126.6226323000000065 34.4076621999999972)",34.4071537,126.6218273,34.4076622,126.6226323,93.011,False,342885007
@@ -114,6 +117,18 @@ const LocationProfileDashBoard = (props: Props): React.ReactElement => {
     useEffect(() => {
         asyncWordFetch();
     }, []);
+
+    useEffect(() => {
+        asyncHiveFetch();
+    }, []);
+
+    const asyncHiveFetch = () => {
+        get<[]>("/api/plug/device")
+            .then((jsonData) => {
+                sethiveData(jsonData)
+            })
+    };
+
     const asyncFetch = () => {
         fetch('https://gw.alipayobjects.com/os/bmw-prod/e00d52f4-2fa6-47ee-a0d7-105dd95bde20.json')
             .then((response) => response.json())
@@ -195,6 +210,21 @@ const LocationProfileDashBoard = (props: Props): React.ReactElement => {
             cfg: {
                 size: 30,
             },
+        },
+    };
+
+    const hiveconfig = {
+        data: hiveData,
+        xField: 'dvcgb',
+        yField: 'cnt01',
+        xAxis: {
+            label: {
+                autoRotate: false,
+            },
+        },
+        slider: {
+            start: 0.1,
+            end: 0.2,
         },
     };
 
@@ -304,7 +334,7 @@ const LocationProfileDashBoard = (props: Props): React.ReactElement => {
                 <Line {...config} />
             </div>
             <div>
-                <WordCloud {...wordConfig}/>
+                <Column {...hiveconfig}/>
             </div>
             <div>
                 <Liquid {...liquidConfig}/>

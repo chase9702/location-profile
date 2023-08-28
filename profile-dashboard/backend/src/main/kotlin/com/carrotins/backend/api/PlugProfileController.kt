@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import com.carrotins.backend.repository.ZeroTripTable
 
 /**
  * Created by alvin on 2023/07/19.
@@ -16,9 +17,16 @@ import org.springframework.web.bind.annotation.RestController
 class PlugProfileController(
     private val plugProfileService: PlugProfileService
 ) {
-
     @GetMapping("/test")
     fun getTestData():List<HiveDataTable>{
         return plugProfileService.getTest()
+    }
+    @GetMapping("/device")
+    fun getDeviceData():List<HiveDataTable>{
+        return plugProfileService.getDevicegb()
+    }
+    @GetMapping("/zerogpsrt")
+    fun getZgpsRTData():List<ZeroTripTable>{
+        return plugProfileService.getZgpsRT()
     }
 }

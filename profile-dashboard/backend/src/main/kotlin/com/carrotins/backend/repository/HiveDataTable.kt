@@ -6,6 +6,12 @@ import java.math.BigDecimal
  * Created by alvin on 2023/07/19.
  */
 data class HiveDataTable(
-    val col: String,
-    val type: String,
+    val dvcgb: String,
+    val cnt01: Int,
+)
+
+data class ZeroTripTable(
+    val dvc_gb: String,
+    val part_dt: String,
+    val trip_98_rt: Double,
 )

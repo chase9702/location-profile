@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {Button, Card, Col, Row, Select} from "antd";
+import {Button, Card, Col, Row, Select, Table, Space, Tag} from "antd";
 import {DeleteOutlined, SaveOutlined, SearchOutlined} from '@ant-design/icons';
 import {downloadFileFromFrontendData} from "@src/common/file-download";
 import {NotifyError} from "@src/components/common/Notification";
@@ -9,6 +9,9 @@ import {addDataToMap, updateMap, wrapTo} from "kepler.gl/actions";
 import {processCsvData} from "kepler.gl/processors";
 import CustomKeplerMap from "@src/components/common/CustomKeplerMap";
 import {get} from "@src/api";
+import {Line, Column} from "@ant-design/plots";
+import type { ColumnsType } from 'antd/es/table';
+
 
 
 interface State {
@@ -18,10 +21,21 @@ interface Props {
 
 }
 
+interface DataType {
+    key: string;
+    name: string;
+    age: number;
+    address: string;
+    tags: string[];
+}
+
 const PlugProfileDashBoard = (props: Props): React.ReactElement => {
 
     const [data, setData] = useState([]);
     const [excelDownLoading, setExcelDownLoading] = useState(false);
+    const [hiveData, sethiveData] = useState([])
+    const [coldata, setcolData] = useState([]);
+
 
 
     const testData = `no,eid,source,target,tunnel,geometry,source_lt,source_ln,target_lt,target_ln,length,reversed,eid_idx
@@ -107,6 +121,30 @@ const PlugProfileDashBoard = (props: Props): React.ReactElement => {
 
     }, []);
 
+    useEffect(() => {
+        asyncHiveFetch();
+    }, []);
+
+    useEffect(() => {
+        asynccolFetch();
+    }, []);
+
+    const asynccolFetch = () => {
+        fetch('https://gw.alipayobjects.com/os/antfincdn/PC3daFYjNw/column-data.json')
+            .then((response) => response.json())
+            .then((json) => setcolData(json))
+            .catch((error) => {
+                console.log('fetch data failed', error);
+            });
+    };
+
+    const asyncHiveFetch = () => {
+        get<[]>("/api/plug/device")
+            .then((jsonData) => {
+                sethiveData(jsonData)
+            })
+    };
+
     const handleGetTestData = () => {
 
         get<[]>("/api/plug/test")
@@ -179,24 +217,170 @@ const PlugProfileDashBoard = (props: Props): React.ReactElement => {
         }
     };
 
+    const hiveconfig = {
+        data: hiveData,
+        xField: 'dvcgb',
+        yField: 'cnt01',
+        xAxis: {
+            label: {
+                autoRotate: false,
+            },
+        },
+        slider: {
+            start: 0.1,
+            end: 0.2,
+        },
+    };
+
+    const colconfig = {
+        data: coldata,
+        xField: 'city',
+        yField: 'value',
+        seriesField: 'type',
+        isGroup: true,
+        columnStyle: {
+            radius: [20, 20, 0, 0],
+        },
+    };
+
+    const columns: ColumnsType<DataType> = [
+        {
+            title: 'Name',
+            dataIndex: 'name',
+            key: 'name',
+            render: (text) => <a>{text}</a>,
+        },
+        {
+            title: 'Age',
+            dataIndex: 'age',
+            key: 'age',
+        },
+        {
+            title: 'Address',
+            dataIndex: 'address',
+            key: 'address',
+        },
+        {
+            title: 'Tags',
+            key: 'tags',
+            dataIndex: 'tags',
+            render: (_, { tags }) => (
+                <>
+                    {tags.map((tag) => {
+                        let color = tag.length > 5 ? 'geekblue' : 'green';
+                        if (tag === 'loser') {
+                            color = 'volcano';
+                        }
+                        return (
+                            <Tag color={color} key={tag}>
+                                {tag.toUpperCase()}
+                            </Tag>
+                        );
+                    })}
+                </>
+            ),
+        },
+        {
+            title: 'Action',
+            key: 'action',
+            render: (_, record) => (
+                <Space size="middle">
+                    <a>Invite {record.name}</a>
+                    <a>Delete</a>
+                </Space>
+            ),
+        },
+    ];
+
+    const tabledata: DataType[] = [
+        {
+            key: '1',
+            name: 'John Brown',
+            age: 32,
+            address: 'New York No. 1 Lake Park',
+            tags: ['nice', 'developer'],
+        },
+        {
+            key: '2',
+            name: 'Jim Green',
+            age: 42,
+            address: 'London No. 1 Lake Park',
+            tags: ['loser'],
+        },
+        {
+            key: '3',
+            name: 'Joe Black',
+            age: 32,
+            address: 'Sydney No. 1 Lake Park',
+            tags: ['cool', 'teacher'],
+        },
+    ];
+
     const renderSaveComponent = () => {
         return (
             <div>
-                <Row gutter={16}>
+                <Row gutter={[24, 16]}>
                     <Col span={8}>
 
                         <Select
                             showSearch
-                            placeholder="Funnel 선택"
+                            placeholder="제조사 선택"
                             optionFilterProp="children"
                             // onChange={selectFunnelName}
-                            style={{width: '100%'}}
+                            style={{width: '70%'}}
+                            options={[
+                                { value: 'LUX', label: 'LUX' },
+                                { value: 'TLK', label: 'TLK' },
+                                { value: 'AMT', label: 'AMT' },
+                                { value: 'UNK', label: 'UNK' },
+                                { value: 'disabled', label: 'Disabled', disabled: true },
+                            ]}
                         >
 
                         </Select>
-
                     </Col>
-                    <Col span={9}>
+
+                    <Col span={8}>
+                        <Select
+                            showSearch
+                            placeholder="모델명 선택"
+                            optionFilterProp="children"
+                            // onChange={selectFunnelName}
+                            style={{width: '70%'}}
+                            options={[
+                                { value: 'LUX1', label: 'LUX1' },
+                                { value: 'LUX2', label: 'LUX2' },
+                                { value: 'UNK1', label: 'UNK1' },
+                                { value: 'AMT1', label: 'AMT1' },
+                                { value: 'disabled', label: 'Disabled', disabled: true },
+                            ]}
+                        >
+
+                        </Select>
+                    </Col>
+
+                    <Col span={8}>
+                        <Select
+                            showSearch
+                            placeholder="날짜 선택"
+                            optionFilterProp="children"
+                            // onChange={selectFunnelName}
+                            style={{width: '70%'}}
+                            options={[
+                                { value: '20230810', label: '20230810' },
+                                { value: '20230811', label: '20230811' },
+                                { value: '20230812', label: '20230812' },
+                                { value: '20230813', label: '20230813' },
+                                { value: 'disabled', label: 'Disabled', disabled: true },
+                            ]}
+                        >
+
+                        </Select>
+                    </Col>
+                </Row>
+
+                <Row gutter={[24, 16]}>
+                    <Col span={4}>
                         <Button icon={<SaveOutlined/>}>
                             저장
                         </Button>
@@ -205,7 +389,7 @@ const PlugProfileDashBoard = (props: Props): React.ReactElement => {
                         </Button>
 
                     </Col>
-                    <Col span={4}>
+                    <Col span={2}>
                         <Button style={{float: 'right'}} icon={<DeleteOutlined/>}
                         >
                             초기화
@@ -245,25 +429,21 @@ const PlugProfileDashBoard = (props: Props): React.ReactElement => {
                 지도 화면으로 이동2
             </Button>
 
-            <Card>
-                {renderSaveComponent()}
-            </Card>
-            <Card>
-                {renderSaveComponent()}
-            </Card>
-            <Card>
-                {renderSaveComponent()}
-            </Card>
-            <Card>
-                {renderSaveComponent()}
-            </Card>
-            <Card>
-                {renderSaveComponent()}
-            </Card>
-            <Card>
-                {renderSaveComponent()}
-            </Card>
-
+            {/*<div>*/}
+            {/*    <Column {...hiveconfig}/>*/}
+            {/*</div>*/}
+            <div>
+                제조사별 보간, Zero gps 상세 테이블
+                <Table columns={columns} dataSource={tabledata} />
+            </div>
+            <div>
+                X축 : 날짜, Y축 : 보간비율, 범례 : 제조사
+                <Column {...colconfig} />
+            </div>
+            <div>
+                X축 : 날짜, Y축 : Zero GPS비율, 범례 : 제조사
+                <Column {...colconfig} />
+            </div>
 
         </div>
     )

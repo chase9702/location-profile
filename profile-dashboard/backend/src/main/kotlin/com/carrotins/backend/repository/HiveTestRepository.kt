@@ -10,22 +10,40 @@ import org.springframework.stereotype.Repository
 class HiveTestRepository(
     private val hiveJdbcTemplate: JdbcTemplate
 ) {
-    fun getTestData(
+    fun get01trip(
 
     ): List<HiveDataTable> {
         val query: String = """
              SELECT 
-                 divc_no,
-                 dvc_gb
-             FROM `dw`.`li_plug_profile_100`
-             WHERE 1=1
-             LIMIT 100
+                 dvc_gb,
+                 01_trip_cnt
+               FROM `dw`.`li_plug_profile_100`
         """.trimIndent()
 
         return hiveJdbcTemplate.query(query){ rs, _ ->
             HiveDataTable(
-                col = rs.getString("divc_no"),
-                type = rs.getString("dvc_gb"),
+                dvcgb = rs.getString("dvc_gb"),
+                cnt01 = rs.getInt("01_trip_cnt"),
+            )
+        }
+    }
+
+    fun get02rt(
+
+    ): List<ZeroTripTable> {
+        val query: String = """
+             SELECT 
+                 dvc_gb,
+                 part_dt,
+                 (98_trip_cnt / (01_trip_cnt + 98_trip_cnt)) as 98_trip_cnt
+               FROM `dw`.`li_plug_profile_100`
+        """.trimIndent()
+
+        return hiveJdbcTemplate.query(query){ rs, _ ->
+            ZeroTripTable(
+                dvc_gb = rs.getString("dvc_gb"),
+                part_dt = rs.getString("part_dt"),
+                trip_98_rt = rs.getDouble("98_trip_cnt"),
             )
         }
     }
@@ -35,8 +53,8 @@ class HiveTestRepository(
     ): List<HiveDataTable> {
         val query: String = """
              SELECT 
-                 ctmno,
-                 ctm_dscno
+                 dvc_gb,
+                 01_trip_cnt
              FROM `dmp`.`cus_mstr`
              WHERE 1=1 
              LIMIT 100
@@ -44,8 +62,8 @@ class HiveTestRepository(
 
         return hiveJdbcTemplate.query(query){ rs, _ ->
             HiveDataTable(
-                col = rs.getString("a"),
-                type = rs.getString("b"),
+                dvcgb = rs.getString("dvc_gb"),
+                cnt01 = rs.getInt("01_trip_cnt"),
             )
         }
     }
