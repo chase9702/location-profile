@@ -25,6 +25,9 @@ any-list:
   /actuator/**,
   /v3/api-docs/**,
   /swagger-ui/**
+jwt-list:
+  /plug/**,
+  /location/**
 
 jwt:
   jwk:

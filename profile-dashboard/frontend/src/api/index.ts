@@ -24,6 +24,7 @@ const tokenInterceptor = (config) => {
     const accessToken = localStorage.getItem('profileAccessToken');
     if (accessToken) {
         config.headers['Authorization'] = `Bearer ${accessToken}`;
+        config.headers['csrf'] = 'token';
         // 기타 헤더 설정 가능
     }
     return config;

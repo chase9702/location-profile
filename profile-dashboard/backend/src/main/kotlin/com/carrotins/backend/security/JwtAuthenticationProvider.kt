@@ -1,16 +1,11 @@
 package com.carrotins.backend.security
 
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.authentication.AuthenticationProvider
 import org.springframework.security.core.Authentication
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
-import org.springframework.security.oauth2.core.DelegatingOAuth2TokenValidator
-import org.springframework.security.oauth2.core.OAuth2TokenValidator
 import org.springframework.security.oauth2.jwt.Jwt
 import org.springframework.security.oauth2.jwt.JwtDecoder
-import org.springframework.security.oauth2.jwt.JwtValidators
-import org.springframework.security.oauth2.jwt.NimbusJwtDecoder
 import org.springframework.security.oauth2.server.resource.BearerTokenAuthenticationToken
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
 import java.util.*
@@ -22,6 +17,7 @@ import java.util.stream.Collectors
  */
 
 class JwtAuthenticationProvider(
+    private val jwtDecoder: JwtDecoder,
     private val jwkUrl: String
 ) : AuthenticationProvider {
 
@@ -36,7 +32,7 @@ class JwtAuthenticationProvider(
     }
 
     private fun getJwt(bearer: BearerTokenAuthenticationToken): Jwt {
-        return jwtDecoder().decode(bearer.token)
+        return jwtDecoder.decode(bearer.token)
     }
 
 
@@ -61,21 +57,4 @@ class JwtAuthenticationProvider(
             null
         }
     }
-
-    private fun jwtDecoder(): JwtDecoder {
-        return run {
-            val jwtDecoder = NimbusJwtDecoder.withJwkSetUri(jwkUrl).build()
-            val tokenTypeValidator: OAuth2TokenValidator<Jwt> =
-                JwtTokenValidator()
-            val defaultValidator = JwtValidators.createDefault()
-            val delegatedValidator: OAuth2TokenValidator<Jwt> =
-                DelegatingOAuth2TokenValidator(
-                    tokenTypeValidator,
-                    defaultValidator,
-                )
-            jwtDecoder.setJwtValidator(delegatedValidator)
-            jwtDecoder
-        }
-    }
-
 }

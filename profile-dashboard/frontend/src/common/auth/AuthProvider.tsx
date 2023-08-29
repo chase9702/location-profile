@@ -18,14 +18,14 @@ const AuthProvider = ({children}) => {
 
     const ssoLogin = () => {
         console.log("try sso login:")
-        console.log("ssoId:"+ssoId)
+        console.log("ssoId:" + ssoId)
         if (ssoId === 'UNKNOWN' || ssoId === "") {
             // SSO 로그인 시도
             authPost<any>("/auth/sso/login", {
                 redirectUrl: profileRedirectUrl,
             }).then((jsonData) => {
                 console.log(jsonData)
-                console.log("sso login response:"+ jsonData.redirectUrl)
+                console.log("sso login response:" + jsonData.redirectUrl)
                 window.location.href = jsonData.redirectUrl
                 // if (jsonData.redirectUrl) {
                 //     window.location.href = jsonData.redirectUrl
@@ -43,13 +43,12 @@ const AuthProvider = ({children}) => {
         setResultCode(response.resultCode ? response.resultCode : "");
     }
 
-    const jwtLogin = () => {
+    const jwtLogin = (ssoId, resultCode) => {
         if (ssoId && resultCode === "1") {
             authPost<any>("/auth/login", {
                 id: ssoId,
                 realm: "location-intelligence",
             }).then((jsonData) => {
-
                 console.log(jsonData);
                 console.log(`@@ ssoId: ${ssoId}`);
                 setJwtLoginInfo(jsonData);
@@ -102,17 +101,13 @@ const AuthProvider = ({children}) => {
         //sso login
         ssoLogin();
         //jwt login
-        jwtLogin();
+        jwtLogin(ssoId, resultCode);
     };
 
     // 로컬 환경 테스트 용도
     const localInit = () => {
         console.log("************************localInit*****************")
-        try {
-
-        } catch (e) {
-            NotifyError(e);
-        }
+        jwtLogin(9999997, "1")
     };
 
 
