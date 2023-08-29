@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {Button, Card, Col, Row, Select, Table, Space, Tag} from "antd";
+import {Button, Card, Col, Row, Select, Table, Space, Tag, Calendar, DatePicker} from "antd";
 import {DeleteOutlined, SaveOutlined, SearchOutlined} from '@ant-design/icons';
 import {downloadFileFromFrontendData} from "@src/common/file-download";
 import {NotifyError} from "@src/components/common/Notification";
@@ -9,9 +9,11 @@ import {addDataToMap, updateMap, wrapTo} from "kepler.gl/actions";
 import {processCsvData} from "kepler.gl/processors";
 import CustomKeplerMap from "@src/components/common/CustomKeplerMap";
 import {get} from "@src/api";
-import {Line, Column} from "@ant-design/plots";
-import type { ColumnsType } from 'antd/es/table';
-
+import {Line, Column, DualAxes, Treemap} from "@ant-design/plots";
+import type {ColumnsType,} from 'antd/es/table';
+import type {CalendarProps} from 'antd';
+import type {Dayjs} from 'dayjs';
+import type {DatePickerProps, RangePickerProps} from 'antd/es/date-picker';
 
 
 interface State {
@@ -35,7 +37,6 @@ const PlugProfileDashBoard = (props: Props): React.ReactElement => {
     const [excelDownLoading, setExcelDownLoading] = useState(false);
     const [hiveData, sethiveData] = useState([])
     const [coldata, setcolData] = useState([]);
-
 
 
     const testData = `no,eid,source,target,tunnel,geometry,source_lt,source_ln,target_lt,target_ln,length,reversed,eid_idx
@@ -129,6 +130,10 @@ const PlugProfileDashBoard = (props: Props): React.ReactElement => {
         asynccolFetch();
     }, []);
 
+    const onPanelChange = (value: Dayjs, mode: CalendarProps<Dayjs>['mode']) => {
+        console.log(value.format('YYYY-MM-DD'), mode);
+    };
+
     const asynccolFetch = () => {
         fetch('https://gw.alipayobjects.com/os/antfincdn/PC3daFYjNw/column-data.json')
             .then((response) => response.json())
@@ -155,7 +160,7 @@ const PlugProfileDashBoard = (props: Props): React.ReactElement => {
                 NotifyError(e);
             });
     };
-    useEffect(()=>{
+    useEffect(() => {
         handleGetTestData()
     });
 
@@ -185,6 +190,7 @@ const PlugProfileDashBoard = (props: Props): React.ReactElement => {
 
         setExcelDownLoading(false);
     };
+
 
     const sampleTripData2 = {
         fields: [
@@ -264,7 +270,7 @@ const PlugProfileDashBoard = (props: Props): React.ReactElement => {
             title: 'Tags',
             key: 'tags',
             dataIndex: 'tags',
-            render: (_, { tags }) => (
+            render: (_, {tags}) => (
                 <>
                     {tags.map((tag) => {
                         let color = tag.length > 5 ? 'geekblue' : 'green';
@@ -315,11 +321,180 @@ const PlugProfileDashBoard = (props: Props): React.ReactElement => {
             tags: ['cool', 'teacher'],
         },
     ];
+    const collinedata = [
+        {
+            time: '2019-03',
+            value: 350,
+            count: 800,
+        },
+        {
+            time: '2019-04',
+            value: 900,
+            count: 600,
+        },
+        {
+            time: '2019-05',
+            value: 300,
+            count: 400,
+        },
+        {
+            time: '2019-06',
+            value: 450,
+            count: 380,
+        },
+        {
+            time: '2019-07',
+            value: 470,
+            count: 220,
+        },
+    ];
+
+    const treemapdata = {
+        name: 'root',
+        children: [
+            {
+                name: '토요타',
+                value: 560,
+            },
+            {
+                name: '닛산',
+                value: 500,
+            },
+            {
+                name: '아우디',
+                value: 150,
+            },
+            {
+                name: '기타',
+                value: 140,
+            },
+            {
+                name: '폭스바겐',
+                value: 115,
+            },
+            {
+                name: '르노삼성',
+                value: 95,
+            },
+            {
+                name: '기아',
+                value: 90,
+            },
+            {
+                name: '현대',
+                value: 75,
+            },
+            {
+                name: '마세라티',
+                value: 98,
+            },
+            {
+                name: 'BMW',
+                value: 60,
+            },
+            {
+                name: '밴츠',
+                value: 45,
+            },
+            {
+                name: '포드',
+                value: 40,
+            },
+            {
+                name: 'BMW',
+                value: 40,
+            },
+            {
+                name: '람브로기니',
+                value: 35,
+            },
+            {
+                name: '포르쉐',
+                value: 40,
+            },
+            {
+                name: 'GM',
+                value: 40,
+            },
+            {
+                name: '대창',
+                value: 40,
+            },
+            {
+                name: '랜드로버',
+                value: 30,
+            },
+            {
+                name: '재규어',
+                value: 28,
+            },
+            {
+                name: '테슬라',
+                value: 16,
+            },
+        ],
+    };
+
+    const collineconfig = {
+        data: [collinedata, collinedata],
+        xField: 'time',
+        yField: ['value', 'count'],
+        geometryOptions: [
+            {
+                geometry: 'column',
+                pattern: {
+                    type: 'line',
+                },
+            },
+            {
+                geometry: 'line',
+                lineStyle: {
+                    lineWidth: 2,
+                },
+            },
+        ],
+    };
+
+    const treemapconfig = {
+        data: treemapdata,
+        colorField: 'name',
+    };
+
+    const onCalender = (value: Dayjs, mode: CalendarProps<Dayjs>['mode']) => {
+        console.log(value.format('YYYY-MM-DD'), mode);
+    };
+
+    const {RangePicker} = DatePicker;
+
+    const onChange = (
+        value: DatePickerProps['value'] | RangePickerProps['value'],
+        dateString: [string, string] | string,
+    ) => {
+        console.log('Selected Time: ', value);
+        console.log('Formatted Selected Time: ', dateString);
+    };
+
+    const onOk = (value: DatePickerProps['value'] | RangePickerProps['value']) => {
+        console.log('onOk: ', value);
+    };
+
 
     const renderSaveComponent = () => {
         return (
             <div>
-                <Row gutter={[24, 16]}>
+                <Row gutter={0}>
+
+                    <Col span={8}>
+                        <Space direction="vertical" size={12}>
+                            <DatePicker showTime onChange={onChange} onOk={onOk}/>
+                            <RangePicker
+                                format="YYYY-MM-DD"
+                                onChange={onChange}
+                                onOk={onOk}
+                            />
+                        </Space>
+                    </Col>
+
                     <Col span={8}>
 
                         <Select
@@ -327,13 +502,13 @@ const PlugProfileDashBoard = (props: Props): React.ReactElement => {
                             placeholder="제조사 선택"
                             optionFilterProp="children"
                             // onChange={selectFunnelName}
-                            style={{width: '70%'}}
+                            style={{width: '70%', float: 'left'}}
                             options={[
-                                { value: 'LUX', label: 'LUX' },
-                                { value: 'TLK', label: 'TLK' },
-                                { value: 'AMT', label: 'AMT' },
-                                { value: 'UNK', label: 'UNK' },
-                                { value: 'disabled', label: 'Disabled', disabled: true },
+                                {value: 'LUX', label: 'LUX'},
+                                {value: 'TLK', label: 'TLK'},
+                                {value: 'AMT', label: 'AMT'},
+                                {value: 'UNK', label: 'UNK'},
+                                {value: 'disabled', label: 'Disabled', disabled: true},
                             ]}
                         >
 
@@ -346,51 +521,36 @@ const PlugProfileDashBoard = (props: Props): React.ReactElement => {
                             placeholder="모델명 선택"
                             optionFilterProp="children"
                             // onChange={selectFunnelName}
-                            style={{width: '70%'}}
+                            style={{width: '70%', float: 'left'}}
                             options={[
-                                { value: 'LUX1', label: 'LUX1' },
-                                { value: 'LUX2', label: 'LUX2' },
-                                { value: 'UNK1', label: 'UNK1' },
-                                { value: 'AMT1', label: 'AMT1' },
-                                { value: 'disabled', label: 'Disabled', disabled: true },
+                                {value: 'LUX1', label: 'LUX1'},
+                                {value: 'LUX2', label: 'LUX2'},
+                                {value: 'UNK1', label: 'UNK1'},
+                                {value: 'AMT1', label: 'AMT1'},
+                                {value: 'disabled', label: 'Disabled', disabled: true},
                             ]}
                         >
 
                         </Select>
                     </Col>
 
-                    <Col span={8}>
-                        <Select
-                            showSearch
-                            placeholder="날짜 선택"
-                            optionFilterProp="children"
-                            // onChange={selectFunnelName}
-                            style={{width: '70%'}}
-                            options={[
-                                { value: '20230810', label: '20230810' },
-                                { value: '20230811', label: '20230811' },
-                                { value: '20230812', label: '20230812' },
-                                { value: '20230813', label: '20230813' },
-                                { value: 'disabled', label: 'Disabled', disabled: true },
-                            ]}
-                        >
-
-                        </Select>
-                    </Col>
                 </Row>
 
-                <Row gutter={[24, 16]}>
-                    <Col span={4}>
+                <Row gutter={0} style={{float: 'right'}}>
+                    <Col span={8}>
                         <Button icon={<SaveOutlined/>}>
                             저장
                         </Button>
+                    </Col>
+
+                    <Col span={8}>
                         <Button icon={<SearchOutlined/>}>
                             조회
                         </Button>
-
                     </Col>
-                    <Col span={2}>
-                        <Button style={{float: 'right'}} icon={<DeleteOutlined/>}
+
+                    <Col span={8}>
+                        <Button icon={<DeleteOutlined/>}
                         >
                             초기화
                         </Button>
@@ -414,9 +574,7 @@ const PlugProfileDashBoard = (props: Props): React.ReactElement => {
                 heightRatio={70}
                 id={"plugMap"}
             />
-            <Card>
-                {renderSaveComponent()}
-            </Card>
+
             <Button
                 type={'primary'}
                 disabled={excelDownLoading}
@@ -425,26 +583,60 @@ const PlugProfileDashBoard = (props: Props): React.ReactElement => {
                 download
             </Button>
 
-            <Button onClick={() => linkToPlugMap2()}>
+            <Button onClick={() => linkToPlugMap2()} >
                 지도 화면으로 이동2
             </Button>
 
-            {/*<div>*/}
-            {/*    <Column {...hiveconfig}/>*/}
-            {/*</div>*/}
-            <div>
-                제조사별 보간, Zero gps 상세 테이블
-                <Table columns={columns} dataSource={tabledata} />
-            </div>
-            <div>
-                X축 : 날짜, Y축 : 보간비율, 범례 : 제조사
-                <Column {...colconfig} />
-            </div>
-            <div>
-                X축 : 날짜, Y축 : Zero GPS비율, 범례 : 제조사
-                <Column {...colconfig} />
-            </div>
+            <Card>
+                {renderSaveComponent()}
+            </Card>
 
+            <Card style={{padding: '10px'}}>
+                <div>
+                    제조사별 보간, Zero gps 상세 테이블
+                    <Table columns={columns} dataSource={tabledata}/>
+                </div>
+            </Card>
+
+            <Row gutter={0}>
+                <Col span={12}>
+                    <Card style={{padding: '10px'}}>
+                        <div>
+                            X축 : 날짜, Y축 : 보간비율, 범례 : 제조사
+                            <Column {...colconfig} />
+                        </div>
+                    </Card>
+                </Col>
+
+                <Col span={12}>
+                    <Card style={{padding: '10px'}}>
+                        <div>
+                            X축 : 날짜, Y축 : Zero GPS비율, 범례 : 제조사
+                            <Column {...colconfig} />
+                        </div>
+                    </Card>
+                </Col>
+            </Row>
+
+            <Row gutter={0}>
+                <Col span={12}>
+                    <Card style={{padding: '10px'}}>
+                        <div>
+                            X축 : 제작년월, Y축 : 보간비율, line : 디바이스 수
+                            <DualAxes {...collineconfig} />
+                        </div>
+                    </Card>
+                </Col>
+
+                <Col span={12}>
+                    <Card style={{padding: '10px'}}>
+                        <div>
+                            차량 회사별 제로 비율
+                            <Treemap {...treemapconfig} />
+                        </div>
+                    </Card>
+                </Col>
+            </Row>
         </div>
     )
 };

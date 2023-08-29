@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect} from 'react';
 import {withRouter} from "react-router-dom";
-import { Line } from '@ant-design/plots';
-import { Space, Table, Tag } from 'antd';
-import type { ColumnsType } from 'antd/es/table';
-
+import {Line} from '@ant-design/plots';
+import {Space, Table, Tag, Card} from 'antd';
+import type {ColumnsType} from 'antd/es/table';
 
 
 interface State {
@@ -103,7 +102,7 @@ const Home = (): React.ReactElement => {
             title: 'Tags',
             key: 'tags',
             dataIndex: 'tags',
-            render: (_, { tags }) => (
+            render: (_, {tags}) => (
                 <>
                     {tags.map((tag) => {
                         let color = tag.length > 5 ? 'geekblue' : 'green';
@@ -131,23 +130,25 @@ const Home = (): React.ReactElement => {
         },
     ];
 
-        return (
-            <div>
+    return (
+        <div>
+            <Card style={{ padding: '10px' }}>
                 <div>
-                    일자별, 디바이스별 현황 홍 페이지
-                </div>
-                <div>
+                    일자별, 디바이스별 현황 홈 페이지
                     <Line {...config} />
                 </div>
-                <div>
-                    초기 화면 테이블
-                </div>
-                <div>
-                    <Table columns={columns} dataSource={tabledata} />
-                </div>
+            </Card>
+            <div>
             </div>
+            <Card style={{ padding: '10px' }}>
+                <div>
+                    초기 현황 테이블
+                    <Table columns={columns} dataSource={tabledata}/>
+                </div>
+            </Card>
+        </div>
 
-        )
+    )
 
 };
 
