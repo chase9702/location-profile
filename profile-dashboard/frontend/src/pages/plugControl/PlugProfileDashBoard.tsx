@@ -37,6 +37,7 @@ const PlugProfileDashBoard = (props: Props): React.ReactElement => {
     const [excelDownLoading, setExcelDownLoading] = useState(false);
     const [hiveData, sethiveData] = useState([])
     const [coldata, setcolData] = useState([]);
+    const [ZeroGPSData, setZeroGPSData] = useState([]);
 
 
     const testData = `no,eid,source,target,tunnel,geometry,source_lt,source_ln,target_lt,target_ln,length,reversed,eid_idx
@@ -130,6 +131,10 @@ const PlugProfileDashBoard = (props: Props): React.ReactElement => {
         asynccolFetch();
     }, []);
 
+    useEffect(() => {
+        asyncZeroGPSFetch();
+    }, []);
+
     const onPanelChange = (value: Dayjs, mode: CalendarProps<Dayjs>['mode']) => {
         console.log(value.format('YYYY-MM-DD'), mode);
     };
@@ -164,6 +169,12 @@ const PlugProfileDashBoard = (props: Props): React.ReactElement => {
         handleGetTestData()
     });
 
+    const asyncZeroGPSFetch = () => {
+        get<[]>("/api/plug/zerogpsrt")
+            .then((jsonData) => {
+                setZeroGPSData(jsonData)
+            })
+    };
     const handleClickExcelDownload = async () => {
         setExcelDownLoading(true);
         // const columns = data.map((data) => {
@@ -238,14 +249,22 @@ const PlugProfileDashBoard = (props: Props): React.ReactElement => {
         },
     };
 
-    const colconfig = {
-        data: coldata,
-        xField: 'city',
-        yField: 'value',
-        seriesField: 'type',
+    const zeroGPSconfig = {
+        data: ZeroGPSData,
+        xField: 'part_dt',
+        yField: 'trip_rt',
+        seriesField: 'dvc_gb',
         isGroup: true,
         columnStyle: {
             radius: [20, 20, 0, 0],
+        },
+        label: {
+            position: 'middle',
+            content: (item) => `${item.trip_rt}`, // 각 데이터의 값을 라벨로 표시
+            style: {
+                fill: '#000', // 라벨 색상 설정
+                fontSize: 12,
+            },
         },
     };
 
@@ -496,42 +515,92 @@ const PlugProfileDashBoard = (props: Props): React.ReactElement => {
                     </Col>
 
                     <Col span={8}>
+                        <Space>
+                            <Select
+                                showSearch
+                                placeholder="제조사 선택"
+                                optionFilterProp="children"
+                                // onChange={selectFunnelName}
+                                style={{width: '100%', float: 'left'}}
+                                options={[
+                                    {value: 'LUX', label: 'LUX'},
+                                    {value: 'TLK', label: 'TLK'},
+                                    {value: 'AMT', label: 'AMT'},
+                                    {value: 'UNK', label: 'UNK'},
+                                    {value: 'disabled', label: 'Disabled', disabled: true},
+                                ]}
+                            >
+                            </Select>
 
-                        <Select
-                            showSearch
-                            placeholder="제조사 선택"
-                            optionFilterProp="children"
-                            // onChange={selectFunnelName}
-                            style={{width: '70%', float: 'left'}}
-                            options={[
-                                {value: 'LUX', label: 'LUX'},
-                                {value: 'TLK', label: 'TLK'},
-                                {value: 'AMT', label: 'AMT'},
-                                {value: 'UNK', label: 'UNK'},
-                                {value: 'disabled', label: 'Disabled', disabled: true},
-                            ]}
-                        >
+                            <Select
+                                showSearch
+                                placeholder="모델명 선택"
+                                optionFilterProp="children"
+                                // onChange={selectFunnelName}
+                                style={{width: '100%', float: 'left'}}
+                                options={[
+                                    {value: 'LUX1', label: 'LUX1'},
+                                    {value: 'LUX2', label: 'LUX2'},
+                                    {value: 'UNK1', label: 'UNK1'},
+                                    {value: 'AMT1', label: 'AMT1'},
+                                    {value: 'disabled', label: 'Disabled', disabled: true},
+                                ]}
+                            >
+                            </Select>
 
-                        </Select>
+                            <Select
+                                showSearch
+                                placeholder="차종 선택"
+                                optionFilterProp="children"
+                                // onChange={selectFunnelName}
+                                style={{width: '100%', float: 'left'}}
+                                options={[
+                                    {value: '현대', label: '현대'},
+                                    {value: '기아', label: '기아'},
+                                    {value: '테슬라', label: '테슬라'},
+                                    {value: '등등', label: '등등'},
+                                    {value: 'disabled', label: 'Disabled', disabled: true},
+                                ]}
+                            >
+                            </Select>
+                        </Space>
                     </Col>
 
                     <Col span={8}>
-                        <Select
-                            showSearch
-                            placeholder="모델명 선택"
-                            optionFilterProp="children"
-                            // onChange={selectFunnelName}
-                            style={{width: '70%', float: 'left'}}
-                            options={[
-                                {value: 'LUX1', label: 'LUX1'},
-                                {value: 'LUX2', label: 'LUX2'},
-                                {value: 'UNK1', label: 'UNK1'},
-                                {value: 'AMT1', label: 'AMT1'},
-                                {value: 'disabled', label: 'Disabled', disabled: true},
-                            ]}
-                        >
+                        <Space>
+                            <Select
+                                showSearch
+                                placeholder="증권번호 선택"
+                                optionFilterProp="children"
+                                // onChange={selectFunnelName}
+                                style={{width: '100%', float: 'left'}}
+                                options={[
+                                    {value: '11111', label: '11111'},
+                                    {value: '22222', label: '22222'},
+                                    {value: '33333', label: '33333'},
+                                    {value: '44444', label: '44444'},
+                                    {value: 'disabled', label: 'Disabled', disabled: true},
+                                ]}
+                            >
+                            </Select>
 
-                        </Select>
+                            <Select
+                                showSearch
+                                placeholder="디바이스 선택"
+                                optionFilterProp="children"
+                                // onChange={selectFunnelName}
+                                style={{width: '100%', float: 'left'}}
+                                options={[
+                                    {value: 'LUX1_12345', label: 'LUX1_12345'},
+                                    {value: 'LUX2_12345', label: 'LUX2_12345'},
+                                    {value: 'UNK1_12345', label: 'UNK1_12345'},
+                                    {value: 'AMT1_12345', label: 'AMT1_12345'},
+                                    {value: 'disabled', label: 'Disabled', disabled: true},
+                                ]}
+                            >
+
+                            </Select>
+                        </Space>
                     </Col>
 
                 </Row>
@@ -583,7 +652,7 @@ const PlugProfileDashBoard = (props: Props): React.ReactElement => {
                 download
             </Button>
 
-            <Button onClick={() => linkToPlugMap2()} >
+            <Button onClick={() => linkToPlugMap2()}>
                 지도 화면으로 이동2
             </Button>
 
@@ -603,7 +672,7 @@ const PlugProfileDashBoard = (props: Props): React.ReactElement => {
                     <Card style={{padding: '10px'}}>
                         <div>
                             X축 : 날짜, Y축 : 보간비율, 범례 : 제조사
-                            <Column {...colconfig} />
+                            <Column {...zeroGPSconfig} />
                         </div>
                     </Card>
                 </Col>
@@ -612,7 +681,7 @@ const PlugProfileDashBoard = (props: Props): React.ReactElement => {
                     <Card style={{padding: '10px'}}>
                         <div>
                             X축 : 날짜, Y축 : Zero GPS비율, 범례 : 제조사
-                            <Column {...colconfig} />
+                            <Column {...zeroGPSconfig} />
                         </div>
                     </Card>
                 </Col>
