@@ -38,6 +38,8 @@ const PlugProfileDashBoard = (props: Props): React.ReactElement => {
     const [hiveData, sethiveData] = useState([])
     const [coldata, setcolData] = useState([]);
     const [ZeroGPSData, setZeroGPSData] = useState([]);
+    const [Trip02Data, settrip02Data] = useState([]);
+    const [CarNameData, setCarNameData] = useState([]);
 
 
     const testData = `no,eid,source,target,tunnel,geometry,source_lt,source_ln,target_lt,target_ln,length,reversed,eid_idx
@@ -135,6 +137,14 @@ const PlugProfileDashBoard = (props: Props): React.ReactElement => {
         asyncZeroGPSFetch();
     }, []);
 
+    useEffect(() => {
+        asynctrip02Fetch();
+    }, []);
+
+    useEffect(() => {
+        asynccarnameFetch();
+    }, []);
+
     const onPanelChange = (value: Dayjs, mode: CalendarProps<Dayjs>['mode']) => {
         console.log(value.format('YYYY-MM-DD'), mode);
     };
@@ -175,6 +185,21 @@ const PlugProfileDashBoard = (props: Props): React.ReactElement => {
                 setZeroGPSData(jsonData)
             })
     };
+
+    const asynctrip02Fetch = () => {
+        get<[]>("/api/plug/trip02rt")
+            .then((jsonData) => {
+                settrip02Data(jsonData)
+            })
+    };
+
+    const asynccarnameFetch = () => {
+        get<[]>("/api/plug/carname")
+            .then((jsonData) => {
+                setCarNameData(jsonData)
+            })
+    };
+
     const handleClickExcelDownload = async () => {
         setExcelDownLoading(true);
         // const columns = data.map((data) => {
@@ -246,6 +271,25 @@ const PlugProfileDashBoard = (props: Props): React.ReactElement => {
         slider: {
             start: 0.1,
             end: 0.2,
+        },
+    };
+
+    const trip02config = {
+        data: Trip02Data,
+        xField: 'part_dt',
+        yField: 'trip_rt',
+        seriesField: 'dvc_gb',
+        isGroup: true,
+        columnStyle: {
+            radius: [20, 20, 0, 0],
+        },
+        label: {
+            position: 'middle',
+            content: (item) => `${item.trip_rt}`, // 각 데이터의 값을 라벨로 표시
+            style: {
+                fill: '#000', // 라벨 색상 설정
+                fontSize: 12,
+            },
         },
     };
 
@@ -672,7 +716,7 @@ const PlugProfileDashBoard = (props: Props): React.ReactElement => {
                     <Card style={{padding: '10px'}}>
                         <div>
                             X축 : 날짜, Y축 : 보간비율, 범례 : 제조사
-                            <Column {...zeroGPSconfig} />
+                            <Column {...trip02config} />
                         </div>
                     </Card>
                 </Col>
