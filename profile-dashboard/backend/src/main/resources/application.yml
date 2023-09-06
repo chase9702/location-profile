@@ -81,3 +81,5 @@ logging:
   level:
     root: INFO
     com.carrotins.backend: INFO
+server:
+  port: 8090
