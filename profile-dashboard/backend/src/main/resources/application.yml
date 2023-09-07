@@ -26,8 +26,8 @@ any-list:
   /v3/api-docs/**,
   /swagger-ui/**
 jwt-list:
-  /plug/**,
-  /location/**
+  /api/plug/**,
+  /api/location/**
 
 jwt:
   jwk:
@@ -68,6 +68,9 @@ white-list:
   0:0:0:0:0:0:0:1,
   10.90.0.0/16,
   10.80.0.0/16
+jwt-list:
+  /plug/**,
+  /location/**
 any-list:
   /actuator/**,
   /v3/api-docs/**,

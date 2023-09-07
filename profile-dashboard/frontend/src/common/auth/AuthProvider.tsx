@@ -19,36 +19,48 @@ const AuthProvider = ({children}) => {
     const ssoLogin = () => {
         console.log("try sso login:")
         console.log("ssoId:" + ssoId)
-        if (ssoId === 'UNKNOWN' || ssoId === "") {
-            // SSO 로그인 시도
-            authPost<any>("/auth/sso/login", {
-                redirectUrl: profileRedirectUrl,
-            }).then((jsonData) => {
-                console.log(jsonData)
-                console.log("sso login response:" + jsonData.redirectUrl)
-                window.location.href = jsonData.redirectUrl
-                // if (jsonData.redirectUrl) {
-                //     window.location.href = jsonData.redirectUrl
-                // }
-                setSSOLoginInfo(jsonData)
 
-            }).catch((e) => {
-                NotifyError(e);
-            });
-        }
+        // SSO 로그인 시도
+        authPost<any>("/auth/sso/login", {
+            redirectUrl: profileRedirectUrl,
+        }).then((jsonData) => {
+            console.log(jsonData)
+            console.log("sso login response:" + jsonData.redirectUrl)
+            if (jsonData.redirectUrl) {
+                window.location.href = jsonData.redirectUrl;
+            }
+            // if (jsonData.redirectUrl) {
+            //     window.location.href = jsonData.redirectUrl
+            // }
+            dispatch(setSSOId(jsonData.ssoId ? jsonData.ssoId : ""))
+            jwtLogin(jsonData.ssoId , jsonData.resultCode)
+            setResultCode(jsonData.resultCode ? jsonData.resultCode : "");
+            console.log("sso login success");
+            // setSSOLoginInfo(jsonData)
+
+        }).catch((e) => {
+            NotifyError(e);
+        });
+
     }
     const setSSOLoginInfo = (response: any) => {
         console.log(response)
         dispatch(setSSOId(response.ssoId ? response.ssoId : ""))
         setResultCode(response.resultCode ? response.resultCode : "");
+        console.log("sso login success");
     }
 
     const jwtLogin = (ssoId, resultCode) => {
-        if (ssoId && resultCode === "1") {
+        debugger
+        console.log("jwt login")
+        console.log("ssoid:"+ssoId)
+        console.log("resultCode:"+resultCode)
+        if (resultCode === "1") {
             authPost<any>("/auth/login", {
                 id: ssoId,
                 realm: "location-intelligence",
             }).then((jsonData) => {
+                debugger
                 console.log(jsonData);
                 console.log(`@@ ssoId: ${ssoId}`);
                 setJwtLoginInfo(jsonData);
@@ -99,9 +111,12 @@ const AuthProvider = ({children}) => {
     const init = () => {
         console.log("************************init*****************")
         //sso login
-        ssoLogin();
+        const at = window.localStorage.getItem("profileAccessToken");
+        if (!at) {
+            ssoLogin();
+            // jwtLogin(ssoId, resultCode);
+        }
         //jwt login
-        jwtLogin(ssoId, resultCode);
     };
 
     // 로컬 환경 테스트 용도

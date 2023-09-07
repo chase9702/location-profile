@@ -52,7 +52,7 @@ class WebSecurityConfig(
     fun defaultSecurityFilterChain(httpSecurity: HttpSecurity): SecurityFilterChain {
         applyBasic(httpSecurity)
         applyRestApiSecurity(httpSecurity)
-        applyFinallyAnyRequestDenyAll(httpSecurity)
+//        applyFinallyAnyRequestDenyAll(httpSecurity)
 
         return httpSecurity.build()
     }
@@ -96,30 +96,31 @@ class WebSecurityConfig(
     private fun applyRestApiSecurity(httpSecurity: HttpSecurity) {
 
         println(jwtList)
-        println(jwtList.toTypedArray())
-        println(whiteIpList)
         if (jwtList.isNotEmpty()) {
             val jwtUrlList = jwtList.toTypedArray()
-            httpSecurity.authorizeRequests().antMatchers(*jwtUrlList)
+            httpSecurity
+                .authorizeRequests()
+                .antMatchers(*jwtUrlList)
                 .access(
                     "isAuthenticated() and " +
                             getAttributeByIpList(whiteIpList)
                 )
+                .anyRequest().permitAll()
             httpSecurity.oauth2ResourceServer { oauth2ResourceServer: OAuth2ResourceServerConfigurer<HttpSecurity?> -> oauth2ResourceServer.jwt() }
         } else {
             log.info("Authenticated API not allowed")
         }
 
-        println(anyUrlList)
-        println(anyUrlList.toTypedArray())
-        println(whiteIpList)
-        if (anyUrlList.isNotEmpty()) {
-            val anyUrlList = anyUrlList.toTypedArray()
-            httpSecurity.authorizeRequests().antMatchers(*anyUrlList)
-                .access(getAttributeByIpList(whiteIpList))
-        } else {
-            log.info("Anonymous API not allowed")
-        }
+//        println(anyUrlList)
+//        if (anyUrlList.isNotEmpty()) {
+//            val anyUrlList = anyUrlList.toTypedArray()
+//            httpSecurity
+//                .authorizeRequests()
+//                .antMatchers(*anyUrlList)
+//                .access(getAttributeByIpList(whiteIpList))
+//        } else {
+//            log.info("Anonymous API not allowed")
+//        }
     }
 
     @Throws(Exception::class)
