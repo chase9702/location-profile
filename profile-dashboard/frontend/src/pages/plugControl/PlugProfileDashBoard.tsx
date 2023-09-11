@@ -159,43 +159,30 @@ const PlugProfileDashBoard = (props: Props): React.ReactElement => {
     };
 
     const asyncHiveFetch = () => {
-        get<[]>("/api/plug/device")
+        get<[]>("/api/plug/device-info")
             .then((jsonData) => {
                 sethiveData(jsonData)
             })
     };
 
-    const handleGetTestData = () => {
-
-        get<[]>("/api/plug/test")
-            .then((jsonData) => {
-                console.log(jsonData)
-            })
-            .catch((e) => {
-                NotifyError(e);
-            });
-    };
-    useEffect(() => {
-        handleGetTestData()
-    });
-
     const asyncZeroGPSFetch = () => {
-        get<[]>("/api/plug/zerogpsrt")
+        get<[]>("/api/plug/zero-gps-trip-info")
             .then((jsonData) => {
                 setZeroGPSData(jsonData)
             })
     };
 
     const asynctrip02Fetch = () => {
-        get<[]>("/api/plug/trip02rt")
+        get<[]>("/api/plug/interpolation-trip-info")
             .then((jsonData) => {
                 settrip02Data(jsonData)
             })
     };
 
     const asynccarnameFetch = () => {
-        get<[]>("/api/plug/carname")
+        get<[]>("/api/plug/car-product-name-info")
             .then((jsonData) => {
+                console.log(jsonData)
                 setCarNameData(jsonData)
             })
     };
@@ -414,88 +401,7 @@ const PlugProfileDashBoard = (props: Props): React.ReactElement => {
 
     const treemapdata = {
         name: 'root',
-        children: [
-            {
-                name: '토요타',
-                value: 560,
-            },
-            {
-                name: '닛산',
-                value: 500,
-            },
-            {
-                name: '아우디',
-                value: 150,
-            },
-            {
-                name: '기타',
-                value: 140,
-            },
-            {
-                name: '폭스바겐',
-                value: 115,
-            },
-            {
-                name: '르노삼성',
-                value: 95,
-            },
-            {
-                name: '기아',
-                value: 90,
-            },
-            {
-                name: '현대',
-                value: 75,
-            },
-            {
-                name: '마세라티',
-                value: 98,
-            },
-            {
-                name: 'BMW',
-                value: 60,
-            },
-            {
-                name: '밴츠',
-                value: 45,
-            },
-            {
-                name: '포드',
-                value: 40,
-            },
-            {
-                name: 'BMW',
-                value: 40,
-            },
-            {
-                name: '람브로기니',
-                value: 35,
-            },
-            {
-                name: '포르쉐',
-                value: 40,
-            },
-            {
-                name: 'GM',
-                value: 40,
-            },
-            {
-                name: '대창',
-                value: 40,
-            },
-            {
-                name: '랜드로버',
-                value: 30,
-            },
-            {
-                name: '재규어',
-                value: 28,
-            },
-            {
-                name: '테슬라',
-                value: 16,
-            },
-        ],
+        children: CarNameData,
     };
 
     const collineconfig = {
@@ -520,7 +426,7 @@ const PlugProfileDashBoard = (props: Props): React.ReactElement => {
 
     const treemapconfig = {
         data: treemapdata,
-        colorField: 'name',
+        colorField: 'cr_prd_cmpcd_nm',
     };
 
     const onCalender = (value: Dayjs, mode: CalendarProps<Dayjs>['mode']) => {
@@ -755,4 +661,5 @@ const PlugProfileDashBoard = (props: Props): React.ReactElement => {
 };
 
 export default PlugProfileDashBoard;
+
 

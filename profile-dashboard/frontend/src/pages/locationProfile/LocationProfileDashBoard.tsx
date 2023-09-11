@@ -3,7 +3,7 @@ import {Button, Card, Col, Row, Select} from "antd";
 import {DeleteOutlined, SaveOutlined, SearchOutlined} from '@ant-design/icons';
 import {downloadFileFromFrontendData} from "@src/common/file-download";
 import {NotifyError} from "@src/components/common/Notification";
-import {Line, Liquid, WordCloud} from '@ant-design/plots';
+import {Line, Liquid, Treemap} from '@ant-design/plots';
 import {LegendCfg} from '@antv/g2/src/interface';
 import PageTitle from "@src/components/common/PageTitle";
 import {addDataToMap, updateMap} from "kepler.gl/actions";
@@ -123,7 +123,7 @@ const LocationProfileDashBoard = (props: Props): React.ReactElement => {
     }, []);
 
     const asyncHiveFetch = () => {
-        get<[]>("/api/plug/device")
+        get<[]>("/api/plug/device-info")
             .then((jsonData) => {
                 sethiveData(jsonData)
             })
@@ -167,6 +167,97 @@ const LocationProfileDashBoard = (props: Props): React.ReactElement => {
                 duration: 5000,
             },
         },
+    };
+
+    const treedata = {
+        name: 'root',
+        children: [
+            {
+                name: '分类 1',
+                value: 560,
+            },
+            {
+                name: '分类 2',
+                value: 500,
+            },
+            {
+                name: '分类 3',
+                value: 150,
+            },
+            {
+                name: '分类 4',
+                value: 140,
+            },
+            {
+                name: '分类 5',
+                value: 115,
+            },
+            {
+                name: '分类 6',
+                value: 95,
+            },
+            {
+                name: '分类 7',
+                value: 90,
+            },
+            {
+                name: '分类 8',
+                value: 75,
+            },
+            {
+                name: '分类 9',
+                value: 98,
+            },
+            {
+                name: '分类 10',
+                value: 60,
+            },
+            {
+                name: '分类 11',
+                value: 45,
+            },
+            {
+                name: '分类 12',
+                value: 40,
+            },
+            {
+                name: '分类 13',
+                value: 40,
+            },
+            {
+                name: '分类 14',
+                value: 35,
+            },
+            {
+                name: '分类 15',
+                value: 40,
+            },
+            {
+                name: '分类 16',
+                value: 40,
+            },
+            {
+                name: '分类 17',
+                value: 40,
+            },
+            {
+                name: '分类 18',
+                value: 30,
+            },
+            {
+                name: '分类 19',
+                value: 28,
+            },
+            {
+                name: '分类 20',
+                value: 16,
+            },
+        ],
+    };
+
+    const treeconfig = {
+        data:treedata,
+        colorField: 'name',
     };
 
     const wordConfig = {
@@ -334,7 +425,7 @@ const LocationProfileDashBoard = (props: Props): React.ReactElement => {
                 <Line {...config} />
             </div>
             <div>
-                <Column {...hiveconfig}/>
+                <Treemap {...treeconfig}/>
             </div>
             <div>
                 <Liquid {...liquidConfig}/>

@@ -10,9 +10,7 @@ import org.springframework.stereotype.Repository
 class HiveTestRepository(
     private val hiveJdbcTemplate: JdbcTemplate
 ) {
-    fun get01trip(
-
-    ): List<HiveDataTable> {
+    fun getDeviceProductCountData(): List<DeviceProductCount> {
         val query: String = """
              SELECT 
                  dvc_gb,
@@ -23,20 +21,18 @@ class HiveTestRepository(
         """.trimIndent()
 
         return hiveJdbcTemplate.query(query){ rs, _ ->
-            HiveDataTable(
+            DeviceProductCount(
                 dvcgb = rs.getString("dvc_gb"),
                 cnt01 = rs.getInt("01_trip_cnt"),
             )
         }
     }
 
-    fun getcrnm(
-
-    ): List<CarprdName> {
+    fun getCarProductNameInfoData(): List<CarProductNameInfo> {
         val query: String = """
              SELECT 
                  cr_prd_cmpcd_nm,
-                 (sum(nvl(98_trip_cnt,0)) / (sum(nvl(01_trip_cnt,0)) + sum(nvl(98_trip_cnt,0)))) * 100 as trip_rt,
+                 round((sum(nvl(98_trip_cnt,0)) / (sum(nvl(01_trip_cnt,0)) + sum(nvl(98_trip_cnt,0)))) * 100) as trip_rt
                FROM `dw`.`li_plug_profile_100`
               WHERE part_dt >= '20230821'
                 AND part_dt <= '20230823'
@@ -44,16 +40,14 @@ class HiveTestRepository(
         """.trimIndent()
 
         return hiveJdbcTemplate.query(query){ rs, _ ->
-            CarprdName(
+            CarProductNameInfo(
                 cr_prd_cmpcd_nm = rs.getString("cr_prd_cmpcd_nm"),
-                trip_rt = rs.getDouble("trip_rt"),
+                trip_rt = rs.getInt("trip_rt"),
                 )
         }
     }
 
-    fun get98rt(
-
-    ): List<ZeroTripTable> {
+    fun getZeroGpsTripInfoData(): List<ZeroGpsTripInfo> {
         val query: String = """
              SELECT 
                  dvc_gb,
@@ -69,7 +63,7 @@ class HiveTestRepository(
         """.trimIndent()
 
         return hiveJdbcTemplate.query(query){ rs, _ ->
-            ZeroTripTable(
+            ZeroGpsTripInfo(
                 dvc_gb = rs.getString("dvc_gb"),
                 part_dt = rs.getString("part_dt"),
                 trip_total = rs.getInt("total_trip"),
@@ -79,9 +73,7 @@ class HiveTestRepository(
         }
     }
 
-    fun get02rt(
-
-    ): List<Trip02Table> {
+    fun getInterpolationTripInfoData(): List<InterpolationTripInfo> {
         val query: String = """
              SELECT 
                  dvc_gb,
@@ -94,35 +86,15 @@ class HiveTestRepository(
                 AND part_dt <= '20230823'
         """.trimIndent()
 
-        hiveJdbcTemplate.fetchSize = 50000
+        hiveJdbcTemplate.fetchSize = 100000
 
         return hiveJdbcTemplate.query(query){ rs, _ ->
-            Trip02Table(
+            InterpolationTripInfo(
                 dvc_gb = rs.getString("dvc_gb"),
                 part_dt = rs.getString("part_dt"),
                 trip_total = rs.getInt("total_trip"),
                 trip_01 = rs.getInt("01_trip_cnt"),
                 trip_02 = rs.getInt("02_trip_cnt"),
-            )
-        }
-    }
-
-    fun getTestData2(
-
-    ): List<HiveDataTable> {
-        val query: String = """
-             SELECT 
-                 dvc_gb,
-                 01_trip_cnt
-             FROM `dmp`.`cus_mstr`
-             WHERE 1=1 
-             LIMIT 100
-        """.trimIndent()
-
-        return hiveJdbcTemplate.query(query){ rs, _ ->
-            HiveDataTable(
-                dvcgb = rs.getString("dvc_gb"),
-                cnt01 = rs.getInt("01_trip_cnt"),
             )
         }
     }
