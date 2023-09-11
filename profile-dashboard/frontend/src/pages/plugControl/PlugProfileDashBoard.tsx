@@ -427,6 +427,7 @@ const PlugProfileDashBoard = (props: Props): React.ReactElement => {
     const treemapconfig = {
         data: treemapdata,
         colorField: 'cr_prd_cmpcd_nm',
+        sizeField: "trip_rt",
     };
 
     const onCalender = (value: Dayjs, mode: CalendarProps<Dayjs>['mode']) => {

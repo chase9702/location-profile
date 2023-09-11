@@ -10,7 +10,7 @@ data class DeviceProductCount(
 
 data class CarProductNameInfo(
     val cr_prd_cmpcd_nm: String, // 자동차 생산 회사명
-    var trip_rt: Int,         // Zero GPS 비율
+    var trip_rt: Double,         // Zero GPS 비율
 )
 
 data class ZeroGpsTripInfo(

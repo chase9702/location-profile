@@ -32,7 +32,7 @@ class HiveTestRepository(
         val query: String = """
              SELECT 
                  cr_prd_cmpcd_nm,
-                 round((sum(nvl(98_trip_cnt,0)) / (sum(nvl(01_trip_cnt,0)) + sum(nvl(98_trip_cnt,0)))) * 100) as trip_rt
+                 round((sum(nvl(98_trip_cnt,0)) / (sum(nvl(01_trip_cnt,0)) + sum(nvl(98_trip_cnt,0)))) * 100, 2) as trip_rt
                FROM `dw`.`li_plug_profile_100`
               WHERE part_dt >= '20230821'
                 AND part_dt <= '20230823'
@@ -42,7 +42,7 @@ class HiveTestRepository(
         return hiveJdbcTemplate.query(query){ rs, _ ->
             CarProductNameInfo(
                 cr_prd_cmpcd_nm = rs.getString("cr_prd_cmpcd_nm"),
-                trip_rt = rs.getInt("trip_rt"),
+                trip_rt = rs.getDouble("trip_rt"),
                 )
         }
     }
