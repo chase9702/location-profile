@@ -3,13 +3,15 @@ import {Button, Card, Col, Row, Select} from "antd";
 import {DeleteOutlined, SaveOutlined, SearchOutlined} from '@ant-design/icons';
 import {downloadFileFromFrontendData} from "@src/common/file-download";
 import {NotifyError} from "@src/components/common/Notification";
-import {Line, Liquid, WordCloud} from '@ant-design/plots';
+import {Line, Liquid, Treemap} from '@ant-design/plots';
 import {LegendCfg} from '@antv/g2/src/interface';
 import PageTitle from "@src/components/common/PageTitle";
 import {addDataToMap, updateMap} from "kepler.gl/actions";
 import {store} from "@src/index";
 import {processCsvData} from "kepler.gl/processors";
 import CustomKeplerMap from "@src/components/common/CustomKeplerMap";
+import {Column} from "@ant-design/plots";
+import {get} from "@src/api"
 
 interface State {
 }
@@ -23,6 +25,7 @@ const LocationProfileDashBoard = (props: Props): React.ReactElement => {
     const [data, setData] = useState([]);
     const [wordData, setWordData] = useState([]);
     const [excelDownLoading, setExcelDownLoading] = useState(false);
+    const [hiveData, sethiveData] = useState([])
 
     const testData = `no,eid,source,target,tunnel,geometry,source_lt,source_ln,target_lt,target_ln,length,reversed,eid_idx
 7106,342885007,436745716,436745711,yes,"LINESTRING (126.6218273000000067 34.4071537000000021, 126.6226323000000065 34.4076621999999972)",34.4071537,126.6218273,34.4076622,126.6226323,93.011,False,342885007
@@ -114,6 +117,18 @@ const LocationProfileDashBoard = (props: Props): React.ReactElement => {
     useEffect(() => {
         asyncWordFetch();
     }, []);
+
+    useEffect(() => {
+        asyncHiveFetch();
+    }, []);
+
+    const asyncHiveFetch = () => {
+        get<[]>("/api/plug/device-info")
+            .then((jsonData) => {
+                sethiveData(jsonData)
+            })
+    };
+
     const asyncFetch = () => {
         fetch('https://gw.alipayobjects.com/os/bmw-prod/e00d52f4-2fa6-47ee-a0d7-105dd95bde20.json')
             .then((response) => response.json())
@@ -152,6 +167,97 @@ const LocationProfileDashBoard = (props: Props): React.ReactElement => {
                 duration: 5000,
             },
         },
+    };
+
+    const treedata = {
+        name: 'root',
+        children: [
+            {
+                name: '分类 1',
+                value: 560,
+            },
+            {
+                name: '分类 2',
+                value: 500,
+            },
+            {
+                name: '分类 3',
+                value: 150,
+            },
+            {
+                name: '分类 4',
+                value: 140,
+            },
+            {
+                name: '分类 5',
+                value: 115,
+            },
+            {
+                name: '分类 6',
+                value: 95,
+            },
+            {
+                name: '分类 7',
+                value: 90,
+            },
+            {
+                name: '分类 8',
+                value: 75,
+            },
+            {
+                name: '分类 9',
+                value: 98,
+            },
+            {
+                name: '分类 10',
+                value: 60,
+            },
+            {
+                name: '分类 11',
+                value: 45,
+            },
+            {
+                name: '分类 12',
+                value: 40,
+            },
+            {
+                name: '分类 13',
+                value: 40,
+            },
+            {
+                name: '分类 14',
+                value: 35,
+            },
+            {
+                name: '分类 15',
+                value: 40,
+            },
+            {
+                name: '分类 16',
+                value: 40,
+            },
+            {
+                name: '分类 17',
+                value: 40,
+            },
+            {
+                name: '分类 18',
+                value: 30,
+            },
+            {
+                name: '分类 19',
+                value: 28,
+            },
+            {
+                name: '分类 20',
+                value: 16,
+            },
+        ],
+    };
+
+    const treeconfig = {
+        data:treedata,
+        colorField: 'name',
     };
 
     const wordConfig = {
@@ -195,6 +301,21 @@ const LocationProfileDashBoard = (props: Props): React.ReactElement => {
             cfg: {
                 size: 30,
             },
+        },
+    };
+
+    const hiveconfig = {
+        data: hiveData,
+        xField: 'dvcgb',
+        yField: 'cnt01',
+        xAxis: {
+            label: {
+                autoRotate: false,
+            },
+        },
+        slider: {
+            start: 0.1,
+            end: 0.2,
         },
     };
 
@@ -304,7 +425,7 @@ const LocationProfileDashBoard = (props: Props): React.ReactElement => {
                 <Line {...config} />
             </div>
             <div>
-                <WordCloud {...wordConfig}/>
+                <Treemap {...treeconfig}/>
             </div>
             <div>
                 <Liquid {...liquidConfig}/>
