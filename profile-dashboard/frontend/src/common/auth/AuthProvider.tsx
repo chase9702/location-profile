@@ -15,21 +15,13 @@ const AuthProvider = ({children}) => {
     const refreshToken = useSelector((state: StoreState) => state.auth.refreshToken)
     const resultCode = useSelector((state: StoreState) => state.auth.resultCode)
 
-
     const ssoLogin = () => {
-        console.log("try sso login:")
-
-        // SSO 로그인 시도
         authPost<any>("/auth/sso/login", {
             redirectUrl: profileRedirectUrl,
         }).then((jsonData) => {
-            console.log("auth/sso/login result:::::::::::::::::::::")
-            console.log(jsonData)
             if (jsonData.redirectUrl) {
                 window.location.href = jsonData.redirectUrl;
             }
-            console.log("redirect is null")
-            console.log(jsonData.resultCode)
             dispatch(setSSOId(jsonData.ssoId ? jsonData.ssoId : ""))
             dispatch(setResultCode(jsonData.resultCode ? jsonData.resultCode : ""))
 
@@ -44,16 +36,11 @@ const AuthProvider = ({children}) => {
 
 
     const jwtLogin = (response) => {
-        console.log("jwt login")
-        console.log("ssoid:" + ssoId)
-        console.log("resultCode:" + resultCode)
         if (response.resultCode === "1") {
             authPost<any>("/auth/login", {
                 id: response.ssoId,
                 realm: "location-intelligence",
             }).then((jsonData) => {
-                console.log(jsonData);
-                console.log(`@@ ssoId: ${ssoId}`);
                 setJwtLoginInfo(jsonData);
 
             }).catch((e) => {
@@ -63,7 +50,7 @@ const AuthProvider = ({children}) => {
     }
 
     const setJwtLoginInfo = (response: any) => {
-        console.log("set JwtLoginInfo")
+
         dispatch(setAccessToken(response.access_token))
         dispatch(setRefreshToken(response.refresh_token))
 
@@ -72,8 +59,6 @@ const AuthProvider = ({children}) => {
 
         const jwtObj: any = JwtDecode(response.access_token);
 
-        console.log("JwtLoginInfo")
-        console.log(jwtObj)
         dispatch(setAuthInfo({
             userName: jwtObj.pri_username ?? "UNKNOWN",
             userRole: jwtObj.pri_auth.split(",")
@@ -83,16 +68,10 @@ const AuthProvider = ({children}) => {
 
     const init = () => {
         console.log("************************init*****************")
-        //sso login
         const at = window.localStorage.getItem("profileAccessToken");
-        console.log(at)
-        console.log(accessToken)
         if (at === null || accessToken === null) {
-            console.log("at is empty")
             ssoLogin();
         }
-        console.log("end to login")
-        //jwt loginÏ
     };
 
     // 로컬 환경 테스트 용도
@@ -105,7 +84,7 @@ const AuthProvider = ({children}) => {
     useEffect(() => {
         console.log("ssoId changed:", ssoId);
         console.log("accessToken changed:", accessToken);
-    }, [ssoId, accessToken, resultCode]);
+    }, [ssoId, accessToken, resultCode, refreshToken]);
 
     useEffect(() => {
         if (process.env.NODE_ENV.startsWith("production")) {

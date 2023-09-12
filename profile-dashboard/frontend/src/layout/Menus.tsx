@@ -10,6 +10,7 @@ import {authGet, authPut} from "@src/api";
 import {NotifyError} from "@src/components/common/Notification";
 import {setAccessToken, setAuthInfo, setRefreshToken, setSSOId} from "@src/actions/AuthAction";
 import {StoreState} from "@src/reducers";
+import axios from "axios";
 
 const {SubMenu} = Menu;
 
@@ -19,17 +20,6 @@ const Menus = (): React.ReactElement => {
     const dispatch = useDispatch();
     const userRole = useSelector((state: StoreState) => state.auth.userRole)
     const userName = useSelector((state: StoreState) => state.auth.userName)
-
-
-    const deleteAllCookies = () => {
-        const cookies = document.cookie.split(';');
-        for (let i = 0; i < cookies.length; i++) {
-            const cookie = cookies[i];
-            const eqPos = cookie.indexOf('=');
-            const name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
-            document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
-        }
-    }
 
     const logout = () => {
 
@@ -51,10 +41,14 @@ const Menus = (): React.ReactElement => {
                 if (jsonData.redirectUrl === undefined) {
                     console.log("log out redirect undefined")
                     return;
-                } else {
+            2    } else {
 
-                    deleteAllCookies();
-                    window.location.href = "/"
+                    authGet(jsonData.redirectUrl)
+                        .then(() => {
+                        })
+                        .finally(() => {
+                            window.location.href = "/"
+                        })
 
                 }
             }).catch((e) => {
@@ -100,9 +94,9 @@ const Menus = (): React.ReactElement => {
                     );
                 })}
             </Menu>
-            <Button type="link" icon={<LogoutOutlined/>} className="logout-button" onClick={logout}>
-                Logout
-            </Button>
+            {/*<Button type="link" icon={<LogoutOutlined/>} className="logout-button" onClick={logout}>*/}
+            {/*    Logout*/}
+            {/*</Button>*/}
         </div>
     );
 

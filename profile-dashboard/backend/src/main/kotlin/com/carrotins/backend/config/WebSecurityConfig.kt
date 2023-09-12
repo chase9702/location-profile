@@ -53,7 +53,6 @@ class WebSecurityConfig(
         applyBasic(httpSecurity)
         applyRestApiSecurity(httpSecurity)
 //        applyFinallyAnyRequestDenyAll(httpSecurity)
-
         return httpSecurity.build()
     }
 
@@ -111,52 +110,12 @@ class WebSecurityConfig(
             log.info("Authenticated API not allowed")
         }
 
-//        println(anyUrlList)
-//        if (anyUrlList.isNotEmpty()) {
-//            val anyUrlList = anyUrlList.toTypedArray()
-//            httpSecurity
-//                .authorizeRequests()
-//                .antMatchers(*anyUrlList)
-//                .access(getAttributeByIpList(whiteIpList))
-//        } else {
-//            log.info("Anonymous API not allowed")
-//        }
     }
 
     @Throws(Exception::class)
     private fun applyFinallyAnyRequestDenyAll(httpSecurity: HttpSecurity) {
         httpSecurity.authorizeRequests().anyRequest().denyAll()
     }
-
-//    @Bean
-//    @Throws(Exception::class)
-//    fun filterChain(http: HttpSecurity): SecurityFilterChain {
-//
-//        val anyUrlList = anyUrlList.toTypedArray()
-//        val jwtList = jwtList.toTypedArray()
-//        http
-//            .authorizeRequests()
-//            .antMatchers(*jwtList).authenticated()
-//            .antMatchers(*anyUrlList).permitAll()
-//            .antMatchers("/**").access(getAttributeByIpList(whiteIpList))
-//            .anyRequest().authenticated()
-//            .and()
-//            .cors().configurationSource(corsConfigurationSource())
-//            .and()
-//            .formLogin().disable()
-//            .csrf().disable()
-//            .headers().disable()
-//            .httpBasic().disable()
-//            .logout().disable()
-//            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-//            .and()
-//            .exceptionHandling()
-//            .accessDeniedHandler(restAccessDeniedHandler)
-//            .authenticationEntryPoint(restAuthenticationEntryPoint)
-//            .and()
-//            .authenticationProvider(JwtAuthenticationProvider(jwkUrl))
-//        return http.build()
-//    }
 
     private fun getAttributeByIpList(approveIpList: List<String>): String {
         return (
