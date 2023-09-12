@@ -10,7 +10,11 @@ data class DeviceProductCount(
 
 data class CarProductNameInfo(
     val cr_prd_cmpcd_nm: String, // 자동차 생산 회사명
-    var trip_rt: Double,         // Zero GPS 비율
+    val part_dt: String,     // 파티션 날짜
+    val trip_total : Int,    // 01(정상) + 98(Zero GPS) 트립 수 합
+    val trip_01: Int,        // 01(정상) 트립 수
+    val trip_98: Int,        // 98(Zero GPS) 트립 수
+    var trip_rt: Double=0.0, // Zero GPS 비율
 )
 
 data class ZeroGpsTripInfo(

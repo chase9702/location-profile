@@ -25,24 +25,57 @@ class PlugProfileService(
     }
 
     fun getCarProductNameInfo(): List<CarProductNameInfo> {
-        return hiveTestRepository.getCarProductNameInfoData()
+        val carProductNameData = hiveTestRepository.getCarProductNameInfoData()
+
+        val groupCarProductNameData = carProductNameData
+            .groupBy { Pair(it.cr_prd_cmpcd_nm, it.part_dt) }
+            .map { (key, value) ->
+                CarProductNameInfo(
+                    cr_prd_cmpcd_nm = key.first,
+                    part_dt = key.second,
+                    value.sumOf { it.trip_total },
+                    value.sumOf { it.trip_01 },
+                    value.sumOf { it.trip_98 },
+                    value.sumOf { it.trip_rt }
+                )
+            }
+
+        val updateCarProductNameData = groupCarProductNameData.map { item ->
+            val zeroGpsRatio = if (item.trip_98 != 0) BigDecimal((item.trip_98.toDouble() / item.trip_total) * 100).setScale(2, BigDecimal.ROUND_HALF_UP).toDouble() else 0.0
+            item.copy(trip_rt = zeroGpsRatio)
+        }
+
+        return updateCarProductNameData
     }
 
     fun getZeroGpsTripInfo(): List<ZeroGpsTripInfo> {
-        val dataEntries = hiveTestRepository.getZeroGpsTripInfoData()
+        val zeroGpsData = hiveTestRepository.getZeroGpsTripInfoData()
 
-        val updatedDataList = dataEntries.map { item ->
-            val triprt = if (item.trip_98 != 0) BigDecimal((item.trip_98.toDouble() / item.trip_total) * 100).setScale(2, BigDecimal.ROUND_HALF_UP).toDouble() else 0.0
-            item.copy(trip_rt = triprt)
+        val groupZeroGpsData = zeroGpsData
+            .groupBy { Pair(it.dvc_gb, it.part_dt) }
+            .map { (key, value) ->
+                ZeroGpsTripInfo(
+                    dvc_gb = key.first,
+                    part_dt = key.second,
+                    value.sumOf { it.trip_total },
+                    value.sumOf { it.trip_01 },
+                    value.sumOf { it.trip_98 },
+                    value.sumOf { it.trip_rt }
+                )
+            }
+
+        val updateZeroGpsData = groupZeroGpsData.map { item ->
+            val zeroGpsRatio = if (item.trip_98 != 0) BigDecimal((item.trip_98.toDouble() / item.trip_total) * 100).setScale(2, BigDecimal.ROUND_HALF_UP).toDouble() else 0.0
+            item.copy(trip_rt = zeroGpsRatio)
         }
 
-        return updatedDataList
+        return updateZeroGpsData
     }
 
     fun getInterpolationTripInfo(): List<InterpolationTripInfo> {
-        val dataEntries = hiveTestRepository.getInterpolationTripInfoData()
+        val interpolationData = hiveTestRepository.getInterpolationTripInfoData()
 
-        val groupedAndSummedData = dataEntries
+        val groupInterpolationData = interpolationData
             .groupBy { Pair(it.dvc_gb, it.part_dt) }
             .map { (key, value) ->
                 InterpolationTripInfo(
@@ -55,12 +88,12 @@ class PlugProfileService(
                 )
             }
 
-        val updatedDataList = groupedAndSummedData.map { item ->
-            val triprt = if (item.trip_02 != 0) BigDecimal((item.trip_02.toDouble() / item.trip_total) * 100).setScale(2, BigDecimal.ROUND_HALF_UP).toDouble() else 0.0
-            item.copy(trip_rt = triprt)
+        val updateInterpolationData = groupInterpolationData.map { item ->
+            val interpolationRatio = if (item.trip_02 != 0) BigDecimal((item.trip_02.toDouble() / item.trip_total) * 100).setScale(2, BigDecimal.ROUND_HALF_UP).toDouble() else 0.0
+            item.copy(trip_rt = interpolationRatio)
         }
 
-        return updatedDataList
+        return updateInterpolationData
     }
 
 }

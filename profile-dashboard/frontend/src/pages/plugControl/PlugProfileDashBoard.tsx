@@ -14,6 +14,7 @@ import type {ColumnsType,} from 'antd/es/table';
 import type {CalendarProps} from 'antd';
 import type {Dayjs} from 'dayjs';
 import type {DatePickerProps, RangePickerProps} from 'antd/es/date-picker';
+import axios from "axios";
 
 
 interface State {
@@ -41,6 +42,7 @@ const PlugProfileDashBoard = (props: Props): React.ReactElement => {
     const [Trip02Data, settrip02Data] = useState([]);
     const [CarNameData, setCarNameData] = useState([]);
 
+    const [selectedOption, setSelectedOption] = useState(''); // 선택한 옵션을 상태로 관리
 
     const testData = `no,eid,source,target,tunnel,geometry,source_lt,source_ln,target_lt,target_ln,length,reversed,eid_idx
 7106,342885007,436745716,436745711,yes,"LINESTRING (126.6218273000000067 34.4071537000000021, 126.6226323000000065 34.4076621999999972)",34.4071537,126.6218273,34.4076622,126.6226323,93.011,False,342885007
@@ -144,6 +146,24 @@ const PlugProfileDashBoard = (props: Props): React.ReactElement => {
     useEffect(() => {
         asynccarnameFetch();
     }, []);
+
+    const handleSearchClick = () => {
+        // "조회" 버튼 클릭 시 백엔드로 선택한 옵션을 보냄
+        axios.post('http://localhost:8080/api/plug/click-test', { selectedOption })
+            .then((response) => {
+                // 백엔드 응답 처리
+                console.log('백엔드 응답:', response.data);
+            })
+            .catch((error) => {
+                // 오류 처리
+                console.error('에러 발생:', error);
+            });
+    };
+
+    const handleOptionChange = (value) => {
+        // 옵션 선택이 변경될 때마다 선택한 옵션 업데이트
+        setSelectedOption(value);
+    };
 
     const onPanelChange = (value: Dayjs, mode: CalendarProps<Dayjs>['mode']) => {
         console.log(value.format('YYYY-MM-DD'), mode);
@@ -427,7 +447,53 @@ const PlugProfileDashBoard = (props: Props): React.ReactElement => {
     const treemapconfig = {
         data: treemapdata,
         colorField: 'cr_prd_cmpcd_nm',
-        sizeField: "trip_rt",
+        value: 'trip_rt'
+    };
+
+    const testdata = {
+        name: 'root',
+        children: [
+            {
+                name: '分类 1',
+                trip_rt: 560,
+            },
+            {
+                name: '分类 2',
+                trip_rt: 500,
+            },
+            {
+                name: '分类 3',
+                trip_rt: 150,
+            },
+            {
+                name: '分类 4',
+                trip_rt: 140,
+            },
+            {
+                name: '分类 5',
+                trip_rt: 115,
+            },
+            {
+                name: '分类 6',
+                value: 95,
+            },
+            {
+                name: '分类 7',
+                trip_rt: 90,
+            },
+            {
+                name: '分类 8',
+                trip_rt: 75,
+            },
+            {
+                name: '分类 9',
+                trip_rt: 98,
+            },
+        ],
+    };
+    const testconfig = {
+        data: testdata,
+        colorField: 'name',
     };
 
     const onCalender = (value: Dayjs, mode: CalendarProps<Dayjs>['mode']) => {
@@ -473,6 +539,8 @@ const PlugProfileDashBoard = (props: Props): React.ReactElement => {
                                 optionFilterProp="children"
                                 // onChange={selectFunnelName}
                                 style={{width: '100%', float: 'left'}}
+                                onChange={handleOptionChange}
+                                value={selectedOption}
                                 options={[
                                     {value: 'LUX', label: 'LUX'},
                                     {value: 'TLK', label: 'TLK'},
@@ -564,7 +632,7 @@ const PlugProfileDashBoard = (props: Props): React.ReactElement => {
                     </Col>
 
                     <Col span={8}>
-                        <Button icon={<SearchOutlined/>}>
+                        <Button icon={<SearchOutlined/>} onClick={handleSearchClick}>
                             조회
                         </Button>
                     </Col>
@@ -652,7 +720,7 @@ const PlugProfileDashBoard = (props: Props): React.ReactElement => {
                     <Card style={{padding: '10px'}}>
                         <div>
                             차량 회사별 제로 비율
-                            <Treemap {...treemapconfig} />
+                            <Treemap {...testconfig} />
                         </div>
                     </Card>
                 </Col>
