@@ -10,6 +10,7 @@ axios.interceptors.response.use(
     },
     (error) => {
         if (error.response.status === 401 || error.response.status === 302) {
+            console.log("401, 302 error relocation!")
             window.location.href = baseUrl
         } else if (error.response.status === 400) {
             NotifyError(error.response.data);
@@ -21,8 +22,8 @@ axios.interceptors.response.use(
 
 //request용 인터셉터
 const tokenInterceptor = (config) => {
-    const accessToken = localStorage.getItem('profileAccessToken');
-    if (accessToken) {
+    const accessToken = window.localStorage.getItem('profileAccessToken');
+    if (accessToken !== 'null') {
         config.headers['Authorization'] = `Bearer ${accessToken}`;
         config.headers['csrf'] = 'token';
         // 기타 헤더 설정 가능

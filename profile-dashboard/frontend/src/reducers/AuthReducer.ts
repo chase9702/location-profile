@@ -2,7 +2,8 @@ import {
     SET_AUTH_INFO,
     SET_SSOID,
     SET_ACCESS_TOKEN,
-    SET_REFRESH_TOKEN
+    SET_REFRESH_TOKEN,
+    SET_RESULTCODE
 } from "@src/actions/AuthAction"
 
 export interface AuthState {
@@ -11,6 +12,7 @@ export interface AuthState {
     ssoId: string;
     accessToken: string;
     refreshToken: string;
+    resultCode: string;
 }
 
 export const initialState: AuthState = {
@@ -18,7 +20,8 @@ export const initialState: AuthState = {
     userRole: 'UNKNOWN',
     ssoId: 'UNKNOWN',
     accessToken: null,
-    refreshToken: null
+    refreshToken: null,
+    resultCode: null,
 }
 
 const authReducer = (state = initialState, action) => {
@@ -31,9 +34,17 @@ const authReducer = (state = initialState, action) => {
             }
         }
         case SET_SSOID: {
+            console.log("action::::::::")
+            console.log(action.ssoId)
             return {
                 ...state,
                 ssoId: action.ssoId,
+            }
+        }
+        case SET_RESULTCODE: {
+            return {
+                ...state,
+                resultCode: action.resultCode,
             }
         }
         case SET_ACCESS_TOKEN: {

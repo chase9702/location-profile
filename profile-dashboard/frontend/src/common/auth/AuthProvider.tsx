@@ -3,7 +3,7 @@ import {NotifyError} from "@src/components/common/Notification";
 import {useDispatch, useSelector} from "react-redux";
 import {StoreState} from "@src/reducers";
 import {authPost, authPut, get} from "@src/api";
-import {setAccessToken, setAuthInfo, setRefreshToken, setSSOId} from "@src/actions/AuthAction";
+import {setAccessToken, setAuthInfo, setRefreshToken, setSSOId, setResultCode} from "@src/actions/AuthAction";
 import JwtDecode from "jwt-decode";
 import {profileRedirectUrl} from "@src/common/auth/constantValue";
 
@@ -13,54 +13,45 @@ const AuthProvider = ({children}) => {
     const ssoId = useSelector((state: StoreState) => state.auth.ssoId)
     const accessToken = useSelector((state: StoreState) => state.auth.accessToken)
     const refreshToken = useSelector((state: StoreState) => state.auth.refreshToken)
+    const resultCode = useSelector((state: StoreState) => state.auth.resultCode)
 
-    const [resultCode, setResultCode] = useState(null)
 
     const ssoLogin = () => {
         console.log("try sso login:")
-        console.log("ssoId:" + ssoId)
 
         // SSO 로그인 시도
         authPost<any>("/auth/sso/login", {
             redirectUrl: profileRedirectUrl,
         }).then((jsonData) => {
+            console.log("auth/sso/login result:::::::::::::::::::::")
             console.log(jsonData)
-            console.log("sso login response:" + jsonData.redirectUrl)
             if (jsonData.redirectUrl) {
                 window.location.href = jsonData.redirectUrl;
             }
-            // if (jsonData.redirectUrl) {
-            //     window.location.href = jsonData.redirectUrl
-            // }
+            console.log("redirect is null")
+            console.log(jsonData.resultCode)
             dispatch(setSSOId(jsonData.ssoId ? jsonData.ssoId : ""))
-            jwtLogin(jsonData.ssoId , jsonData.resultCode)
-            setResultCode(jsonData.resultCode ? jsonData.resultCode : "");
-            console.log("sso login success");
-            // setSSOLoginInfo(jsonData)
+            dispatch(setResultCode(jsonData.resultCode ? jsonData.resultCode : ""))
 
+            if (jsonData.resultCode === "1") {
+                jwtLogin(jsonData);
+            }
         }).catch((e) => {
             NotifyError(e);
         });
 
     }
-    const setSSOLoginInfo = (response: any) => {
-        console.log(response)
-        dispatch(setSSOId(response.ssoId ? response.ssoId : ""))
-        setResultCode(response.resultCode ? response.resultCode : "");
-        console.log("sso login success");
-    }
 
-    const jwtLogin = (ssoId, resultCode) => {
-        debugger
+
+    const jwtLogin = (response) => {
         console.log("jwt login")
-        console.log("ssoid:"+ssoId)
-        console.log("resultCode:"+resultCode)
-        if (resultCode === "1") {
+        console.log("ssoid:" + ssoId)
+        console.log("resultCode:" + resultCode)
+        if (response.resultCode === "1") {
             authPost<any>("/auth/login", {
-                id: ssoId,
+                id: response.ssoId,
                 realm: "location-intelligence",
             }).then((jsonData) => {
-                debugger
                 console.log(jsonData);
                 console.log(`@@ ssoId: ${ssoId}`);
                 setJwtLoginInfo(jsonData);
@@ -72,59 +63,49 @@ const AuthProvider = ({children}) => {
     }
 
     const setJwtLoginInfo = (response: any) => {
+        console.log("set JwtLoginInfo")
         dispatch(setAccessToken(response.access_token))
         dispatch(setRefreshToken(response.refresh_token))
 
-        window.localStorage.setItem("profileAccessToken", accessToken);
-        window.localStorage.setItem("profileRefreshToken", refreshToken);
+        window.localStorage.setItem("profileAccessToken", response.access_token);
+        window.localStorage.setItem("profileRefreshToken", response.refresh_token);
 
-        const jwtObj: any = JwtDecode(accessToken);
+        const jwtObj: any = JwtDecode(response.access_token);
 
+        console.log("JwtLoginInfo")
+        console.log(jwtObj)
         dispatch(setAuthInfo({
             userName: jwtObj.pri_username ?? "UNKNOWN",
             userRole: jwtObj.pri_auth.split(",")
         }))
 
     }
-//TODO 이 로그아웃은 다른곳으로 빼야 할듯?
-    const logout = () => {
-        authPut<any>("/auth/sso/logout", null)
-            .then((jsonData) => {
-                if (jsonData.redirectUrl === undefined) {
-                    return;
-                } else {
-                    setLogout();
-                    window.location.href = jsonData.redirectUrl
-                }
-            }).catch((e) => {
-            NotifyError(e);
-        });
-    }
-
-    const setLogout = () => {
-        window.localStorage.removeItem("profileAccessToken");
-        window.localStorage.removeItem("profileRefreshToken");
-        dispatch(setAccessToken(undefined))
-        dispatch(setRefreshToken(undefined))
-    }
 
     const init = () => {
         console.log("************************init*****************")
         //sso login
         const at = window.localStorage.getItem("profileAccessToken");
-        if (!at) {
+        console.log(at)
+        console.log(accessToken)
+        if (at === null || accessToken === null) {
+            console.log("at is empty")
             ssoLogin();
-            // jwtLogin(ssoId, resultCode);
         }
-        //jwt login
+        console.log("end to login")
+        //jwt loginÏ
     };
 
     // 로컬 환경 테스트 용도
     const localInit = () => {
         console.log("************************localInit*****************")
-        jwtLogin(9999997, "1")
+        jwtLogin(9999997)
     };
 
+
+    useEffect(() => {
+        console.log("ssoId changed:", ssoId);
+        console.log("accessToken changed:", accessToken);
+    }, [ssoId, accessToken, resultCode]);
 
     useEffect(() => {
         if (process.env.NODE_ENV.startsWith("production")) {
