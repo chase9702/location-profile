@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.CrossOrigin;
  */
 @Tag(name = "Plug controller")
 @RestController
-@CrossOrigin(origins = ["http://localhost:3000"]) // 요청을 허용할 origin을 지정
 @RequestMapping("/api/plug")
 class PlugProfileController(
     private val plugProfileService: PlugProfileService
