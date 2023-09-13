@@ -1,6 +1,7 @@
 package com.carrotins.backend.service
 
-import com.carrotins.backend.repository.HiveTestRepository
+import com.carrotins.backend.repository.plug.PlugStatisticsRepository
+import com.carrotins.backend.service.plug.PlugProfileStatisticsService
 import io.kotest.core.spec.style.BehaviorSpec
 import io.mockk.clearAllMocks
 import io.mockk.mockk
@@ -18,8 +19,8 @@ class PlugProfileServiceTest:BehaviorSpec(){
             clearAllMocks()
         }
 
-        val hiveTestRepository = mockk<HiveTestRepository>()
-        val service = PlugProfileService(hiveTestRepository)
+        val plugStatisticsRepository = mockk<PlugStatisticsRepository>()
+        val service = PlugProfileStatisticsService(plugStatisticsRepository)
     }
 
 

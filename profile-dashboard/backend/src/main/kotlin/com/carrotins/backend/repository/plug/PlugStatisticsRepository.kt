@@ -1,4 +1,4 @@
-package com.carrotins.backend.repository
+package com.carrotins.backend.repository.plug
 
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Repository
@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository
  * Created by alvin on 2023/07/19.
  */
 @Repository
-class HiveTestRepository(
+class PlugStatisticsRepository(
     private val hiveJdbcTemplate: JdbcTemplate
 ) {
     fun getDeviceProductCountData(): List<DeviceProductCount> {
