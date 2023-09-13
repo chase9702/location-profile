@@ -1,6 +1,8 @@
 import React from "react";
 import LocationProfileDashBoard from "@src/pages/locationProfile/LocationProfileDashBoard";
 import PlugProfileDashBoard from "@src/pages/plugControl/PlugProfileDashBoard";
+import PlugProfileDashBoardStatistics from "@src/pages/plugControl/PlugProfileDashBoardStatistics";
+
 
 
 
@@ -23,7 +25,13 @@ const RouteMenu: MenuInfo[] = [
                 name: 'Plug Dashboard',
                 key: 'plug-dashboard',
                 to: '/plug/dashboard',
-                component: PlugProfileDashBoard,
+                component: PlugProfileDashBoard
+            },
+            {
+                name: 'Plug Dashboard 통계',
+                key: 'plug-dashboard-statistics',
+                to: '/plug/dashboard/Statistics',
+                component: PlugProfileDashBoardStatistics
             }
         ],
     },
