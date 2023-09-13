@@ -40,9 +40,6 @@ class PlugProfileController(
 
     @PostMapping("/click-test")
     fun search(@RequestBody searchData: String): String {
-        // searchData를 사용하여 데이터 조회 또는 처리 수행
-
-        // 예: 간단하게 searchData를 대문자로 변환하여 응답
         val result = searchData.toUpperCase()
 
         return "서버에서 받은 데이터: $result"

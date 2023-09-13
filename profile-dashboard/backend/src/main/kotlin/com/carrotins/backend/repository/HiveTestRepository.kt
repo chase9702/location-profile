@@ -20,6 +20,8 @@ class HiveTestRepository(
                limit 100
         """.trimIndent()
 
+        hiveJdbcTemplate.fetchSize = 100000
+
         return hiveJdbcTemplate.query(query){ rs, _ ->
             DeviceProductCount(
                 dvcgb = rs.getString("dvc_gb"),
@@ -40,6 +42,8 @@ class HiveTestRepository(
               --WHERE part_dt >= '20230821'
                 --AND part_dt <= '20230823'
         """.trimIndent()
+
+        hiveJdbcTemplate.fetchSize = 100000
 
         return hiveJdbcTemplate.query(query){ rs, _ ->
             CarProductNameInfo(
