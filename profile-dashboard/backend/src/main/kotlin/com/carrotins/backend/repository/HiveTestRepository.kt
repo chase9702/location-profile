@@ -16,9 +16,11 @@ class HiveTestRepository(
                  dvc_gb,
                  case when 01_trip_cnt is null then 0 else 01_trip_cnt end as 01_trip_cnt
                FROM `dw`.`li_plug_profile_100`
-               where part_dt = '20230818'
+              -- where part_dt = '20230818'
                limit 100
         """.trimIndent()
+
+        hiveJdbcTemplate.fetchSize = 100000
 
         return hiveJdbcTemplate.query(query){ rs, _ ->
             DeviceProductCount(
@@ -32,18 +34,24 @@ class HiveTestRepository(
         val query: String = """
              SELECT 
                  cr_prd_cmpcd_nm,
-                 round((sum(nvl(98_trip_cnt,0)) / (sum(nvl(01_trip_cnt,0)) + sum(nvl(98_trip_cnt,0)))) * 100, 2) as trip_rt
-               FROM `dw`.`li_plug_profile_100`
-              WHERE part_dt >= '20230821'
-                AND part_dt <= '20230823'
-              GROUP BY cr_prd_cmpcd_nm
+                 part_dt,
+                 nvl(01_trip_cnt,0) + nvl(98_trip_cnt,0) as total_trip,
+                 nvl(01_trip_cnt,0) as 01_trip_cnt,
+                 nvl(98_trip_cnt,0) as 98_trip_cnt
+                 FROM `dw`.`li_plug_profile_100`
+              --WHERE part_dt >= '20230821'
+                --AND part_dt <= '20230823'
         """.trimIndent()
+
+        hiveJdbcTemplate.fetchSize = 100000
 
         return hiveJdbcTemplate.query(query){ rs, _ ->
             CarProductNameInfo(
                 cr_prd_cmpcd_nm = rs.getString("cr_prd_cmpcd_nm"),
-                trip_rt = rs.getDouble("trip_rt"),
-                )
+                part_dt = rs.getString("part_dt"),
+                trip_total = rs.getInt("total_trip"),
+                trip_01 = rs.getInt("01_trip_cnt"),
+                trip_98 = rs.getInt("98_trip_cnt"),                )
         }
     }
 
@@ -52,15 +60,16 @@ class HiveTestRepository(
              SELECT 
                  dvc_gb,
                  part_dt,
-                 sum(nvl(01_trip_cnt,0)) + sum(nvl(98_trip_cnt,0)) as total_trip,
-                 sum(nvl(01_trip_cnt,0)) as 01_trip_cnt,
-                 sum(nvl(98_trip_cnt,0)) as 98_trip_cnt
+                 nvl(01_trip_cnt,0) + nvl(98_trip_cnt,0) as total_trip,
+                 nvl(01_trip_cnt,0) as 01_trip_cnt,
+                 nvl(98_trip_cnt,0) as 98_trip_cnt
                FROM `dw`.`li_plug_profile_100`
-              WHERE part_dt >= '20230821'
-                AND part_dt <= '20230823'
-              GROUP BY dvc_gb
-                     , part_dt
+              --WHERE part_dt >= '20230821'
+                --AND part_dt <= '20230823'
+
         """.trimIndent()
+
+        hiveJdbcTemplate.fetchSize = 100000
 
         return hiveJdbcTemplate.query(query){ rs, _ ->
             ZeroGpsTripInfo(
@@ -82,8 +91,8 @@ class HiveTestRepository(
                  nvl(01_trip_cnt,0) as 01_trip_cnt,
                  nvl(02_trip_cnt,0) as 02_trip_cnt
                FROM `dw`.`li_plug_profile_100`
-              WHERE part_dt >= '20230821'
-                AND part_dt <= '20230823'
+              --WHERE part_dt >= '20230821'
+                --AND part_dt <= '20230823'
         """.trimIndent()
 
         hiveJdbcTemplate.fetchSize = 100000

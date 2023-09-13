@@ -8,12 +8,12 @@ import {store} from '@src/index';
 import {addDataToMap, updateMap, wrapTo} from "kepler.gl/actions";
 import {processCsvData} from "kepler.gl/processors";
 import CustomKeplerMap from "@src/components/common/CustomKeplerMap";
-import {get} from "@src/api";
+import {get, post} from "@src/api";
 import {Line, Column, DualAxes, Treemap} from "@ant-design/plots";
 import type {ColumnsType,} from 'antd/es/table';
 import type {CalendarProps} from 'antd';
 import type {Dayjs} from 'dayjs';
-import type {DatePickerProps, RangePickerProps} from 'antd/es/date-picker';
+import type {RangePickerProps} from 'antd/es/date-picker';
 
 
 interface State {
@@ -41,6 +41,10 @@ const PlugProfileDashBoard = (props: Props): React.ReactElement => {
     const [Trip02Data, settrip02Data] = useState([]);
     const [CarNameData, setCarNameData] = useState([]);
 
+    const [selectedStartDate, setSelectedStartDate] = useState('');
+    const [selectedEndDate, setSelectedEndDate] = useState('');
+    const [selectedCompany, setSelectedCompany] = useState('');
+    const [selectedModel, setSelectedModel] = useState('');
 
     const testData = `no,eid,source,target,tunnel,geometry,source_lt,source_ln,target_lt,target_ln,length,reversed,eid_idx
 7106,342885007,436745716,436745711,yes,"LINESTRING (126.6218273000000067 34.4071537000000021, 126.6226323000000065 34.4076621999999972)",34.4071537,126.6218273,34.4076622,126.6226323,93.011,False,342885007
@@ -144,6 +148,40 @@ const PlugProfileDashBoard = (props: Props): React.ReactElement => {
     useEffect(() => {
         asynccarnameFetch();
     }, []);
+
+    useEffect(() => {
+        setSelectedCompany('제조사 선택');
+    }, []);
+
+    useEffect(() => {
+        setSelectedModel('모델명 선택');
+    }, []);
+
+    const handleSearchClick = () => {
+        const requestData = {
+            selectedStartDate,
+            selectedEndDate,
+            selectedCompany,
+            selectedModel,
+        };
+
+        // "조회" 버튼 클릭 시 백엔드로 선택한 옵션을 보냄
+        post<[]>("/api/plug/click-test", {requestData})
+            .then((response) => {
+                console.log('백엔드 응답:', response);
+            })
+            .catch((error) => {
+                console.error('에러 발생:', error);
+            });
+    };
+
+    const handleCompanyChange = (value) => {
+        setSelectedCompany(value);
+    };
+
+    const handleModelChange = (value) => {
+        setSelectedModel(value);
+    };
 
     const onPanelChange = (value: Dayjs, mode: CalendarProps<Dayjs>['mode']) => {
         console.log(value.format('YYYY-MM-DD'), mode);
@@ -427,24 +465,70 @@ const PlugProfileDashBoard = (props: Props): React.ReactElement => {
     const treemapconfig = {
         data: treemapdata,
         colorField: 'cr_prd_cmpcd_nm',
-        sizeField: "trip_rt",
+        value: 'trip_rt'
     };
 
-    const onCalender = (value: Dayjs, mode: CalendarProps<Dayjs>['mode']) => {
-        console.log(value.format('YYYY-MM-DD'), mode);
+    const testdata = {
+        name: 'root',
+        children: [
+            {
+                name: '分类 1',
+                trip_rt: 560,
+            },
+            {
+                name: '分类 2',
+                trip_rt: 500,
+            },
+            {
+                name: '分类 3',
+                trip_rt: 150,
+            },
+            {
+                name: '分类 4',
+                trip_rt: 140,
+            },
+            {
+                name: '分类 5',
+                trip_rt: 115,
+            },
+            {
+                name: '分类 6',
+                value: 95,
+            },
+            {
+                name: '分类 7',
+                trip_rt: 90,
+            },
+            {
+                name: '分类 8',
+                trip_rt: 75,
+            },
+            {
+                name: '分类 9',
+                trip_rt: 98,
+            },
+        ],
+    };
+    const testconfig = {
+        data: testdata,
+        colorField: 'name',
     };
 
     const {RangePicker} = DatePicker;
 
     const onChange = (
-        value: DatePickerProps['value'] | RangePickerProps['value'],
+        value: RangePickerProps['value'],
         dateString: [string, string] | string,
     ) => {
+        const startDate = dateString[0]
+        const endDate = dateString[1]
+        setSelectedStartDate(startDate)
+        setSelectedEndDate(endDate)
         console.log('Selected Time: ', value);
         console.log('Formatted Selected Time: ', dateString);
     };
 
-    const onOk = (value: DatePickerProps['value'] | RangePickerProps['value']) => {
+    const onOk = (value: RangePickerProps['value']) => {
         console.log('onOk: ', value);
     };
 
@@ -456,7 +540,6 @@ const PlugProfileDashBoard = (props: Props): React.ReactElement => {
 
                     <Col span={8}>
                         <Space direction="vertical" size={12}>
-                            <DatePicker showTime onChange={onChange} onOk={onOk}/>
                             <RangePicker
                                 format="YYYY-MM-DD"
                                 onChange={onChange}
@@ -471,7 +554,8 @@ const PlugProfileDashBoard = (props: Props): React.ReactElement => {
                                 showSearch
                                 placeholder="제조사 선택"
                                 optionFilterProp="children"
-                                // onChange={selectFunnelName}
+                                onChange={handleCompanyChange}
+                                value={selectedCompany}
                                 style={{width: '100%', float: 'left'}}
                                 options={[
                                     {value: 'LUX', label: 'LUX'},
@@ -486,8 +570,10 @@ const PlugProfileDashBoard = (props: Props): React.ReactElement => {
                             <Select
                                 showSearch
                                 placeholder="모델명 선택"
+                                defaultValue=""
                                 optionFilterProp="children"
-                                // onChange={selectFunnelName}
+                                onChange={handleModelChange}
+                                value={selectedModel}
                                 style={{width: '100%', float: 'left'}}
                                 options={[
                                     {value: 'LUX1', label: 'LUX1'},
@@ -539,7 +625,6 @@ const PlugProfileDashBoard = (props: Props): React.ReactElement => {
                                 showSearch
                                 placeholder="디바이스 선택"
                                 optionFilterProp="children"
-                                // onChange={selectFunnelName}
                                 style={{width: '100%', float: 'left'}}
                                 options={[
                                     {value: 'LUX1_12345', label: 'LUX1_12345'},
@@ -564,7 +649,7 @@ const PlugProfileDashBoard = (props: Props): React.ReactElement => {
                     </Col>
 
                     <Col span={8}>
-                        <Button icon={<SearchOutlined/>}>
+                        <Button icon={<SearchOutlined/>} onClick={handleSearchClick}>
                             조회
                         </Button>
                     </Col>
@@ -652,7 +737,7 @@ const PlugProfileDashBoard = (props: Props): React.ReactElement => {
                     <Card style={{padding: '10px'}}>
                         <div>
                             차량 회사별 제로 비율
-                            <Treemap {...treemapconfig} />
+                            <Treemap {...testconfig} />
                         </div>
                     </Card>
                 </Col>

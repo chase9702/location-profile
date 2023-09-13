@@ -4,11 +4,11 @@ import com.carrotins.backend.repository.DeviceProductCount
 import com.carrotins.backend.repository.InterpolationTripInfo
 import com.carrotins.backend.service.PlugProfileService
 import io.swagger.v3.oas.annotations.tags.Tag
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
 import com.carrotins.backend.repository.ZeroGpsTripInfo
 import com.carrotins.backend.repository.CarProductNameInfo
+import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.CrossOrigin;
+
 
 
 /**
@@ -35,5 +35,12 @@ class PlugProfileController(
     @GetMapping("/interpolation-trip-info")
     fun gettrip02RTData():List<InterpolationTripInfo>{
         return plugProfileService.getInterpolationTripInfo()
+    }
+
+    @PostMapping("/click-test")
+    fun search(@RequestBody searchData: String): String {
+        val result = searchData.toUpperCase()
+
+        return "서버에서 받은 데이터: $result"
     }
 }
