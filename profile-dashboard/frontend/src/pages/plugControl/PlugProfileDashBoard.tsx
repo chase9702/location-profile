@@ -13,8 +13,7 @@ import {Line, Column, DualAxes, Treemap} from "@ant-design/plots";
 import type {ColumnsType,} from 'antd/es/table';
 import type {CalendarProps} from 'antd';
 import type {Dayjs} from 'dayjs';
-import type {DatePickerProps, RangePickerProps} from 'antd/es/date-picker';
-import axios from "axios";
+import type {RangePickerProps} from 'antd/es/date-picker';
 
 
 interface State {

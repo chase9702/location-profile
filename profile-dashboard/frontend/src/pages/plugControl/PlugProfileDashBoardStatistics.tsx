@@ -6,6 +6,8 @@ import {get, post} from "@src/api";
 import {Column, DualAxes, Treemap} from "@ant-design/plots";
 import type {ColumnsType,} from 'antd/es/table';
 import type {RangePickerProps} from 'antd/es/date-picker';
+import TestPlugTable from "@src/components/plugControl/TestPlugTable";
+
 
 
 interface State {
@@ -110,36 +112,6 @@ const PlugProfileDashBoard = (props: Props): React.ReactElement => {
                 console.log(jsonData)
                 setCarNameData(jsonData)
             })
-    };
-
-
-    const sampleTripData2 = {
-        fields: [
-            {name: 'datetime', format: 'YYYY-M-D H:m:s', type: 'timestamp'},
-            {name: 'trip_longitude', format: '', type: 'real'},
-            {name: 'trip_latitude', format: '', type: 'real'}
-        ],
-        rows: [
-            ['2015-01-15 19:05:39 +00:00', 126.6218273, 34.4071537],
-            ['2015-01-15 19:05:39 +00:00', 126.6226323, 34.4076622],
-            ['2015-01-15 19:05:40 +00:00', 126.6226323, 34.4156622]
-        ]
-    };
-
-
-    const hiveconfig = {
-        data: hiveData,
-        xField: 'dvcgb',
-        yField: 'cnt01',
-        xAxis: {
-            label: {
-                autoRotate: false,
-            },
-        },
-        slider: {
-            start: 0.1,
-            end: 0.2,
-        },
     };
 
     const trip02config = {
@@ -523,11 +495,9 @@ const PlugProfileDashBoard = (props: Props): React.ReactElement => {
             </Card>
 
             <Card style={{padding: '10px'}}>
-                <div>
-                    제조사별 보간, Zero gps 상세 테이블
-                    <Table columns={columns} dataSource={tabledata}/>
-                </div>
+                <TestPlugTable />
             </Card>
+
 
             <Row gutter={0}>
                 <Col span={12}>
