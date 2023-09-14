@@ -14,8 +14,6 @@ export const setAuthInfo = (authInfo: AuthInfo) => {
 };
 
 export const setSSOId = (ssoId: String) => {
-    console.log("dispatch:::::::::::")
-    console.log(ssoId)
     return {
         type: SET_SSOID,
         ssoId

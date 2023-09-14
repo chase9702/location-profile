@@ -34,8 +34,6 @@ const authReducer = (state = initialState, action) => {
             }
         }
         case SET_SSOID: {
-            console.log("action::::::::")
-            console.log(action.ssoId)
             return {
                 ...state,
                 ssoId: action.ssoId,
