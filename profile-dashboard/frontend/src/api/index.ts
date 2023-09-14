@@ -39,7 +39,7 @@ const api = axios.create({
 // 로그인용 api 인스턴스 생성
 const authApi = axios.create({
     baseURL: authUrl,
-    withCredentials: true, // 필요한 경우에만 설정
+    // withCredentials: true, // 필요한 경우에만 설정
 });
 
 // request 인터셉터 등록
