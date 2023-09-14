@@ -6,6 +6,7 @@ import {authPost, authPut, get} from "@src/api";
 import {setAccessToken, setAuthInfo, setRefreshToken, setSSOId, setResultCode} from "@src/actions/AuthAction";
 import JwtDecode from "jwt-decode";
 import {profileRedirectUrl} from "@src/common/auth/constantValue";
+import axios from "axios";
 
 const AuthProvider = ({children}) => {
 
@@ -34,18 +35,41 @@ const AuthProvider = ({children}) => {
 
     }
 
-
     const jwtLogin = (response) => {
-        if (response.resultCode === "1") {
-            authPost<any>("/auth/login", {
-                id: response.ssoId,
-                realm: "location-intelligence",
-            }).then((jsonData) => {
-                setJwtLoginInfo(jsonData);
+        if (process.env.NODE_ENV.startsWith("production")) {
+            if (response.resultCode === "1") {
+                authPost<any>("/auth/login", {
+                    id: response.ssoId,
+                    realm: "location_intelligence",
+                }).then((jsonData) => {
+                    console.log(jsonData)
+                    setJwtLoginInfo(jsonData);
 
-            }).catch((e) => {
-                NotifyError(e);
-            })
+                }).catch((e) => {
+                    NotifyError(e);
+                })
+            }
+        } else {
+            const url = 'http://predev-imbauth.carrotins.com:9005/api/bauth/v1/backend/auth/login';
+            const data = {
+                id: '8888888',
+                realm: 'location_intelligence'
+            };
+            const headers = {
+                'Accept': '*/*',
+                'Content-Type': 'application/json'
+            };
+
+            axios.post(url, data, {headers})
+                .then(jsonData => {
+                    // 요청 성공 시 처리
+                    console.log('응답 데이터:', jsonData.data);
+                    setJwtLoginInfo(jsonData.data);
+                })
+                .catch(error => {
+                    // 요청 실패 시 처리
+                    console.error('에러:', error);
+                });
         }
     }
 
@@ -59,11 +83,11 @@ const AuthProvider = ({children}) => {
 
         const jwtObj: any = JwtDecode(response.access_token);
 
+        console.log(jwtObj)
         dispatch(setAuthInfo({
             userName: jwtObj.pri_username ?? "UNKNOWN",
             userRole: jwtObj.pri_auth.split(",")
         }))
-
     }
 
     const init = () => {
@@ -77,7 +101,7 @@ const AuthProvider = ({children}) => {
     // 로컬 환경 테스트 용도
     const localInit = () => {
         console.log("************************localInit*****************")
-        jwtLogin(9999997)
+        jwtLogin({ssoId: "8888888", resultCode: "1"})
     };
 
 

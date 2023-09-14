@@ -7,6 +7,7 @@ import com.carrotins.backend.security.RestAuthenticationEntryPoint
 import com.carrotins.backend.utils.logger
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Profile
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer
@@ -27,7 +28,7 @@ import java.util.stream.Collectors
 /**
  * Created by alvin on 2023/08/22.
  */
-@EnableWebSecurity
+@EnableWebSecurity(debug=true)
 class WebSecurityConfig(
     private val restAuthenticationEntryPoint: RestAuthenticationEntryPoint,
     private val restAccessDeniedHandler: RestAccessDeniedHandler,
