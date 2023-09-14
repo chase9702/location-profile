@@ -1,7 +1,7 @@
 package com.carrotins.backend.api.plug
 
 import com.carrotins.backend.repository.plug.DeviceProductCount
-import com.carrotins.backend.repository.plug.InterpolationTripInfo
+import com.carrotins.backend.repository.plug.InterpolationTripDailyInfo
 import com.carrotins.backend.service.plug.PlugProfileStatisticsService
 import io.swagger.v3.oas.annotations.tags.Tag
 import com.carrotins.backend.repository.plug.ZeroGpsTripInfo
@@ -30,9 +30,9 @@ class PlugProfileStatisticsController(
     fun getZgpsRTData():List<ZeroGpsTripInfo>{
         return plugProfileStatisticsService.getZeroGpsTripInfo()
     }
-    @GetMapping("/interpolation-trip-info")
-    fun gettrip02RTData():List<InterpolationTripInfo>{
-        return plugProfileStatisticsService.getInterpolationTripInfo()
+    @GetMapping("/interpolation-trip-daily-info")
+    fun getInterpolationTripDailyInfoData():List<InterpolationTripDailyInfo>{
+        return plugProfileStatisticsService.getInterpolationTripDailyInfo()
     }
 
     @PostMapping("/click-test")

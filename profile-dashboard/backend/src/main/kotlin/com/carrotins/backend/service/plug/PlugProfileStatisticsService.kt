@@ -2,7 +2,7 @@ package com.carrotins.backend.service.plug
 
 import com.carrotins.backend.repository.plug.DeviceProductCount
 import com.carrotins.backend.repository.plug.ZeroGpsTripInfo
-import com.carrotins.backend.repository.plug.InterpolationTripInfo
+import com.carrotins.backend.repository.plug.InterpolationTripDailyInfo
 import com.carrotins.backend.repository.plug.CarProductNameInfo
 import com.carrotins.backend.repository.plug.PlugStatisticsRepository
 import org.springframework.stereotype.Service
@@ -72,28 +72,8 @@ class PlugProfileStatisticsService(
         return updateZeroGpsData
     }
 
-    fun getInterpolationTripInfo(): List<InterpolationTripInfo> {
-        val interpolationData = plugStatisticsRepository.getInterpolationTripInfoData()
-
-        val groupInterpolationData = interpolationData
-            .groupBy { Pair(it.dvc_gb, it.part_dt) }
-            .map { (key, value) ->
-                InterpolationTripInfo(
-                    dvc_gb = key.first,
-                    part_dt = key.second,
-                    value.sumOf { it.trip_total },
-                    value.sumOf { it.trip_01 },
-                    value.sumOf { it.trip_02 },
-                    value.sumOf { it.trip_rt }
-                )
-            }
-
-        val updateInterpolationData = groupInterpolationData.map { item ->
-            val interpolationRatio = if (item.trip_02 != 0) BigDecimal((item.trip_02.toDouble() / item.trip_total) * 100).setScale(2, BigDecimal.ROUND_HALF_UP).toDouble() else 0.0
-            item.copy(trip_rt = interpolationRatio)
-        }
-
-        return updateInterpolationData
+    fun getInterpolationTripDailyInfo(): List<InterpolationTripDailyInfo> {
+        return plugStatisticsRepository.getInterpolationTripDailyInfoData()
     }
 
 }

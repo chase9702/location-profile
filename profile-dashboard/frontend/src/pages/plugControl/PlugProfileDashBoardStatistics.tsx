@@ -7,6 +7,7 @@ import {Column, DualAxes, Treemap} from "@ant-design/plots";
 import type {ColumnsType,} from 'antd/es/table';
 import type {RangePickerProps} from 'antd/es/date-picker';
 import TestPlugTable from "@src/components/plugControl/TestPlugTable";
+import PlugInterpolationDailyTable from "@src/components/plugControl/PlugInterpolationDailyTable";
 
 
 
@@ -484,7 +485,7 @@ const PlugProfileDashBoard = (props: Props): React.ReactElement => {
             </Card>
 
             <Card style={{padding: '10px'}}>
-                <TestPlugTable />
+                <PlugInterpolationDailyTable />
             </Card>
 
 
