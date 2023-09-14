@@ -39,24 +39,13 @@ const PlugProfileDashBoard = (props: Props): React.ReactElement => {
 
 
     useEffect(() => {
-        asyncZeroGPSFetch();
-    }, []);
-
-    useEffect(() => {
         asynctrip02Fetch();
-    }, []);
-
-    useEffect(() => {
+        asyncZeroGPSFetch();
         asynccarnameFetch();
-    }, []);
-
-    useEffect(() => {
         setSelectedCompany('제조사 선택');
-    }, []);
-
-    useEffect(() => {
         setSelectedModel('모델명 선택');
     }, []);
+
 
     const handleSearchClick = () => {
         const requestData = {
@@ -67,7 +56,7 @@ const PlugProfileDashBoard = (props: Props): React.ReactElement => {
         };
 
         // "조회" 버튼 클릭 시 백엔드로 선택한 옵션을 보냄
-        post<[]>("/api/plug/click-test", {requestData})
+        post<[]>("/api/plug/statistic/click-test", {requestData})
             .then((response) => {
                 console.log('백엔드 응답:', response);
             })
@@ -86,28 +75,28 @@ const PlugProfileDashBoard = (props: Props): React.ReactElement => {
 
 
     const asyncHiveFetch = () => {
-        get<[]>("/api/plug/device-info")
+        get<[]>("/api/plug/statistic/device-info")
             .then((jsonData) => {
                 sethiveData(jsonData)
             })
     };
 
     const asyncZeroGPSFetch = () => {
-        get<[]>("/api/plug/zero-gps-trip-info")
+        get<[]>("/api/plug/statistic/zero-gps-trip-info")
             .then((jsonData) => {
                 setZeroGPSData(jsonData)
             })
     };
 
     const asynctrip02Fetch = () => {
-        get<[]>("/api/plug/interpolation-trip-info")
+        get<[]>("/api/plug/statistic/interpolation-trip-info")
             .then((jsonData) => {
                 settrip02Data(jsonData)
             })
     };
 
     const asynccarnameFetch = () => {
-        get<[]>("/api/plug/car-product-name-info")
+        get<[]>("/api/plug/statistic/car-product-name-info")
             .then((jsonData) => {
                 console.log(jsonData)
                 setCarNameData(jsonData)

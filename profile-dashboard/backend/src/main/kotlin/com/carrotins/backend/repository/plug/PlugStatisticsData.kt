@@ -1,4 +1,4 @@
-package com.carrotins.backend.repository
+package com.carrotins.backend.repository.plug
 
 /**
  * Created by alvin on 2023/07/19.

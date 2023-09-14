@@ -1,10 +1,10 @@
-package com.carrotins.backend.service
+package com.carrotins.backend.service.plug
 
-import com.carrotins.backend.repository.DeviceProductCount
-import com.carrotins.backend.repository.ZeroGpsTripInfo
-import com.carrotins.backend.repository.InterpolationTripInfo
-import com.carrotins.backend.repository.CarProductNameInfo
-import com.carrotins.backend.repository.HiveTestRepository
+import com.carrotins.backend.repository.plug.DeviceProductCount
+import com.carrotins.backend.repository.plug.ZeroGpsTripInfo
+import com.carrotins.backend.repository.plug.InterpolationTripInfo
+import com.carrotins.backend.repository.plug.CarProductNameInfo
+import com.carrotins.backend.repository.plug.PlugStatisticsRepository
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
 
@@ -13,11 +13,11 @@ import java.math.BigDecimal
  * Created by alvin on 2023/07/19.
  */
 @Service
-class PlugProfileService(
-    private val hiveTestRepository: HiveTestRepository
+class PlugProfileStatisticsService(
+    private val plugStatisticsRepository: PlugStatisticsRepository
 ) {
     fun getDeviceProductCount(): List<DeviceProductCount> {
-        val dataEntries = hiveTestRepository.getDeviceProductCountData()
+        val dataEntries = plugStatisticsRepository.getDeviceProductCountData()
 
         return dataEntries
             .groupBy { it.dvcgb }
@@ -25,7 +25,7 @@ class PlugProfileService(
     }
 
     fun getCarProductNameInfo(): List<CarProductNameInfo> {
-        val carProductNameData = hiveTestRepository.getCarProductNameInfoData()
+        val carProductNameData = plugStatisticsRepository.getCarProductNameInfoData()
 
         val groupCarProductNameData = carProductNameData
             .groupBy { Pair(it.cr_prd_cmpcd_nm, it.part_dt) }
@@ -49,7 +49,7 @@ class PlugProfileService(
     }
 
     fun getZeroGpsTripInfo(): List<ZeroGpsTripInfo> {
-        val zeroGpsData = hiveTestRepository.getZeroGpsTripInfoData()
+        val zeroGpsData = plugStatisticsRepository.getZeroGpsTripInfoData()
 
         val groupZeroGpsData = zeroGpsData
             .groupBy { Pair(it.dvc_gb, it.part_dt) }
@@ -73,7 +73,7 @@ class PlugProfileService(
     }
 
     fun getInterpolationTripInfo(): List<InterpolationTripInfo> {
-        val interpolationData = hiveTestRepository.getInterpolationTripInfoData()
+        val interpolationData = plugStatisticsRepository.getInterpolationTripInfoData()
 
         val groupInterpolationData = interpolationData
             .groupBy { Pair(it.dvc_gb, it.part_dt) }
