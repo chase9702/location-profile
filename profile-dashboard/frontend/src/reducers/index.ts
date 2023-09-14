@@ -1,10 +1,12 @@
 import {combineReducers} from 'redux';
 import {keplerGlReducer} from 'kepler.gl/reducers';
 import menuSelectReducer, {MenuSelectState} from "@src/reducers/MenuSelectReducer"
+import authReducer, {AuthState} from "@src/reducers/AuthReducer";
 
 
 export interface StoreState {
     menuSelect: MenuSelectState;
+    auth: AuthState
 
 }
 
@@ -39,10 +41,10 @@ const customizedKeplerGlReducer = keplerGlReducer.initialState({
 });
 
 
-
 const rootReducer = combineReducers({
     keplerGl: customizedKeplerGlReducer,
     menuSelect: menuSelectReducer,
+    auth: authReducer
 });
 
 export default rootReducer;

@@ -27,7 +27,6 @@ const CustomKeplerMap = (props: Props): React.ReactElement => {
                 id={props.id}
                 width={"100%"}
                 height={height}
-                mapboxApiAccessToken={process.env.REACT_APP_MAPBOX_TOKEN}
                 // mapStyles={mapStyles2}
                 // mapStylesReplaceDefault={true}
             />

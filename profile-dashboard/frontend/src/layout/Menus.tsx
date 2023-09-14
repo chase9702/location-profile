@@ -1,11 +1,16 @@
-import React, {Component} from 'react';
+import React, {Component, useEffect} from 'react';
 import {Link, RouteComponentProps, withRouter} from 'react-router-dom';
-import {Menu} from 'antd';
-import {HomeOutlined} from '@ant-design/icons';
+import {Button, Menu} from 'antd';
+import {HomeOutlined, LogoutOutlined} from '@ant-design/icons';
 import RouteMenu from '@src/routes/RouteMenu';
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 import {setSelectMenu} from "@src/actions/MenuSelectAction";
-
+import './menus.less';
+import {authGet, authPut} from "@src/api";
+import {NotifyError} from "@src/components/common/Notification";
+import {setAccessToken, setAuthInfo, setRefreshToken, setSSOId} from "@src/actions/AuthAction";
+import {StoreState} from "@src/reducers";
+import axios from "axios";
 
 const {SubMenu} = Menu;
 
@@ -13,19 +18,59 @@ const {SubMenu} = Menu;
 const Menus = (): React.ReactElement => {
 
     const dispatch = useDispatch();
+    const userRole = useSelector((state: StoreState) => state.auth.userRole)
+    const userName = useSelector((state: StoreState) => state.auth.userName)
 
+    const logout = () => {
 
+        window.localStorage.removeItem("profileAccessToken");
+        window.localStorage.removeItem("profileRefreshToken");
+
+        dispatch(setAuthInfo({
+            userName: "UNKNOWN",
+            userRole: "UNKNOWN",
+        }))
+
+        dispatch(setSSOId("UNKNOWN"))
+
+        dispatch(setAccessToken(undefined))
+        dispatch(setRefreshToken(undefined))
+
+        authPut<any>("/auth/sso/logout", null)
+            .then((jsonData) => {
+                if (jsonData.redirectUrl === undefined) {
+                    console.log("log out redirect undefined")
+                    return;
+            2    } else {
+
+                    authGet(jsonData.redirectUrl)
+                        .then(() => {
+                        })
+                        .finally(() => {
+                            window.location.href = "/"
+                        })
+
+                }
+            }).catch((e) => {
+            NotifyError(e);
+        });
+    }
+
+    useEffect(() => {
+        console.log("userRole changed:", userRole);
+        console.log("userName changed:", userName);
+    }, [userRole, userName]);
     return (
         <div>
             <Menu
                 theme="dark"
                 mode="horizontal"
-                // className="cube-header-menus"
-                // selectedKeys={[this.state.selectedMenu]}
-                // onClick={this.handleMenuChanged}
+                className="cube-header-menus"
             >
                 <Menu.Item key="home">
-                    <HomeOutlined/>
+                    <HomeOutlined
+                        className="cube-main-icon"
+                    />
                     <Link to="/"/>
                 </Menu.Item>
                 {RouteMenu.map((menu) => {
@@ -49,6 +94,9 @@ const Menus = (): React.ReactElement => {
                     );
                 })}
             </Menu>
+            {/*<Button type="link" icon={<LogoutOutlined/>} className="logout-button" onClick={logout}>*/}
+            {/*    Logout*/}
+            {/*</Button>*/}
         </div>
     );
 
