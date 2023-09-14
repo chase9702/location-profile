@@ -1,13 +1,13 @@
 import React, {useEffect, useState} from "react";
-import {Button, Card, Col, Row, Select, Table, Space, Tag, Calendar, DatePicker} from "antd";
+import {Button, Card, Col, Row, Select, Table, Space, Tag, Calendar, DatePicker, Tabs} from "antd";
 import {DeleteOutlined, SaveOutlined, SearchOutlined} from '@ant-design/icons';
 import PageTitle from "@src/components/common/PageTitle";
 import {get, post} from "@src/api";
 import {Column, DualAxes, Treemap} from "@ant-design/plots";
 import type {ColumnsType,} from 'antd/es/table';
 import type {RangePickerProps} from 'antd/es/date-picker';
-import TestPlugTable from "@src/components/plugControl/TestPlugTable";
 import PlugInterpolationDailyTable from "@src/components/plugControl/PlugInterpolationDailyTable";
+import TabPane from "antd/es/tabs/TabPane";
 
 
 
@@ -338,137 +338,6 @@ const PlugProfileDashBoard = (props: Props): React.ReactElement => {
     };
 
 
-    const renderSaveComponent = () => {
-        return (
-            <div>
-                <Row gutter={0}>
-
-                    <Col span={8}>
-                        <Space direction="vertical" size={12}>
-                            <RangePicker
-                                format="YYYY-MM-DD"
-                                onChange={onChange}
-                                onOk={onOk}
-                            />
-                        </Space>
-                    </Col>
-
-                    <Col span={8}>
-                        <Space>
-                            <Select
-                                showSearch
-                                placeholder="제조사 선택"
-                                optionFilterProp="children"
-                                onChange={handleCompanyChange}
-                                value={selectedCompany}
-                                style={{width: '100%', float: 'left'}}
-                                options={[
-                                    {value: 'LUX', label: 'LUX'},
-                                    {value: 'TLK', label: 'TLK'},
-                                    {value: 'AMT', label: 'AMT'},
-                                    {value: 'UNK', label: 'UNK'},
-                                    {value: 'disabled', label: 'Disabled', disabled: true},
-                                ]}
-                            >
-                            </Select>
-
-                            <Select
-                                showSearch
-                                placeholder="모델명 선택"
-                                defaultValue=""
-                                optionFilterProp="children"
-                                onChange={handleModelChange}
-                                value={selectedModel}
-                                style={{width: '100%', float: 'left'}}
-                                options={[
-                                    {value: 'LUX1', label: 'LUX1'},
-                                    {value: 'LUX2', label: 'LUX2'},
-                                    {value: 'UNK1', label: 'UNK1'},
-                                    {value: 'AMT1', label: 'AMT1'},
-                                    {value: 'disabled', label: 'Disabled', disabled: true},
-                                ]}
-                            >
-                            </Select>
-
-                            <Select
-                                showSearch
-                                placeholder="차종 선택"
-                                optionFilterProp="children"
-                                // onChange={selectFunnelName}
-                                style={{width: '100%', float: 'left'}}
-                                options={[
-                                    {value: '현대', label: '현대'},
-                                    {value: '기아', label: '기아'},
-                                    {value: '테슬라', label: '테슬라'},
-                                    {value: '등등', label: '등등'},
-                                    {value: 'disabled', label: 'Disabled', disabled: true},
-                                ]}
-                            >
-                            </Select>
-                        </Space>
-                    </Col>
-
-                    <Col span={8}>
-                        <Space>
-                            <Select
-                                showSearch
-                                placeholder="증권번호 선택"
-                                optionFilterProp="children"
-                                // onChange={selectFunnelName}
-                                style={{width: '100%', float: 'left'}}
-                                options={[
-                                    {value: '11111', label: '11111'},
-                                    {value: '22222', label: '22222'},
-                                    {value: '33333', label: '33333'},
-                                    {value: '44444', label: '44444'},
-                                    {value: 'disabled', label: 'Disabled', disabled: true},
-                                ]}
-                            >
-                            </Select>
-
-                            <Select
-                                showSearch
-                                placeholder="디바이스 선택"
-                                optionFilterProp="children"
-                                style={{width: '100%', float: 'left'}}
-                                options={[
-                                    {value: 'LUX1_12345', label: 'LUX1_12345'},
-                                    {value: 'LUX2_12345', label: 'LUX2_12345'},
-                                    {value: 'UNK1_12345', label: 'UNK1_12345'},
-                                    {value: 'AMT1_12345', label: 'AMT1_12345'},
-                                    {value: 'disabled', label: 'Disabled', disabled: true},
-                                ]}
-                            >
-
-                            </Select>
-                        </Space>
-                    </Col>
-
-                </Row>
-
-                <Row gutter={0} style={{float: 'right'}}>
-                    <Col span={8}>
-                        <Button icon={<SaveOutlined/>}>
-                            저장
-                        </Button>
-                    </Col>
-
-                    <Col span={8}>
-                        <Button icon={<SearchOutlined/>} onClick={handleSearchClick}>
-                            조회
-                        </Button>
-                    </Col>
-
-                    <Col span={8}>
-                        <Button icon={<DeleteOutlined/>}
-                        >
-                            초기화
-                        </Button>
-                    </Col>
-                </Row>
-            </div>
-        );
-    };
 
     return (
         <div>
@@ -480,54 +349,17 @@ const PlugProfileDashBoard = (props: Props): React.ReactElement => {
 
             />
 
-            <Card>
-                {renderSaveComponent()}
-            </Card>
 
             <Card style={{padding: '10px'}}>
-                <PlugInterpolationDailyTable />
+                <Tabs defaultActiveKey="1">
+                    <TabPane tab="테이블 탭" key="1">
+                        <PlugInterpolationDailyTable />
+                    </TabPane>
+                    <TabPane tab="그래프 탭" key="2">
+                        그래프
+                    </TabPane>
+                </Tabs>
             </Card>
-
-
-            <Row gutter={0}>
-                <Col span={12}>
-                    <Card style={{padding: '10px'}}>
-                        <div>
-                            X축 : 날짜, Y축 : 보간비율, 범례 : 제조사
-                            <Column {...trip02config} />
-                        </div>
-                    </Card>
-                </Col>
-
-                <Col span={12}>
-                    <Card style={{padding: '10px'}}>
-                        <div>
-                            X축 : 날짜, Y축 : Zero GPS비율, 범례 : 제조사
-                            <Column {...zeroGPSconfig} />
-                        </div>
-                    </Card>
-                </Col>
-            </Row>
-
-            <Row gutter={0}>
-                <Col span={12}>
-                    <Card style={{padding: '10px'}}>
-                        <div>
-                            X축 : 제작년월, Y축 : 보간비율, line : 디바이스 수
-                            <DualAxes {...collineconfig} />
-                        </div>
-                    </Card>
-                </Col>
-
-                <Col span={12}>
-                    <Card style={{padding: '10px'}}>
-                        <div>
-                            차량 회사별 제로 비율
-                            <Treemap {...testconfig} />
-                        </div>
-                    </Card>
-                </Col>
-            </Row>
         </div>
     )
 };
