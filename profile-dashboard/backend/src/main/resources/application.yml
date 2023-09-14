@@ -16,6 +16,23 @@ ext:
       username: admin
       password: qweQWE123!@#
 
+white-list:
+  127.0.0.1,
+  0:0:0:0:0:0:0:1,
+  10.90.0.0/16,
+  10.80.0.0/16
+any-list:
+  /actuator/**,
+  /v3/api-docs/**,
+  /swagger-ui/**
+jwt-list:
+  /api/plug/**,
+  /api/location/**
+
+jwt:
+  jwk:
+    url: http://predev-imbauth.carrotins.com:9005/api/bauth/v1/backend/auth/key/retrieve
+
 logging:
   level:
     root: INFO
@@ -46,8 +63,26 @@ ext:
 #      username: hdadmin@CARROTINS-DL.COM
 #      password: rlaskadbs2@
 
+white-list:
+  127.0.0.1,
+  0:0:0:0:0:0:0:1,
+  10.90.0.0/16,
+  10.80.0.0/16
+jwt-list:
+  /plug/**,
+  /location/**
+any-list:
+  /actuator/**,
+  /v3/api-docs/**,
+  /swagger-ui/**
+
+jwt:
+  jwk:
+    url: https://auth.carrotins.com:8088/api/bauth/v1/backend/auth/key/retrieve
 
 logging:
   level:
     root: INFO
     com.carrotins.backend: INFO
+server:
+  port: 8090

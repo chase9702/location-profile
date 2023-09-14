@@ -7,7 +7,7 @@ import io.swagger.v3.oas.annotations.tags.Tag
 import com.carrotins.backend.repository.ZeroGpsTripInfo
 import com.carrotins.backend.repository.CarProductNameInfo
 import org.springframework.web.bind.annotation.*
-import org.springframework.web.bind.annotation.CrossOrigin;
+
 
 
 
