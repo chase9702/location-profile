@@ -157,6 +157,21 @@ const PlugProfileDashBoard = (props: Props): React.ReactElement => {
         setSelectedModel('모델명 선택');
     }, []);
 
+    const [interpolationMonthlyChartData, setInterpolationMonthlyChartData] = useState([]);
+
+
+    useEffect(() => {
+        interpolationTableMonthlyChartFetch();
+    }, []);
+
+    const interpolationTableMonthlyChartFetch = () => {
+        get<[]>("/api/plug/statistic/interpolation-trip-Monthly-info")
+            .then((jsonData) => {
+                console.log(jsonData)
+                setInterpolationMonthlyChartData(jsonData)
+            })
+    };
+
     const handleSearchClick = () => {
         const requestData = {
             selectedStartDate,
@@ -317,6 +332,8 @@ const PlugProfileDashBoard = (props: Props): React.ReactElement => {
             },
         },
     };
+
+    console.log(ZeroGPSData)
 
     const zeroGPSconfig = {
         data: ZeroGPSData,

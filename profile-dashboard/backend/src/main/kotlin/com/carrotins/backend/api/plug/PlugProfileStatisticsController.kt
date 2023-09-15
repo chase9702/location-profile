@@ -1,11 +1,8 @@
 package com.carrotins.backend.api.plug
 
-import com.carrotins.backend.repository.plug.DeviceProductCount
-import com.carrotins.backend.repository.plug.InterpolationTripDailyInfo
+import com.carrotins.backend.repository.plug.*
 import com.carrotins.backend.service.plug.PlugProfileStatisticsService
 import io.swagger.v3.oas.annotations.tags.Tag
-import com.carrotins.backend.repository.plug.ZeroGpsTripInfo
-import com.carrotins.backend.repository.plug.CarProductNameInfo
 import org.springframework.web.bind.annotation.*
 
 
@@ -33,6 +30,11 @@ class PlugProfileStatisticsController(
     @GetMapping("/interpolation-trip-daily-info")
     fun getInterpolationTripDailyInfoData():List<InterpolationTripDailyInfo>{
         return plugProfileStatisticsService.getInterpolationTripDailyInfo()
+    }
+
+    @GetMapping("/interpolation-trip-monthly-info")
+    fun getInterpolationTripMonthlyInfoData():List<InterpolationTripMonthlyInfo>{
+        return plugProfileStatisticsService.getInterpolationTripMonthlyInfo()
     }
 
     @PostMapping("/click-test")

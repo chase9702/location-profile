@@ -18,39 +18,39 @@ interface Props {
 //     address: string;
 // }
 
-const PlugInterpolationDailyTable = (props: Props): React.ReactElement => {
+const PlugInterpolationMonthlyTable = (props: Props): React.ReactElement => {
 
-    const uniqueDailyArray = [];
-    const seenDailyKeys = new Set();
-    const [interpolationDailyTableData, setInterpolationDailyTableData] = useState([]);
+    const uniqueMonthlyArray = [];
+    const seenMonthlyKeys = new Set();
+    const [interpolationMonthlyTableData, setInterpolationMonthlyTableData] = useState([]);
 
     useEffect(() => {
-        interpolationDailyTableDataFetch();
+        interpolationMonthlyTableDataFetch();
     }, []);
 
-    const interpolationDailyTableDataFetch = () => {
-        get<[]>("/api/plug/statistic/interpolation-trip-daily-info")
+    const interpolationMonthlyTableDataFetch = () => {
+        get<[]>("/api/plug/statistic/interpolation-trip-monthly-info")
             .then((jsonData) => {
-                setInterpolationDailyTableData(jsonData)
+                setInterpolationMonthlyTableData(jsonData)
             })
     };
 
-    for (const item of interpolationDailyTableData) {
-        if (!seenDailyKeys.has(item.bs_dt)) {
-            uniqueDailyArray.push({
+    for (const item of interpolationMonthlyTableData) {
+        if (!seenMonthlyKeys.has(item.bs_dt)) {
+            uniqueMonthlyArray.push({
                 text: item.bs_dt,
                 value: item.bs_dt,
             });
-            seenDailyKeys.add(item.bs_dt);
+            seenMonthlyKeys.add(item.bs_dt);
         }
     }
 
 
-    const interpolationDailyColumn: ColumnsType<any> = [
+    const interpolationMonthlyColumn: ColumnsType<any> = [
         {
             title: '날짜',
             dataIndex: 'bs_dt',
-            filters: uniqueDailyArray.map(option => ({
+            filters: uniqueMonthlyArray.map(option => ({
                 text: option.text,
                 value: option.value,})),
             onFilter: (value: string, record) => record.bs_dt.indexOf(value) === 0,
@@ -150,34 +150,6 @@ const PlugInterpolationDailyTable = (props: Props): React.ReactElement => {
             title: '보간트립비율',
             dataIndex: 'trip_rt',
         },
-        {
-            title: '0-1km',
-            dataIndex: 'trip_cnt_1',
-        },
-        {
-            title: '1-2km',
-            dataIndex: 'trip_cnt_2',
-        },
-        {
-            title: '2-3km',
-            dataIndex: 'trip_cnt_3',
-        },
-        {
-            title: '3-5km',
-            dataIndex: 'trip_cnt_5',
-        },
-        {
-            title: '5-7km',
-            dataIndex: 'trip_cnt_7',
-        },
-        {
-            title: '7-10km',
-            dataIndex: 'trip_cnt_10',
-        },
-        {
-            title: '10km이상',
-            dataIndex: 'trip_cnt_10_over',
-        },
     ];
 
 
@@ -187,9 +159,9 @@ const PlugInterpolationDailyTable = (props: Props): React.ReactElement => {
 
     return (
         <div>
-            <Table columns={interpolationDailyColumn} dataSource={interpolationDailyTableData} onChange={onChange}/>
+            <Table columns={interpolationMonthlyColumn} dataSource={interpolationMonthlyTableData} onChange={onChange}/>
         </div>
     )
 };
 
-export default PlugInterpolationDailyTable;
+export default PlugInterpolationMonthlyTable;

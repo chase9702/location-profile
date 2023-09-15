@@ -1,10 +1,6 @@
 package com.carrotins.backend.service.plug
 
-import com.carrotins.backend.repository.plug.DeviceProductCount
-import com.carrotins.backend.repository.plug.ZeroGpsTripInfo
-import com.carrotins.backend.repository.plug.InterpolationTripDailyInfo
-import com.carrotins.backend.repository.plug.CarProductNameInfo
-import com.carrotins.backend.repository.plug.PlugStatisticsRepository
+import com.carrotins.backend.repository.plug.*
 import org.springframework.stereotype.Service
 import java.math.BigDecimal
 
@@ -72,6 +68,9 @@ class PlugProfileStatisticsService(
         return updateZeroGpsData
     }
 
+    fun getInterpolationTripMonthlyInfo(): List<InterpolationTripMonthlyInfo>{
+        return plugStatisticsRepository.getInterpolationTripMonthlyInfoData()
+    }
     fun getInterpolationTripDailyInfo(): List<InterpolationTripDailyInfo> {
         return plugStatisticsRepository.getInterpolationTripDailyInfoData()
     }

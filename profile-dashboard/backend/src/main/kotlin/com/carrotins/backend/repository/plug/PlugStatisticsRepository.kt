@@ -82,6 +82,45 @@ class PlugStatisticsRepository(
         }
     }
 
+    fun getInterpolationTripMonthlyInfoData(): List<InterpolationTripMonthlyInfo> {
+        val query: String = """
+             select DVC_GB
+                    ,DVC_MDL
+                    ,CTGRY
+                    ,BS_DT
+                    ,DIVC_CNT
+                    ,SUM_TOTAL_DIST
+                    ,SUM_01_DIST
+                    ,SUM_02_DIST
+                    ,02_DIST_RT
+                    ,SUM_TOTAL_TRIP_CNT
+                    ,SUM_01_TRIP_CNT
+                    ,SUM_02_TRIP_CNT
+                    ,02_TRIP_RT
+               FROM DW.LI_PLUG_INTP_MTHLY_RSLT
+        """.trimIndent()
+
+        hiveJdbcTemplate.fetchSize = 1000
+
+        return hiveJdbcTemplate.query(query){ rs, _ ->
+            InterpolationTripMonthlyInfo(
+                dvc_gb = rs.getString("dvc_gb"),
+                dvc_mdl = rs.getString("dvc_mdl"),
+                ctgry = rs.getString("ctgry"),
+                bs_dt = rs.getString("bs_dt"),
+                divc_cnt = rs.getInt("divc_cnt"),
+                sum_total_dist = rs.getInt("sum_total_dist"),
+                sum_01_dist = rs.getInt("sum_01_dist"),
+                sum_02_dist = rs.getInt("sum_02_dist"),
+                dist_02_rt = rs.getDouble("02_dist_rt"),
+                sum_total_trip_cnt = rs.getInt("sum_total_trip_cnt"),
+                sum_01_trip_cnt = rs.getInt("sum_01_trip_cnt"),
+                sum_02_trip_cnt = rs.getInt("sum_02_trip_cnt"),
+                trip_rt = rs.getDouble("02_trip_rt"),
+            )
+        }
+    }
+
     fun getInterpolationTripDailyInfoData(): List<InterpolationTripDailyInfo> {
         val query: String = """
              select DVC_GB
@@ -108,7 +147,7 @@ class PlugStatisticsRepository(
                FROM DW.LI_PLUG_INTP_RSLT
         """.trimIndent()
 
-        hiveJdbcTemplate.fetchSize = 100000
+        hiveJdbcTemplate.fetchSize = 2000
 
         return hiveJdbcTemplate.query(query){ rs, _ ->
             InterpolationTripDailyInfo(
@@ -124,7 +163,7 @@ class PlugStatisticsRepository(
                 dist_02_rt = rs.getDouble("02_dist_rt"),
                 sum_total_trip_cnt = rs.getInt("sum_total_trip_cnt"),
                 sum_01_trip_cnt = rs.getInt("sum_01_trip_cnt"),
-                sum_02_trip_cnt = rs.getInt("sum_total_trip_cnt"),
+                sum_02_trip_cnt = rs.getInt("sum_02_trip_cnt"),
                 trip_rt = rs.getDouble("02_trip_rt"),
                 trip_cnt_1 = rs.getInt("02_trip_cnt_1"),
                 trip_cnt_2 = rs.getInt("02_trip_cnt_2"),

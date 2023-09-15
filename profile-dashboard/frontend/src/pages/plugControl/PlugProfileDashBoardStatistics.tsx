@@ -8,6 +8,9 @@ import type {ColumnsType,} from 'antd/es/table';
 import type {RangePickerProps} from 'antd/es/date-picker';
 import PlugInterpolationDailyTable from "@src/components/plugControl/PlugInterpolationDailyTable";
 import TabPane from "antd/es/tabs/TabPane";
+import PlugInterpolationDailyChart from "@src/components/plugControl/PlugInterpolationDailyChart";
+import PlugInterpolationMonthlyChart from "@src/components/plugControl/PlugInterpolationMonthlyChart";
+import PlugInterpolationMonthlyTable from "@src/components/plugControl/PlugInterpolationMonthlyTable";
 
 
 
@@ -337,26 +340,40 @@ const PlugProfileDashBoard = (props: Props): React.ReactElement => {
         console.log('onOk: ', value);
     };
 
-
+    const tabStyle = {
+        backgroundColor: '#f0f0f0', // 배경색을 변경
+        border: '1px solid #d9d9d9', // 테두리 스타일을 변경
+        padding: '16px', // 패딩을 추가
+    };
 
     return (
         <div>
             <PageTitle
-                title="Plug Profile DashBoard"
-                description={[
-                    'Plug 관제 정보를 확인 할 수 있습니다.',
-                ]}
+                title="Plug Profile 통계 DashBoard"
+                // description={[
+                //     'Plug 정보를 확인 할 수 있습니다.',
+                // ]}
 
             />
-
-
             <Card style={{padding: '10px'}}>
+                일별 보간트립 정보
                 <Tabs defaultActiveKey="1">
-                    <TabPane tab="테이블 탭" key="1">
+                    <TabPane tab="모델별 보간트립 그래프" key="1" >
+                        <PlugInterpolationDailyChart />
+                    </TabPane>
+                    <TabPane tab="모델별 보간트립 데이터" key="2">
                         <PlugInterpolationDailyTable />
                     </TabPane>
-                    <TabPane tab="그래프 탭" key="2">
-                        그래프
+                </Tabs>
+            </Card>
+            <Card style={{padding: '10px'}}>
+                월별 보간트립 정보
+                <Tabs defaultActiveKey="1">
+                    <TabPane tab="모델별 보간트립 그래프" key="1" >
+                        <PlugInterpolationMonthlyChart />
+                    </TabPane>
+                    <TabPane tab="모델별 보간트립 데이터" key="2">
+                        {/*<PlugInterpolationMonthlyTable />*/}
                     </TabPane>
                 </Tabs>
             </Card>

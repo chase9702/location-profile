@@ -27,6 +27,30 @@ data class ZeroGpsTripInfo(
     var trip_rt: Double=0.0, // Zero GPS 비율
 )
 
+data class InterpolationTrip(
+    val dvc_gb: String,      // 제조사
+    val part_dt: String,     // 파티션 날짜
+    val trip_total : Int,    // 01(정상) + 98(Zero GPS) 트립 수 합
+    val trip_01: Int,        // 01(정상) 트립 수
+    val trip_98: Int,        // 98(Zero GPS) 트립 수
+    var trip_rt: Double=0.0, // Zero GPS 비율
+)
+
+data class InterpolationTripMonthlyInfo(
+    val dvc_gb: String,
+    val dvc_mdl: String,
+    val ctgry: String,
+    val bs_dt: String,
+    val divc_cnt: Int,
+    val sum_total_dist: Int,
+    val sum_01_dist: Int,
+    val sum_02_dist: Int,
+    val dist_02_rt: Double,
+    val sum_total_trip_cnt: Int,
+    val sum_01_trip_cnt: Int,
+    val sum_02_trip_cnt: Int,
+    val trip_rt: Double,
+)
 data class InterpolationTripDailyInfo(
     val dvc_gb: String,
     val dvc_mdl: String,
