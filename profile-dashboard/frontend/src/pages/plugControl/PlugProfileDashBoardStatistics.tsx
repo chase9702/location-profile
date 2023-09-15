@@ -8,9 +8,11 @@ import type {ColumnsType,} from 'antd/es/table';
 import type {RangePickerProps} from 'antd/es/date-picker';
 import PlugInterpolationDailyTable from "@src/components/plugControl/PlugInterpolationDailyTable";
 import TabPane from "antd/es/tabs/TabPane";
-import PlugInterpolationDailyChart from "@src/components/plugControl/PlugInterpolationDailyChart";
-import PlugInterpolationMonthlyChart from "@src/components/plugControl/PlugInterpolationMonthlyChart";
+import PlugInterpolationAsIsDailyChart from "@src/components/plugControl/PlugInterpolationAsIsDailyChart";
+import PlugInterpolationAsIsMonthlyChart from "@src/components/plugControl/PlugInterpolationAsIsMonthlyChart";
 import PlugInterpolationMonthlyTable from "@src/components/plugControl/PlugInterpolationMonthlyTable";
+import PlugInterpolationToBeDailyChart from "@src/components/plugControl/PlugInterpolationToBeDailyChart";
+import PlugInterpolationToBeMonthlyChart from "@src/components/plugControl/PlugInterpolationToBeMonthlyChart";
 
 
 
@@ -358,10 +360,13 @@ const PlugProfileDashBoard = (props: Props): React.ReactElement => {
             <Card style={{padding: '10px'}}>
                 일별 보간트립 정보
                 <Tabs defaultActiveKey="1">
-                    <TabPane tab="모델별 보간트립 그래프" key="1" >
-                        <PlugInterpolationDailyChart />
+                    <TabPane tab="모델별 AS-IS 보간트립 그래프" key="1" >
+                        <PlugInterpolationAsIsDailyChart />
                     </TabPane>
-                    <TabPane tab="모델별 보간트립 데이터" key="2">
+                    <TabPane tab="모델별 TO-BE 그래프" key="2" >
+                        <PlugInterpolationToBeDailyChart />
+                    </TabPane>
+                    <TabPane tab="모델별 AS-IS 보간트립 데이터" key="3">
                         <PlugInterpolationDailyTable />
                     </TabPane>
                 </Tabs>
@@ -369,10 +374,13 @@ const PlugProfileDashBoard = (props: Props): React.ReactElement => {
             <Card style={{padding: '10px'}}>
                 월별 보간트립 정보
                 <Tabs defaultActiveKey="1">
-                    <TabPane tab="모델별 보간트립 그래프" key="1" >
-                        <PlugInterpolationMonthlyChart />
+                    <TabPane tab="모델별 AS-IS 보간트립 그래프" key="1" >
+                        <PlugInterpolationAsIsMonthlyChart />
                     </TabPane>
-                    <TabPane tab="모델별 보간트립 데이터" key="2">
+                    <TabPane tab="모델별 TO-BE 그래프" key="2" >
+                        <PlugInterpolationToBeMonthlyChart />
+                    </TabPane>
+                    <TabPane tab="모델별 보간트립 데이터" key="3">
                         {/*<PlugInterpolationMonthlyTable />*/}
                     </TabPane>
                 </Tabs>

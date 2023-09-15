@@ -68,11 +68,13 @@ class PlugProfileStatisticsService(
         return updateZeroGpsData
     }
 
-    fun getInterpolationTripMonthlyInfo(): List<InterpolationTripMonthlyInfo>{
-        return plugStatisticsRepository.getInterpolationTripMonthlyInfoData()
+    fun getInterpolationTripMonthlyInfo(ctgry: String): List<InterpolationTripMonthlyInfo>{
+        val allData = plugStatisticsRepository.getInterpolationTripMonthlyInfoData()
+        return allData.filter { it.ctgry == ctgry }
     }
-    fun getInterpolationTripDailyInfo(): List<InterpolationTripDailyInfo> {
-        return plugStatisticsRepository.getInterpolationTripDailyInfoData()
+    fun getInterpolationTripDailyInfo(ctgry: String): List<InterpolationTripDailyInfo> {
+        val allData = plugStatisticsRepository.getInterpolationTripDailyInfoData()
+        return allData.filter { it.ctgry == ctgry }
     }
 
 }

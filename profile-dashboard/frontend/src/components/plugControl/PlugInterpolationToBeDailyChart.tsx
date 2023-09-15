@@ -7,26 +7,27 @@ interface Props {
 
 }
 
-const PlugInterpolationMonthlyChart = (props: Props): React.ReactElement => {
-    const [interpolationMonthlyChartData, setInterpolationMonthlyChartData] = useState([]);
-    const interpolationMonthlyGroupData = _.groupBy(interpolationMonthlyChartData, (item) => `${item.dvc_mdl}-${item.bs_dt}`);
-
+const PlugInterpolationToBeDailyChart = (props: Props): React.ReactElement => {
+    const [interpolationDailyChartData, setInterpolationDailyChartData] = useState([]);
 
     useEffect(() => {
-        interpolationTableMonthlyChartFetch();
+        interpolationTableDailyChartFetch();
     }, []);
 
-    const interpolationTableMonthlyChartFetch = () => {
-        get<[]>("/api/plug/statistic/interpolation-trip-monthly-info")
-            .then((jsonData1) => {
-                setInterpolationMonthlyChartData(jsonData1)
+    const interpolationTableDailyChartFetch = () => {
+        get<[]>("/api/plug/statistic/interpolation-trip-daily-info?ctgry=01")
+            .then((jsonData) => {
+                console.log(jsonData)
+                setInterpolationDailyChartData(jsonData)
             })
     };
 
-    const interpolationMonthlyChartDataResult = _.map(interpolationMonthlyGroupData, (group) => {
+    // 데이터 그룹화 및 필터링
+    const interpolationDailyGroupData = _.groupBy(interpolationDailyChartData, (item) => `${item.dvc_mdl}-${item.bs_dt}`);
+
+    const interpolationDailyChartDataResult = _.map(interpolationDailyGroupData, (group) => {
         const sumTotalcnt = _.sumBy(group, 'sum_total_trip_cnt');
         const sum02TripCnt = _.sumBy(group, 'sum_02_trip_cnt');
-
         const ratio = sumTotalcnt !== 0 ? (sum02TripCnt / sumTotalcnt) * 100 : 0;
 
         return {
@@ -36,8 +37,10 @@ const PlugInterpolationMonthlyChart = (props: Props): React.ReactElement => {
         };
     });
 
-    const interpolationMonthlyChartConfig = {
-        data: interpolationMonthlyChartDataResult,
+    console.log(interpolationDailyChartDataResult)
+
+    const interpolationDailyChartConfig = {
+        data: interpolationDailyChartDataResult,
         xField: 'bs_dt',
         yField: 'trip_rt',
         seriesField: 'dvc_mdl',
@@ -55,12 +58,12 @@ const PlugInterpolationMonthlyChart = (props: Props): React.ReactElement => {
         },
     };
 
-    console.log("Monthly data" + interpolationMonthlyChartDataResult);
+    const [ctgryFilter, setCtgryFilter] = useState(null);
 
     return (
         <div>
-            <Column {...interpolationMonthlyChartConfig} />
+            <Column {...interpolationDailyChartConfig} />
         </div>
     )
 };
-export default PlugInterpolationMonthlyChart;
+export default PlugInterpolationToBeDailyChart;

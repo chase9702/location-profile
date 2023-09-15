@@ -28,13 +28,13 @@ class PlugProfileStatisticsController(
         return plugProfileStatisticsService.getZeroGpsTripInfo()
     }
     @GetMapping("/interpolation-trip-daily-info")
-    fun getInterpolationTripDailyInfoData():List<InterpolationTripDailyInfo>{
-        return plugProfileStatisticsService.getInterpolationTripDailyInfo()
+    fun getInterpolationTripDailyInfoData(@RequestParam ctgry: String):List<InterpolationTripDailyInfo>{
+        return plugProfileStatisticsService.getInterpolationTripDailyInfo(ctgry)
     }
 
     @GetMapping("/interpolation-trip-monthly-info")
-    fun getInterpolationTripMonthlyInfoData():List<InterpolationTripMonthlyInfo>{
-        return plugProfileStatisticsService.getInterpolationTripMonthlyInfo()
+    fun getInterpolationTripMonthlyInfoData(@RequestParam ctgry: String):List<InterpolationTripMonthlyInfo>{
+        return plugProfileStatisticsService.getInterpolationTripMonthlyInfo(ctgry)
     }
 
     @PostMapping("/click-test")

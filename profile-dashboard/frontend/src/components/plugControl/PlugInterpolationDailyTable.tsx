@@ -29,7 +29,7 @@ const PlugInterpolationDailyTable = (props: Props): React.ReactElement => {
     }, []);
 
     const interpolationDailyTableDataFetch = () => {
-        get<[]>("/api/plug/statistic/interpolation-trip-daily-info")
+        get<[]>("/api/plug/statistic/interpolation-trip-daily-info?ctgry=02")
             .then((jsonData) => {
                 setInterpolationDailyTableData(jsonData)
             })
