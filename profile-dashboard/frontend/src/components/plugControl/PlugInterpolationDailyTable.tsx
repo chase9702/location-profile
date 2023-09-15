@@ -1,7 +1,11 @@
 import React, {useEffect, useState} from "react";
-import {Table} from "antd";
+import {Card, Table, Tabs} from "antd";
 import type { ColumnsType, TableProps } from 'antd/es/table';
 import {get} from "@src/api";
+import _ from 'lodash';
+import TabPane from "antd/es/tabs/TabPane";
+import {Column} from "@ant-design/plots";
+
 
 interface Props {
 
@@ -14,17 +18,18 @@ interface Props {
 //     address: string;
 // }
 
-const PlugInterpolationDailyTable = (props: Props): React.ReactElement => {
+const PlugInterpolationDailyTableChart = (props: Props): React.ReactElement => {
 
     const uniqueArray = [];
     const seenKeys = new Set();
-    const [interpolationData, setInterpolationData] = useState([]);
+    const [interpolationTableData, setInterpolationData] = useState([]);
+    const interpolationGroupData = _.groupBy(interpolationTableData, (item) => `${item.dvc_mdl}-${item.bs_dt}`);
 
     useEffect(() => {
-        interpolationDataFetch();
+        interpolationTableDataFetch();
     }, []);
 
-    const interpolationDataFetch = () => {
+    const interpolationTableDataFetch = () => {
         get<[]>("/api/plug/statistic/interpolation-trip-daily-info")
             .then((jsonData) => {
                 console.log(jsonData)
@@ -32,7 +37,7 @@ const PlugInterpolationDailyTable = (props: Props): React.ReactElement => {
             })
     };
 
-    for (const item of interpolationData) {
+    for (const item of interpolationTableData) {
         if (!seenKeys.has(item.bs_dt)) {
             uniqueArray.push({
                 text: item.bs_dt,
@@ -41,6 +46,21 @@ const PlugInterpolationDailyTable = (props: Props): React.ReactElement => {
             seenKeys.add(item.bs_dt);
         }
     }
+
+    const interpolationChartData = _.map(interpolationGroupData, (group) => {
+        const sumTotalcnt = _.sumBy(group, 'sum_total_trip_cnt');
+        const sum02TripCnt = _.sumBy(group, 'sum_02_trip_cnt');
+
+        const ratio = sumTotalcnt !== 0 ? (sum02TripCnt / sumTotalcnt) * 100 : 0;
+
+        return {
+            dvc_mdl: group[0].dvc_mdl,
+            bs_dt: group[0].bs_dt,
+            ratio: ratio.toFixed(2),
+        };
+    });
+
+    console.log(interpolationChartData);
 
     const columns: ColumnsType<any> = [
         {
@@ -175,6 +195,24 @@ const PlugInterpolationDailyTable = (props: Props): React.ReactElement => {
         },
     ];
 
+    const interpolationChartConfig = {
+        data: interpolationGroupData,
+        xField: 'ba_dt',
+        yField: 'trip_rt',
+        seriesField: 'dvc_gb',
+        isGroup: true,
+        columnStyle: {
+            radius: [20, 20, 0, 0],
+        },
+        label: {
+            position: 'middle',
+            content: (item) => `${item.trip_rt}`, // 각 데이터의 값을 라벨로 표시
+            style: {
+                fill: '#000', // 라벨 색상 설정
+                fontSize: 12,
+            },
+        },
+    };
 
 
     const onChange: TableProps<any>['onChange'] = (pagination, filters, sorter, extra) => {
@@ -183,9 +221,9 @@ const PlugInterpolationDailyTable = (props: Props): React.ReactElement => {
 
     return (
         <div>
-            <Table columns={columns} dataSource={interpolationData}  onChange={onChange}/>
+            <Table columns={columns} dataSource={interpolationTableData} onChange={onChange}/>
         </div>
     )
 };
 
-export default PlugInterpolationDailyTable;
+export default PlugInterpolationDailyTableChart;
