@@ -1,13 +1,15 @@
 import React, {useEffect, useState} from 'react';
 import {withRouter} from "react-router-dom";
 import {Line} from '@ant-design/plots';
-import {Card} from 'antd';
+import {Card, Col, Row, Select} from 'antd';
 import CustomKeplerMap from "@src/components/common/CustomKeplerMap";
 import {store} from "@src/index";
 import {addDataToMap, updateMap} from "kepler.gl/actions";
 import {processCsvData} from "kepler.gl/processors";
 import {get} from "@src/api";
 import {NotifyError} from "@src/components/common/Notification";
+import {downloadFileFromFrontendData} from "@src/common/file-download";
+import DeviceTop100Table from "@src/components/plugControl/DeviceTop100Table";
 
 
 interface State {
@@ -24,58 +26,9 @@ interface DataType {
     tags: string[];
 }
 
-const Home = (): React.ReactElement => {
+const PlugProfileDashBoardDevice = (): React.ReactElement => {
     const [data, setData] = useState([]);
-    const [deviceInfo, setDeviceInfo] = useState([]);
     const [homeMapData, setHomeMapData] = useState("");
-
-
-    useEffect(() => {
-        asyncFetch();
-    }, []);
-
-    const asyncFetch = () => {
-        fetch('https://gw.alipayobjects.com/os/bmw-prod/e00d52f4-2fa6-47ee-a0d7-105dd95bde20.json')
-            .then((response) => response.json())
-            .then((json) => setData(json))
-            .catch((error) => {
-                console.log('fetch data failed', error);
-            });
-    };
-
-
-    const getDailyDeviceInfo = () => {
-        get<any>("/api/home/~~~~~")
-            .then(jsonData => {
-                setDeviceInfo(jsonData)
-            })
-            .catch((error) => {
-                NotifyError(error)
-            })
-    }
-
-    const config = {
-        data,
-        xField: 'year',
-        yField: 'gdp',
-        seriesField: 'name',
-        yAxis: {
-            label: {
-                formatter: (v) => `${(v / 10e8).toFixed(1)} B`,
-            },
-        },
-        legend: {
-            position: 'top',
-        },
-        smooth: true,
-
-        animation: {
-            appear: {
-                animation: 'path-in',
-                duration: 5000,
-            },
-        },
-    };
 
 
     const testData = `no,eid,source,target,tunnel,geometry,source_lt,source_ln,target_lt,target_ln,length,reversed,eid_idx 
@@ -159,17 +112,40 @@ const Home = (): React.ReactElement => {
 
     }, []);
 
-
     return (
         <div>
-            <CustomKeplerMap
-                heightRatio={70}
-                id={"homeMap"}
-            />
+            <Card>
+                <CustomKeplerMap
+                    heightRatio={70}
+                    id={"deviceMap"}
+                />
+            </Card>
+            <Card>
+                <Row>
+                    <Col span={2}>
+                        <h3>제조사 선택</h3>
+                    </Col>
+                    <Col span={16}>
+                        <Select
+                            showSearch
+                            placeholder="제조사 선택"
+                            optionFilterProp="children"
+                            style={{width: '50%', float: 'left'}}
+                            defaultValue={'ALL'}
+                            options={[
+                                {value: 'LUX1_12345', label: 'LUX1_12345'},
+                                {value: 'LUX2_12345', label: 'LUX2_12345'},
+                                {value: 'UNK1_12345', label: 'UNK1_12345'},
+                                {value: 'AMT1_12345', label: 'AMT1_12345'},
+                            ]}
+                        >
+                        </Select>
+                    </Col>
+                </Row>
+            </Card>
             <Card style={{padding: '10px'}}>
                 <div>
-                    일자별, 디바이스별 현황
-                    <Line {...config} />
+                    <DeviceTop100Table/>
                 </div>
             </Card>
         </div>
@@ -178,4 +154,4 @@ const Home = (): React.ReactElement => {
 
 };
 
-export default withRouter(Home)
+export default withRouter(PlugProfileDashBoardDevice)
