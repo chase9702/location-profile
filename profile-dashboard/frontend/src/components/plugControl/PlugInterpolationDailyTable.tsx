@@ -45,7 +45,6 @@ const PlugInterpolationDailyTable = (props: Props): React.ReactElement => {
         }
     }
 
-
     const interpolationDailyColumn: ColumnsType<any> = [
         {
             title: '날짜',

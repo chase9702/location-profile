@@ -23,7 +23,6 @@ const PlugInterpolationAsIsDailyChart = (props: Props): React.ReactElement => {
             })
     };
 
-    // 데이터 그룹화 및 필터링
     const interpolationDailyGroupData = _.groupBy(interpolationDailyChartData, (item) => `${item.dvc_mdl}-${item.bs_dt}`);
 
     const interpolationDailyChartDataResult = _.map(interpolationDailyGroupData, (group) => {
