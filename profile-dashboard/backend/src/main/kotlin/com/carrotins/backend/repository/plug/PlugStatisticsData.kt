@@ -35,6 +35,7 @@ data class ZeroGpsTripDailyInfo(
     val sumZero1500TripCnt: Int,
     val sumZero1800TripCnt: Int,
     val sumZero1800OverTripCnt: Int,
+    val sumZeroTripRt: Double,
 )
 
 data class InterpolationTrip(
@@ -53,6 +54,7 @@ data class ZeroGpsTripMonthlyInfo(
     val sumTotalTripCnt: Int,        // 01(정상) 트립 수
     val sumNormalTripCnt: Int,        // 98(Zero GPS) 트립 수
     var sumZeroTripCnt: Int,
+    val sumZeroTripRt: Double,
 )
 
 data class InterpolationTripMonthlyInfo(

@@ -50,6 +50,7 @@ const PlugZeroGpsMonthlyTable = (props: Props): React.ReactElement => {
         {
             title: '날짜',
             dataIndex: 'bsDt',
+            align: 'center' as const,
             filters: uniqueDailyArray.map(option => ({
                 text: option.text,
                 value: option.value,
@@ -59,6 +60,7 @@ const PlugZeroGpsMonthlyTable = (props: Props): React.ReactElement => {
         {
             title: '제조사',
             dataIndex: 'dvcGb',
+            align: 'center' as const,
             filters: [
                 {
                     text: 'AMT',
@@ -86,6 +88,7 @@ const PlugZeroGpsMonthlyTable = (props: Props): React.ReactElement => {
         {
             title: '모델명',
             dataIndex: 'dvcMdl',
+            align: 'center' as const,
             filters: [
                 {
                     text: 'AMT1',
@@ -118,14 +121,22 @@ const PlugZeroGpsMonthlyTable = (props: Props): React.ReactElement => {
         {
             title: '전체트립',
             dataIndex: 'sumTotalTripCnt',
+            align: 'center' as const,
         },
         {
             title: '정상트립',
             dataIndex: 'sumNormalTripCnt',
+            align: 'center' as const,
         },
         {
             title: 'ZGPS트립',
             dataIndex: 'sumZeroTripCnt',
+            align: 'center' as const,
+        },
+        {
+            title: 'ZGPS비율',
+            dataIndex: 'sumZeroTripRt',
+            align: 'center' as const,
         },
     ];
 

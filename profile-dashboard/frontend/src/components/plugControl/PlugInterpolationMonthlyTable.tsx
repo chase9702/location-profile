@@ -52,6 +52,7 @@ const PlugInterpolationMonthlyTable = (props: Props): React.ReactElement => {
         {
             title: '날짜',
             dataIndex: 'bsDt',
+            align: 'center' as const,
             filters: uniqueMonthlyArray.map(option => ({
                 text: option.text,
                 value: option.value,
@@ -61,6 +62,7 @@ const PlugInterpolationMonthlyTable = (props: Props): React.ReactElement => {
         {
             title: '제조사',
             dataIndex: 'dvcGb',
+            align: 'center' as const,
             filters: [
                 {
                     text: 'AMT',
@@ -88,6 +90,7 @@ const PlugInterpolationMonthlyTable = (props: Props): React.ReactElement => {
         {
             title: '모델명',
             dataIndex: 'dvcMdl',
+            align: 'center' as const,
             filters: [
                 {
                     text: 'AMT1',
@@ -120,38 +123,47 @@ const PlugInterpolationMonthlyTable = (props: Props): React.ReactElement => {
         {
             title: '디바이스 수',
             dataIndex: 'dvcCnt',
+            align: 'center' as const,
         },
         {
             title: '전체거리',
             dataIndex: 'sumTotalDist',
+            align: 'center' as const,
         },
         {
             title: '정상거리',
             dataIndex: 'sumNormalDist',
+            align: 'center' as const,
         },
         {
             title: '보간거리',
             dataIndex: 'sumInterpolationDist',
+            align: 'center' as const,
         },
         {
             title: '보간거리비율',
             dataIndex: 'distInterpolationRt',
+            align: 'center' as const,
         },
         {
             title: '전체트립',
             dataIndex: 'sumTotalTripCnt',
+            align: 'center' as const,
         },
         {
             title: '정상트립',
             dataIndex: 'sumNormalTripCnt',
+            align: 'center' as const,
         },
         {
             title: '보간트립',
             dataIndex: 'sumInterpolationTripCnt',
+            align: 'center' as const,
         },
         {
             title: '보간트립비율',
             dataIndex: 'sumInterpolationTripRt',
+            align: 'center' as const,
         },
     ];
 

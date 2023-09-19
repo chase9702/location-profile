@@ -50,6 +50,7 @@ const PlugZeroGpsDailyTable = (props: Props): React.ReactElement => {
         {
             title: '날짜',
             dataIndex: 'bsDt',
+            align: 'center' as const,
             filters: uniqueDailyArray.map(option => ({
                 text: option.text,
                 value: option.value,
@@ -59,6 +60,7 @@ const PlugZeroGpsDailyTable = (props: Props): React.ReactElement => {
         {
             title: '제조사',
             dataIndex: 'dvcGb',
+            align: 'center' as const,
             filters: [
                 {
                     text: 'AMT',
@@ -86,6 +88,7 @@ const PlugZeroGpsDailyTable = (props: Props): React.ReactElement => {
         {
             title: '모델명',
             dataIndex: 'dvcMdl',
+            align: 'center' as const,
             filters: [
                 {
                     text: 'AMT1',
@@ -118,58 +121,72 @@ const PlugZeroGpsDailyTable = (props: Props): React.ReactElement => {
         {
             title: '전체트립',
             dataIndex: 'sumTotalTripCnt',
+            align: 'center' as const,
         },
         {
             title: '정상트립',
             dataIndex: 'sumNormalTripCnt',
+            align: 'center' as const,
         },
         {
             title: 'ZGPS트립',
             dataIndex: 'sumZeroTripCnt',
+            align: 'center' as const,
         },
-        // {
-        //     title: 'ZGPS비율',
-        //     dataIndex: 'trip_rt',
-        // },
+        {
+            title: 'ZGPS비율',
+            dataIndex: 'sumZeroTripRt',
+            align: 'center' as const,
+        },
         {
             title: '5-6분',
             dataIndex: 'sumZero360TripCnt',
+            align: 'center' as const,
         },
         {
             title: '6-7분',
             dataIndex: 'sumZero420TripCnt',
+            align: 'center' as const,
         },
         {
             title: '7-8분',
             dataIndex: 'sumZero480TripCnt',
+            align: 'center' as const,
         },
         {
             title: '8-9분',
             dataIndex: 'sumZero540TripCnt',
+            align: 'center' as const,
         },
         {
             title: '9-10분',
             dataIndex: 'sumZero600TripCnt',
+            align: 'center' as const,
         },
         {
             title: '10-15분',
             dataIndex: 'sumZero900TripCnt',
+            align: 'center' as const,
         },
         {
             title: '15-20분',
             dataIndex: 'sumZero1200TripCnt',
+            align: 'center' as const,
         },
         {
             title: '20-25분',
             dataIndex: 'sumZero1500TripCnt',
+            align: 'center' as const,
         },
         {
             title: '25-30분',
             dataIndex: 'sumZero1800TripCnt',
+            align: 'center' as const,
         },
         {
             title: '30분이상',
             dataIndex: 'sumZero1800OverTripCnt',
+            align: 'center' as const,
         },
     ];
 

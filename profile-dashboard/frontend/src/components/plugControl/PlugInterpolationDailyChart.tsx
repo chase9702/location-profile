@@ -7,28 +7,10 @@ import {LoadingOutlined} from '@ant-design/icons';
 
 
 interface Props {
-
 }
 
-const PlugInterpolationDailyChart = (props: Props): React.ReactElement => {
-    const [interpolationDailyChartData, setInterpolationDailyChartData] = useState([]);
-    const [loading, setLoading] = useState(true);
-
-
-    useEffect(() => {
-        interpolationTableDailyChartFetch();
-    }, []);
-
-    const interpolationTableDailyChartFetch = () => {
-        get<[]>("/api/plug/statistic/interpolation-trip-daily-info")
-            .then((jsonData) => {
-                console.log(jsonData)
-                setInterpolationDailyChartData(jsonData)
-            })
-            .finally(() => {
-                setLoading(false);
-            });
-    };
+const PlugInterpolationDailyChart = (props: { interpolationDailyChartData: any[] }): React.ReactElement => {
+    const { interpolationDailyChartData } = props;
 
     const interpolationDailyGroupData = _.groupBy(interpolationDailyChartData, (item) => `${item.dvcGb}-${item.bsDt}`);
 
@@ -67,9 +49,9 @@ const PlugInterpolationDailyChart = (props: Props): React.ReactElement => {
 
     return (
         <div>
-            <Spin spinning={loading} indicator={<LoadingOutlined/>} tip="로딩 중...">
+            {/*<Spin spinning={loading} indicator={<LoadingOutlined/>} tip="로딩 중...">*/}
                 <Column {...interpolationDailyChartConfig} />
-            </Spin>
+            {/*</Spin>*/}
         </div>
     )
 };

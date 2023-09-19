@@ -63,7 +63,8 @@ class PlugStatisticsRepository(
                  dvc_mdl,
                  sum_total_trip_cnt,
                  sum_01_trip_cnt,
-                 sum_03_trip_cnt
+                 sum_03_trip_cnt,
+                 sum_03_trip_rt
                FROM DW.LI_PLUG_ZERO_TRIP_MNTHLY_RSLT
 
 
@@ -79,6 +80,7 @@ class PlugStatisticsRepository(
                 sumTotalTripCnt = rs.getInt("sum_total_trip_cnt"),
                 sumNormalTripCnt = rs.getInt("sum_01_trip_cnt"),
                 sumZeroTripCnt = rs.getInt("sum_03_trip_cnt"),
+                sumZeroTripRt = rs.getDouble("sum_03_trip_rt"),
                 )
         }
     }
@@ -101,7 +103,8 @@ class PlugStatisticsRepository(
                  SUM_98_1200_TRIP_CNT,
                  SUM_98_1500_TRIP_CNT,
                  SUM_98_1800_TRIP_CNT,
-                 SUM_98_1800_OVER_TRIP_CNT
+                 SUM_98_1800_OVER_TRIP_CNT,
+                 sum_03_trip_rt
                FROM DW.LI_PLUG_ZERO_TRIP_DILY_RSLT
 
 
@@ -127,7 +130,8 @@ class PlugStatisticsRepository(
                 sumZero1500TripCnt = rs.getInt("sum_98_1500_trip_cnt"),
                 sumZero1800TripCnt = rs.getInt("sum_98_1800_trip_cnt"),
                 sumZero1800OverTripCnt = rs.getInt("sum_98_1800_over_trip_cnt"),
-            )
+                sumZeroTripRt = rs.getDouble("sum_03_trip_rt"),
+                )
         }
     }
 

@@ -9,33 +9,14 @@ interface Props {
 
 }
 
-// interface DataType {
-//     key: React.Key;
-//     name: string;
-//     age: number;
-//     address: string;
-// }
+const PlugInterpolationDailyTable = (props: { interpolationDailyTableData: any[] }): React.ReactElement => {
 
-const PlugInterpolationDailyTable = (props: Props): React.ReactElement => {
-
-    const [interpolationDailyTableData, setInterpolationDailyTableData] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const { interpolationDailyTableData } = props;
     const uniqueDailyArray = [];
     const seenDailyKeys = new Set();
-
-    useEffect(() => {
-        interpolationDailyTableDataFetch();
-    }, []);
-
-    const interpolationDailyTableDataFetch = () => {
-        get<[]>("/api/plug/statistic/interpolation-trip-daily-info")
-            .then((jsonData) => {
-                setInterpolationDailyTableData(jsonData)
-            })
-            .finally(() => {
-                setLoading(false);
-            });
-    };
+    console.log("Table Data")
+    console.log(interpolationDailyTableData)
+    console.log(uniqueDailyArray)
 
     for (const item of interpolationDailyTableData) {
         if (!seenDailyKeys.has(item.bsDt)) {
@@ -51,6 +32,7 @@ const PlugInterpolationDailyTable = (props: Props): React.ReactElement => {
         {
             title: '날짜',
             dataIndex: 'bsDt',
+            align: 'center' as const,
             filters: uniqueDailyArray.map(option => ({
                 text: option.text,
                 value: option.value,
@@ -60,6 +42,7 @@ const PlugInterpolationDailyTable = (props: Props): React.ReactElement => {
         {
             title: '제조사',
             dataIndex: 'dvcGb',
+            align: 'center' as const,
             filters: [
                 {
                     text: 'AMT',
@@ -87,6 +70,7 @@ const PlugInterpolationDailyTable = (props: Props): React.ReactElement => {
         {
             title: '모델명',
             dataIndex: 'dvcMdl',
+            align: 'center' as const,
             filters: [
                 {
                     text: 'AMT1',
@@ -124,62 +108,77 @@ const PlugInterpolationDailyTable = (props: Props): React.ReactElement => {
         {
             title: '전체거리',
             dataIndex: 'sumTotalDist',
+            align: 'center' as const,
         },
         {
             title: '정상거리',
             dataIndex: 'sumNormalDist',
+            align: 'center' as const,
         },
         {
             title: '보간거리',
             dataIndex: 'sumInterpolationDist',
+            align: 'center' as const,
         },
         {
             title: '보간거리비율',
             dataIndex: 'distInterpolationRt',
+            align: 'center' as const,
         },
         {
             title: '전체트립',
             dataIndex: 'sumTotalTripCnt',
+            align: 'center' as const,
         },
         {
             title: '정상트립',
             dataIndex: 'sumNormalTripCnt',
+            align: 'center' as const,
         },
         {
             title: '보간트립',
             dataIndex: 'sumInterpolationTripCnt',
+            align: 'center' as const,
         },
         {
             title: '보간트립비율',
             dataIndex: 'tripInterpolationRt',
+            align: 'center' as const,
         },
         {
             title: '0-1km',
             dataIndex: 'tripCnt1',
+            align: 'center' as const,
         },
         {
             title: '1-2km',
             dataIndex: 'tripCnt2',
+            align: 'center' as const,
         },
         {
             title: '2-3km',
             dataIndex: 'tripCnt3',
+            align: 'center' as const,
         },
         {
             title: '3-5km',
             dataIndex: 'tripCnt5',
+            align: 'center' as const,
         },
         {
             title: '5-7km',
             dataIndex: 'tripCnt7',
+            align: 'center' as const,
         },
         {
             title: '7-10km',
             dataIndex: 'tripCnt10',
+            align: 'center' as const,
         },
         {
             title: '10km이상',
             dataIndex: 'tripCnt10Over',
+            align: 'center' as const,
         },
     ];
 
@@ -190,9 +189,9 @@ const PlugInterpolationDailyTable = (props: Props): React.ReactElement => {
 
     return (
         <div>
-            <Spin spinning={loading} indicator={<LoadingOutlined/>} tip="로딩 중...">
+            {/*<Spin spinning={loading} indicator={<LoadingOutlined/>} tip="로딩 중...">*/}
                 <Table columns={interpolationDailyColumn} dataSource={interpolationDailyTableData} onChange={onChange}/>
-            </Spin>
+            {/*</Spin>*/}
         </div>
     )
 };
