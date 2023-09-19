@@ -23,18 +23,22 @@ class PlugProfileStatisticsController(
     fun getCarnmData():List<CarProductNameInfo>{
         return plugProfileStatisticsService.getCarProductNameInfo()
     }
-    @GetMapping("/zero-gps-trip-info")
-    fun getZgpsRTData():List<ZeroGpsTripInfo>{
-        return plugProfileStatisticsService.getZeroGpsTripInfo()
+    @GetMapping("/zero-gps-trip-monthly-info")
+    fun getZeroGpsTripMonthlyInfoData():List<ZeroGpsTripMonthlyInfo>{
+        return plugProfileStatisticsService.getZeroGpsTripMonthlyInfo()
+    }
+    @GetMapping("/zero-gps-trip-daily-info")
+    fun getZeroGpsTripDailyInfoData():List<ZeroGpsTripDailyInfo>{
+        return plugProfileStatisticsService.getZeroGpsTripDailyInfo()
     }
     @GetMapping("/interpolation-trip-daily-info")
-    fun getInterpolationTripDailyInfoData(@RequestParam ctgry: String):List<InterpolationTripDailyInfo>{
-        return plugProfileStatisticsService.getInterpolationTripDailyInfo(ctgry)
+    fun getInterpolationTripDailyInfoData():List<InterpolationTripDailyInfo>{
+        return plugProfileStatisticsService.getInterpolationTripDailyInfo()
     }
 
     @GetMapping("/interpolation-trip-monthly-info")
-    fun getInterpolationTripMonthlyInfoData(@RequestParam ctgry: String):List<InterpolationTripMonthlyInfo>{
-        return plugProfileStatisticsService.getInterpolationTripMonthlyInfo(ctgry)
+    fun getInterpolationTripMonthlyInfoData():List<InterpolationTripMonthlyInfo>{
+        return plugProfileStatisticsService.getInterpolationTripMonthlyInfo()
     }
 
     @PostMapping("/click-test")

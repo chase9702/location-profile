@@ -8,11 +8,13 @@ import type {ColumnsType,} from 'antd/es/table';
 import type {RangePickerProps} from 'antd/es/date-picker';
 import PlugInterpolationDailyTable from "@src/components/plugControl/PlugInterpolationDailyTable";
 import TabPane from "antd/es/tabs/TabPane";
-import PlugInterpolationAsIsDailyChart from "@src/components/plugControl/PlugInterpolationAsIsDailyChart";
-import PlugInterpolationAsIsMonthlyChart from "@src/components/plugControl/PlugInterpolationAsIsMonthlyChart";
+import PlugInterpolationDailyChart from "@src/components/plugControl/PlugInterpolationDailyChart";
+import PlugInterpolationMonthlyChart from "@src/components/plugControl/PlugInterpolationMonthlyChart";
 import PlugInterpolationMonthlyTable from "@src/components/plugControl/PlugInterpolationMonthlyTable";
-import PlugInterpolationToBeDailyChart from "@src/components/plugControl/PlugInterpolationToBeDailyChart";
-import PlugInterpolationToBeMonthlyChart from "@src/components/plugControl/PlugInterpolationToBeMonthlyChart";
+import PlugZeroGpsDailyChart from "@src/components/plugControl/PlugZeroGpsDailyChart";
+import PlugZeroGpsDailyTable from "@src/components/plugControl/PlugZeroGpsDailyTable";
+import PlugZeroGpsMonthlyChart from "@src/components/plugControl/PlugZeroGpsMonthlyChart";
+import PlugZeroGpsMonthlyTable from "@src/components/plugControl/PlugZeroGpsMonthlyTable";
 
 
 
@@ -283,23 +285,23 @@ const PlugProfileDashBoard = (props: Props): React.ReactElement => {
         children: [
             {
                 name: '分类 1',
-                trip_rt: 560,
+                sumZeroTripRt: 560,
             },
             {
                 name: '分类 2',
-                trip_rt: 500,
+                sumZeroTripRt: 500,
             },
             {
                 name: '分类 3',
-                trip_rt: 150,
+                sumZeroTripRt: 150,
             },
             {
                 name: '分类 4',
-                trip_rt: 140,
+                sumZeroTripRt: 140,
             },
             {
                 name: '分类 5',
-                trip_rt: 115,
+                sumZeroTripRt: 115,
             },
             {
                 name: '分类 6',
@@ -307,15 +309,15 @@ const PlugProfileDashBoard = (props: Props): React.ReactElement => {
             },
             {
                 name: '分类 7',
-                trip_rt: 90,
+                sumZeroTripRt: 90,
             },
             {
                 name: '分类 8',
-                trip_rt: 75,
+                sumZeroTripRt: 75,
             },
             {
                 name: '分类 9',
-                trip_rt: 98,
+                sumZeroTripRt: 98,
             },
         ],
     };
@@ -358,30 +360,50 @@ const PlugProfileDashBoard = (props: Props): React.ReactElement => {
 
             />
             <Card style={{padding: '10px'}}>
-                일별 보간트립 정보
+                <h3>
+                    일별 보간트립 정보
+                </h3>
                 <Tabs defaultActiveKey="1">
-                    <TabPane tab="모델별 AS-IS 보간트립 그래프" key="1" >
-                        <PlugInterpolationAsIsDailyChart />
+                    <TabPane tab="모델별 보간트립 그래프" key="1" >
+                        <PlugInterpolationDailyChart />
                     </TabPane>
-                    <TabPane tab="모델별 TO-BE 그래프" key="2" >
-                        <PlugInterpolationToBeDailyChart />
-                    </TabPane>
-                    <TabPane tab="모델별 AS-IS 보간트립 데이터" key="3">
+                    <TabPane tab="모델별 보간트립 데이터" key="2">
                         <PlugInterpolationDailyTable />
                     </TabPane>
                 </Tabs>
             </Card>
             <Card style={{padding: '10px'}}>
-                월별 보간트립 정보
+                <h3>
+                    월별 보간트립 정보
+                </h3>
+                <Tabs defaultActiveKey="2">
+                    <TabPane tab="모델별 보간트립 그래프" key="1" >
+                        <PlugInterpolationMonthlyChart />
+                    </TabPane>
+                    <TabPane tab="모델별 보간트립 데이터" key="2">
+                        <PlugInterpolationMonthlyTable />
+                    </TabPane>
+                </Tabs>
+            </Card>
+            <Card style={{padding: '10px'}}>
+                일별 Zero Gps 정보
                 <Tabs defaultActiveKey="1">
-                    <TabPane tab="모델별 AS-IS 보간트립 그래프" key="1" >
-                        <PlugInterpolationAsIsMonthlyChart />
+                    <TabPane tab="모델별 Zero Gps 그래프" key="1" >
+                        <PlugZeroGpsDailyChart />
                     </TabPane>
-                    <TabPane tab="모델별 TO-BE 그래프" key="2" >
-                        <PlugInterpolationToBeMonthlyChart />
+                    <TabPane tab="모델별 Zero Gps 데이터" key="2">
+                        <PlugZeroGpsDailyTable />
                     </TabPane>
-                    <TabPane tab="모델별 보간트립 데이터" key="3">
-                        {/*<PlugInterpolationMonthlyTable />*/}
+                </Tabs>
+            </Card>
+            <Card style={{padding: '10px'}}>
+                월별 Zero Gps 정보
+                <Tabs defaultActiveKey="1">
+                    <TabPane tab="모델별 Zero Gps 그래프" key="1" >
+                        <PlugZeroGpsMonthlyChart />
+                    </TabPane>
+                    <TabPane tab="모델별 Zero Gps 데이터" key="2">
+                        <PlugZeroGpsMonthlyTable />
                     </TabPane>
                 </Tabs>
             </Card>

@@ -1,0 +1,76 @@
+import React, {useEffect, useState} from "react";
+import {get} from "@src/api";
+import _ from 'lodash';
+import {Column} from "@ant-design/plots";
+import {Spin} from "antd";
+import {LoadingOutlined} from '@ant-design/icons';
+
+
+interface Props {
+
+}
+
+const PlugInterpolationDailyChart = (props: Props): React.ReactElement => {
+    const [interpolationDailyChartData, setInterpolationDailyChartData] = useState([]);
+    const [loading, setLoading] = useState(true);
+
+
+    useEffect(() => {
+        interpolationTableDailyChartFetch();
+    }, []);
+
+    const interpolationTableDailyChartFetch = () => {
+        get<[]>("/api/plug/statistic/interpolation-trip-daily-info")
+            .then((jsonData) => {
+                console.log(jsonData)
+                setInterpolationDailyChartData(jsonData)
+            })
+            .finally(() => {
+                setLoading(false);
+            });
+    };
+
+    const interpolationDailyGroupData = _.groupBy(interpolationDailyChartData, (item) => `${item.dvcGb}-${item.bsDt}`);
+
+    const interpolationDailyChartDataResult = _.map(interpolationDailyGroupData, (group) => {
+        const sumTotalcnt = _.sumBy(group, 'sumTotalTripCnt');
+        const sumInterpolationTripCnt = _.sumBy(group, 'sumInterpolationTripCnt');
+        const tripInterpolationRt = sumTotalcnt !== 0 ? (sumInterpolationTripCnt / sumTotalcnt) * 100 : 0;
+
+        return {
+            dvcMdl: group[0].dvcMdl,
+            bsDt: group[0].bsDt,
+            sumInterpolationTripCnt: parseFloat(tripInterpolationRt.toFixed(2)), // 숫자로 변환
+        };
+    });
+
+    console.log(interpolationDailyChartDataResult)
+
+    const interpolationDailyChartConfig = {
+        data: interpolationDailyChartDataResult,
+        xField: 'bsDt',
+        yField: 'sumInterpolationTripCnt',
+        seriesField: 'dvcMdl',
+        isGroup: true,
+        columnStyle: {
+            radius: [20, 20, 0, 0],
+        },
+        label: {
+            position: 'middle',
+            content: (item) => `${item.sumInterpolationTripCnt}`, // 각 데이터의 값을 라벨로 표시
+            style: {
+                fill: '#000', // 라벨 색상 설정
+                fontSize: 12,
+            },
+        },
+    };
+
+    return (
+        <div>
+            <Spin spinning={loading} indicator={<LoadingOutlined/>} tip="로딩 중...">
+                <Column {...interpolationDailyChartConfig} />
+            </Spin>
+        </div>
+    )
+};
+export default PlugInterpolationDailyChart;

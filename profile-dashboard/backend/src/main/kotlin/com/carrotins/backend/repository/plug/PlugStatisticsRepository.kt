@@ -55,29 +55,78 @@ class PlugStatisticsRepository(
         }
     }
 
-    fun getZeroGpsTripInfoData(): List<ZeroGpsTripInfo> {
+    fun getZeroGpsTripMonthlyInfoData(): List<ZeroGpsTripMonthlyInfo> {
         val query: String = """
              SELECT 
+                 bs_dt,
                  dvc_gb,
-                 part_dt,
-                 nvl(01_trip_cnt,0) + nvl(98_trip_cnt,0) as total_trip,
-                 nvl(01_trip_cnt,0) as 01_trip_cnt,
-                 nvl(98_trip_cnt,0) as 98_trip_cnt
-               FROM `dw`.`li_plug_profile_100`
-              --WHERE part_dt >= '20230821'
-                --AND part_dt <= '20230823'
+                 dvc_mdl,
+                 sum_total_trip_cnt,
+                 sum_01_trip_cnt,
+                 sum_03_trip_cnt
+               FROM DW.LI_PLUG_ZERO_TRIP_MNTHLY_RSLT
+
 
         """.trimIndent()
 
         hiveJdbcTemplate.fetchSize = 100000
 
         return hiveJdbcTemplate.query(query){ rs, _ ->
-            ZeroGpsTripInfo(
-                dvc_gb = rs.getString("dvc_gb"),
-                part_dt = rs.getString("part_dt"),
-                trip_total = rs.getInt("total_trip"),
-                trip_01 = rs.getInt("01_trip_cnt"),
-                trip_98 = rs.getInt("98_trip_cnt"),
+            ZeroGpsTripMonthlyInfo(
+                bsDt = rs.getString("bs_dt"),
+                dvcGb = rs.getString("dvc_gb"),
+                dvcMdl = rs.getString("dvc_mdl"),
+                sumTotalTripCnt = rs.getInt("sum_total_trip_cnt"),
+                sumNormalTripCnt = rs.getInt("sum_01_trip_cnt"),
+                sumZeroTripCnt = rs.getInt("sum_03_trip_cnt"),
+                )
+        }
+    }
+
+    fun getZeroGpsTripDailyInfoData(): List<ZeroGpsTripDailyInfo> {
+        val query: String = """
+             SELECT 
+                 bs_dt,
+                 dvc_gb,
+                 dvc_mdl,
+                 sum_total_trip_cnt,
+                 sum_01_trip_cnt,
+                 sum_03_trip_cnt,
+                 SUM_03_360_TRIP_CNT,
+                 SUM_03_420_TRIP_CNT,
+                 SUM_03_480_TRIP_CNT,
+                 SUM_03_540_TRIP_CNT,
+                 SUM_98_600_TRIP_CNT,
+                 SUM_98_900_TRIP_CNT,
+                 SUM_98_1200_TRIP_CNT,
+                 SUM_98_1500_TRIP_CNT,
+                 SUM_98_1800_TRIP_CNT,
+                 SUM_98_1800_OVER_TRIP_CNT
+               FROM DW.LI_PLUG_ZERO_TRIP_DILY_RSLT
+
+
+        """.trimIndent()
+
+        hiveJdbcTemplate.fetchSize = 100000
+
+        return hiveJdbcTemplate.query(query){ rs, _ ->
+            ZeroGpsTripDailyInfo(
+                bsDt = rs.getString("bs_dt"),
+                dvcGb = rs.getString("dvc_gb"),
+                dvcMdl = rs.getString("dvc_mdl"),
+                sumTotalTripCnt = rs.getInt("sum_total_trip_cnt"),
+                sumNormalTripCnt = rs.getInt("sum_01_trip_cnt"),
+                sumZeroTripCnt = rs.getInt("sum_03_trip_cnt"),
+                sumZero360TripCnt = rs.getInt("sum_03_360_trip_cnt"),
+                sumZero420TripCnt = rs.getInt("sum_03_420_trip_cnt"),
+                sumZero480TripCnt = rs.getInt("sum_03_480_trip_cnt"),
+                sumZero540TripCnt = rs.getInt("sum_03_540_trip_cnt"),
+                sumZero600TripCnt = rs.getInt("sum_98_600_trip_cnt"),
+                sumZero900TripCnt = rs.getInt("sum_98_900_trip_cnt"),
+                sumZero1200TripCnt = rs.getInt("sum_98_1200_trip_cnt"),
+                sumZero1500TripCnt = rs.getInt("sum_98_1500_trip_cnt"),
+                sumZero1800TripCnt = rs.getInt("sum_98_1800_trip_cnt"),
+                sumZero1800OverTripCnt = rs.getInt("sum_98_1800_over_trip_cnt"),
             )
         }
     }
@@ -86,7 +135,6 @@ class PlugStatisticsRepository(
         val query: String = """
              select DVC_GB
                     ,DVC_MDL
-                    ,CTGRY
                     ,BS_DT
                     ,DIVC_CNT
                     ,SUM_TOTAL_DIST
@@ -104,19 +152,18 @@ class PlugStatisticsRepository(
 
         return hiveJdbcTemplate.query(query){ rs, _ ->
             InterpolationTripMonthlyInfo(
-                dvc_gb = rs.getString("dvc_gb"),
-                dvc_mdl = rs.getString("dvc_mdl"),
-                ctgry = rs.getString("ctgry"),
-                bs_dt = rs.getString("bs_dt"),
-                divc_cnt = rs.getInt("divc_cnt"),
-                sum_total_dist = rs.getInt("sum_total_dist"),
-                sum_01_dist = rs.getInt("sum_01_dist"),
-                sum_02_dist = rs.getInt("sum_02_dist"),
-                dist_02_rt = rs.getDouble("02_dist_rt"),
-                sum_total_trip_cnt = rs.getInt("sum_total_trip_cnt"),
-                sum_01_trip_cnt = rs.getInt("sum_01_trip_cnt"),
-                sum_02_trip_cnt = rs.getInt("sum_02_trip_cnt"),
-                trip_rt = rs.getDouble("02_trip_rt"),
+                dvcGb = rs.getString("dvc_gb"),
+                dvcMdl = rs.getString("dvc_mdl"),
+                bsDt = rs.getString("bs_dt"),
+                dvcCnt = rs.getInt("divc_cnt"),
+                sumTotalDist = rs.getInt("sum_total_dist"),
+                sumNormalDist = rs.getInt("sum_01_dist"),
+                sumInterpolationDist = rs.getInt("sum_02_dist"),
+                distInterpolationRt = rs.getDouble("02_dist_rt"),
+                sumTotalTripCnt = rs.getInt("sum_total_trip_cnt"),
+                sumNormalTripCnt = rs.getInt("sum_01_trip_cnt"),
+                sumInterpolationTripCnt = rs.getInt("sum_02_trip_cnt"),
+                sumInterpolationTripRt = rs.getDouble("02_trip_rt"),
             )
         }
     }
@@ -125,8 +172,6 @@ class PlugStatisticsRepository(
         val query: String = """
              select DVC_GB
                     ,DVC_MDL
-                    ,SD
-                    ,CTGRY
                     ,BS_DT
                     ,DIVC_CNT
                     ,SUM_TOTAL_DIST
@@ -151,27 +196,25 @@ class PlugStatisticsRepository(
 
         return hiveJdbcTemplate.query(query){ rs, _ ->
             InterpolationTripDailyInfo(
-                dvc_gb = rs.getString("dvc_gb"),
-                dvc_mdl = rs.getString("dvc_mdl"),
-                sd = rs.getString("sd"),
-                ctgry = rs.getString("ctgry"),
-                bs_dt = rs.getString("bs_dt"),
-                divc_cnt = rs.getInt("divc_cnt"),
-                sum_total_dist = rs.getInt("sum_total_dist"),
-                sum_01_dist = rs.getInt("sum_01_dist"),
-                sum_02_dist = rs.getInt("sum_02_dist"),
-                dist_02_rt = rs.getDouble("02_dist_rt"),
-                sum_total_trip_cnt = rs.getInt("sum_total_trip_cnt"),
-                sum_01_trip_cnt = rs.getInt("sum_01_trip_cnt"),
-                sum_02_trip_cnt = rs.getInt("sum_02_trip_cnt"),
-                trip_rt = rs.getDouble("02_trip_rt"),
-                trip_cnt_1 = rs.getInt("02_trip_cnt_1"),
-                trip_cnt_2 = rs.getInt("02_trip_cnt_2"),
-                trip_cnt_3 = rs.getInt("02_trip_cnt_3"),
-                trip_cnt_5 = rs.getInt("02_trip_cnt_5"),
-                trip_cnt_7 = rs.getInt("02_trip_cnt_7"),
-                trip_cnt_10 = rs.getInt("02_trip_cnt_10"),
-                trip_cnt_10_over = rs.getInt("02_trip_cnt_10_over"),
+                dvcGb = rs.getString("dvc_gb"),
+                dvcMdl = rs.getString("dvc_mdl"),
+                bsDt = rs.getString("bs_dt"),
+                dvcCnt = rs.getInt("divc_cnt"),
+                sumTotalDist = rs.getInt("sum_total_dist"),
+                sumNormalDist = rs.getInt("sum_01_dist"),
+                sumInterpolationDist = rs.getInt("sum_02_dist"),
+                distInterpolationRt = rs.getDouble("02_dist_rt"),
+                sumTotalTripCnt = rs.getInt("sum_total_trip_cnt"),
+                sumNormalTripCnt = rs.getInt("sum_01_trip_cnt"),
+                sumInterpolationTripCnt = rs.getInt("sum_02_trip_cnt"),
+                tripInterpolationRt = rs.getDouble("02_trip_rt"),
+                tripCnt1 = rs.getInt("02_trip_cnt_1"),
+                tripCnt2 = rs.getInt("02_trip_cnt_2"),
+                tripCnt3 = rs.getInt("02_trip_cnt_3"),
+                tripCnt5 = rs.getInt("02_trip_cnt_5"),
+                tripCnt7 = rs.getInt("02_trip_cnt_7"),
+                tripCnt10 = rs.getInt("02_trip_cnt_10"),
+                tripCnt10Over = rs.getInt("02_trip_cnt_10_over"),
             )
         }
     }

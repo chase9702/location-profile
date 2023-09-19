@@ -16,43 +16,41 @@ interface Props {
 //     address: string;
 // }
 
-const PlugInterpolationMonthlyTable = (props: Props): React.ReactElement => {
-
-    const [interpolationMonthlyTableData, setInterpolationMonthlyTableData] = useState([]);
+const PlugZeroGpsMonthlyTable = (props: Props): React.ReactElement => {
+    const [zeroGpsMonthlyTableData, setZeroGpsMonthlyTableData] = useState([]);
     const [loading, setLoading] = useState(true);
-    const uniqueMonthlyArray = [];
-    const seenMonthlyKeys = new Set();
+    const uniqueDailyArray = [];
+    const seenDailyKeys = new Set();
 
     useEffect(() => {
-        interpolationMonthlyTableDataFetch();
+        zeroGpsMonthlyTableDataFetch();
     }, []);
 
-    const interpolationMonthlyTableDataFetch = () => {
-        get<[]>("/api/plug/statistic/interpolation-trip-monthly-info")
+    const zeroGpsMonthlyTableDataFetch = () => {
+        get<[]>("/api/plug/statistic/zero-gps-trip-daily-info")
             .then((jsonData) => {
-                setInterpolationMonthlyTableData(jsonData)
+                setZeroGpsMonthlyTableData(jsonData)
             })
             .finally(() => {
-                setLoading(false);
+                setLoading(false); // 로딩을 완료로 설정
             })
     };
 
-    for (const item of interpolationMonthlyTableData) {
-        if (!seenMonthlyKeys.has(item.bsDt)) {
-            uniqueMonthlyArray.push({
+    for (const item of zeroGpsMonthlyTableData) {
+        if (!seenDailyKeys.has(item.bsDt)) {
+            uniqueDailyArray.push({
                 text: item.bsDt,
                 value: item.bsDt,
             });
-            seenMonthlyKeys.add(item.bsDt);
+            seenDailyKeys.add(item.bsDt);
         }
     }
 
-
-    const interpolationMonthlyColumn: ColumnsType<any> = [
+    const zeroGpsMonthlyColumn: ColumnsType<any> = [
         {
             title: '날짜',
             dataIndex: 'bsDt',
-            filters: uniqueMonthlyArray.map(option => ({
+            filters: uniqueDailyArray.map(option => ({
                 text: option.text,
                 value: option.value,
             })),
@@ -118,26 +116,6 @@ const PlugInterpolationMonthlyTable = (props: Props): React.ReactElement => {
 
         },
         {
-            title: '디바이스 수',
-            dataIndex: 'dvcCnt',
-        },
-        {
-            title: '전체거리',
-            dataIndex: 'sumTotalDist',
-        },
-        {
-            title: '정상거리',
-            dataIndex: 'sumNormalDist',
-        },
-        {
-            title: '보간거리',
-            dataIndex: 'sumInterpolationDist',
-        },
-        {
-            title: '보간거리비율',
-            dataIndex: 'distInterpolationRt',
-        },
-        {
             title: '전체트립',
             dataIndex: 'sumTotalTripCnt',
         },
@@ -146,12 +124,8 @@ const PlugInterpolationMonthlyTable = (props: Props): React.ReactElement => {
             dataIndex: 'sumNormalTripCnt',
         },
         {
-            title: '보간트립',
-            dataIndex: 'sumInterpolationTripCnt',
-        },
-        {
-            title: '보간트립비율',
-            dataIndex: 'sumInterpolationTripRt',
+            title: 'ZGPS트립',
+            dataIndex: 'sumZeroTripCnt',
         },
     ];
 
@@ -163,12 +137,11 @@ const PlugInterpolationMonthlyTable = (props: Props): React.ReactElement => {
     return (
         <div>
             <Spin spinning={loading} indicator={<LoadingOutlined/>} tip="로딩 중...">
-                <Table columns={interpolationMonthlyColumn} dataSource={interpolationMonthlyTableData}
-                       onChange={onChange}/>
+                <Table columns={zeroGpsMonthlyColumn} dataSource={zeroGpsMonthlyTableData} onChange={onChange}/>
             </Spin>
 
         </div>
     )
 };
 
-export default PlugInterpolationMonthlyTable;
+export default PlugZeroGpsMonthlyTable;

@@ -1,10 +1,8 @@
 import React, {useEffect, useState} from "react";
-import {Card, Table, Tabs} from "antd";
-import type { ColumnsType, TableProps } from 'antd/es/table';
+import {Spin, Table} from "antd";
+import type {ColumnsType, TableProps} from 'antd/es/table';
 import {get} from "@src/api";
-import _ from 'lodash';
-import TabPane from "antd/es/tabs/TabPane";
-import {Column} from "@ant-design/plots";
+import {LoadingOutlined} from "@ant-design/icons";
 
 
 interface Props {
@@ -20,43 +18,48 @@ interface Props {
 
 const PlugInterpolationDailyTable = (props: Props): React.ReactElement => {
 
+    const [interpolationDailyTableData, setInterpolationDailyTableData] = useState([]);
+    const [loading, setLoading] = useState(true);
     const uniqueDailyArray = [];
     const seenDailyKeys = new Set();
-    const [interpolationDailyTableData, setInterpolationDailyTableData] = useState([]);
 
     useEffect(() => {
         interpolationDailyTableDataFetch();
     }, []);
 
     const interpolationDailyTableDataFetch = () => {
-        get<[]>("/api/plug/statistic/interpolation-trip-daily-info?ctgry=02")
+        get<[]>("/api/plug/statistic/interpolation-trip-daily-info")
             .then((jsonData) => {
                 setInterpolationDailyTableData(jsonData)
             })
+            .finally(() => {
+                setLoading(false);
+            });
     };
 
     for (const item of interpolationDailyTableData) {
-        if (!seenDailyKeys.has(item.bs_dt)) {
+        if (!seenDailyKeys.has(item.bsDt)) {
             uniqueDailyArray.push({
-                text: item.bs_dt,
-                value: item.bs_dt,
+                text: item.bsDt,
+                value: item.bsDt,
             });
-            seenDailyKeys.add(item.bs_dt);
+            seenDailyKeys.add(item.bsDt);
         }
     }
 
     const interpolationDailyColumn: ColumnsType<any> = [
         {
             title: '날짜',
-            dataIndex: 'bs_dt',
+            dataIndex: 'bsDt',
             filters: uniqueDailyArray.map(option => ({
                 text: option.text,
-                value: option.value,})),
-            onFilter: (value: string, record) => record.bs_dt.indexOf(value) === 0,
+                value: option.value,
+            })),
+            onFilter: (value: string, record) => record.bsDt.indexOf(value) === 0,
         },
         {
             title: '제조사',
-            dataIndex: 'dvc_gb',
+            dataIndex: 'dvcGb',
             filters: [
                 {
                     text: 'AMT',
@@ -79,11 +82,11 @@ const PlugInterpolationDailyTable = (props: Props): React.ReactElement => {
                     value: 'UNK',
                 },
             ],
-            onFilter: (value: string, record) => record.dvc_gb.indexOf(value) === 0,
+            onFilter: (value: string, record) => record.dvcGb.indexOf(value) === 0,
         },
         {
             title: '모델명',
-            dataIndex: 'dvc_mdl',
+            dataIndex: 'dvcMdl',
             filters: [
                 {
                     text: 'AMT1',
@@ -110,72 +113,73 @@ const PlugInterpolationDailyTable = (props: Props): React.ReactElement => {
                     value: 'UNK1',
                 },
             ],
-            onFilter: (value: string, record) => record.dvc_mdl.indexOf(value) === 0,
+            onFilter: (value: string, record) => record.dvcMdl.indexOf(value) === 0,
 
         },
         {
             title: '디바이스 수',
-            dataIndex: 'divc_cnt',
+            dataIndex: 'dvcCnt',
+            align: 'center' as const,
         },
         {
             title: '전체거리',
-            dataIndex: 'sum_total_dist',
+            dataIndex: 'sumTotalDist',
         },
         {
             title: '정상거리',
-            dataIndex: 'sum_01_dist',
+            dataIndex: 'sumNormalDist',
         },
         {
             title: '보간거리',
-            dataIndex: 'sum_02_dist',
+            dataIndex: 'sumInterpolationDist',
         },
         {
             title: '보간거리비율',
-            dataIndex: 'dist_02_rt',
+            dataIndex: 'distInterpolationRt',
         },
         {
             title: '전체트립',
-            dataIndex: 'sum_total_trip_cnt',
+            dataIndex: 'sumTotalTripCnt',
         },
         {
             title: '정상트립',
-            dataIndex: 'sum_01_trip_cnt',
+            dataIndex: 'sumNormalTripCnt',
         },
         {
             title: '보간트립',
-            dataIndex: 'sum_02_trip_cnt',
+            dataIndex: 'sumInterpolationTripCnt',
         },
         {
             title: '보간트립비율',
-            dataIndex: 'trip_rt',
+            dataIndex: 'tripInterpolationRt',
         },
         {
             title: '0-1km',
-            dataIndex: 'trip_cnt_1',
+            dataIndex: 'tripCnt1',
         },
         {
             title: '1-2km',
-            dataIndex: 'trip_cnt_2',
+            dataIndex: 'tripCnt2',
         },
         {
             title: '2-3km',
-            dataIndex: 'trip_cnt_3',
+            dataIndex: 'tripCnt3',
         },
         {
             title: '3-5km',
-            dataIndex: 'trip_cnt_5',
+            dataIndex: 'tripCnt5',
         },
         {
             title: '5-7km',
-            dataIndex: 'trip_cnt_7',
+            dataIndex: 'tripCnt7',
         },
         {
             title: '7-10km',
-            dataIndex: 'trip_cnt_10',
+            dataIndex: 'tripCnt10',
         },
         {
             title: '10km이상',
-            dataIndex: 'trip_cnt_10_over',
+            dataIndex: 'tripCnt10Over',
         },
     ];
 
@@ -186,7 +190,9 @@ const PlugInterpolationDailyTable = (props: Props): React.ReactElement => {
 
     return (
         <div>
-            <Table columns={interpolationDailyColumn} dataSource={interpolationDailyTableData} onChange={onChange}/>
+            <Spin spinning={loading} indicator={<LoadingOutlined/>} tip="로딩 중...">
+                <Table columns={interpolationDailyColumn} dataSource={interpolationDailyTableData} onChange={onChange}/>
+            </Spin>
         </div>
     )
 };

@@ -16,43 +16,41 @@ interface Props {
 //     address: string;
 // }
 
-const PlugInterpolationMonthlyTable = (props: Props): React.ReactElement => {
-
-    const [interpolationMonthlyTableData, setInterpolationMonthlyTableData] = useState([]);
+const PlugZeroGpsDailyTable = (props: Props): React.ReactElement => {
+    const [zeroGpsDailyTableData, setZeroGpsDailyTableData] = useState([]);
     const [loading, setLoading] = useState(true);
-    const uniqueMonthlyArray = [];
-    const seenMonthlyKeys = new Set();
+    const uniqueDailyArray = [];
+    const seenDailyKeys = new Set();
 
     useEffect(() => {
-        interpolationMonthlyTableDataFetch();
+        zeroGpsDailyTableDataFetch();
     }, []);
 
-    const interpolationMonthlyTableDataFetch = () => {
-        get<[]>("/api/plug/statistic/interpolation-trip-monthly-info")
+    const zeroGpsDailyTableDataFetch = () => {
+        get<[]>("/api/plug/statistic/zero-gps-trip-daily-info")
             .then((jsonData) => {
-                setInterpolationMonthlyTableData(jsonData)
+                setZeroGpsDailyTableData(jsonData)
             })
             .finally(() => {
-                setLoading(false);
-            })
+                setLoading(false); // 로딩을 완료로 설정
+            });
     };
 
-    for (const item of interpolationMonthlyTableData) {
-        if (!seenMonthlyKeys.has(item.bsDt)) {
-            uniqueMonthlyArray.push({
+    for (const item of zeroGpsDailyTableData) {
+        if (!seenDailyKeys.has(item.bsDt)) {
+            uniqueDailyArray.push({
                 text: item.bsDt,
                 value: item.bsDt,
             });
-            seenMonthlyKeys.add(item.bsDt);
+            seenDailyKeys.add(item.bsDt);
         }
     }
 
-
-    const interpolationMonthlyColumn: ColumnsType<any> = [
+    const zeroGpsDailyColumn: ColumnsType<any> = [
         {
             title: '날짜',
             dataIndex: 'bsDt',
-            filters: uniqueMonthlyArray.map(option => ({
+            filters: uniqueDailyArray.map(option => ({
                 text: option.text,
                 value: option.value,
             })),
@@ -118,26 +116,6 @@ const PlugInterpolationMonthlyTable = (props: Props): React.ReactElement => {
 
         },
         {
-            title: '디바이스 수',
-            dataIndex: 'dvcCnt',
-        },
-        {
-            title: '전체거리',
-            dataIndex: 'sumTotalDist',
-        },
-        {
-            title: '정상거리',
-            dataIndex: 'sumNormalDist',
-        },
-        {
-            title: '보간거리',
-            dataIndex: 'sumInterpolationDist',
-        },
-        {
-            title: '보간거리비율',
-            dataIndex: 'distInterpolationRt',
-        },
-        {
             title: '전체트립',
             dataIndex: 'sumTotalTripCnt',
         },
@@ -146,12 +124,52 @@ const PlugInterpolationMonthlyTable = (props: Props): React.ReactElement => {
             dataIndex: 'sumNormalTripCnt',
         },
         {
-            title: '보간트립',
-            dataIndex: 'sumInterpolationTripCnt',
+            title: 'ZGPS트립',
+            dataIndex: 'sumZeroTripCnt',
+        },
+        // {
+        //     title: 'ZGPS비율',
+        //     dataIndex: 'trip_rt',
+        // },
+        {
+            title: '5-6분',
+            dataIndex: 'sumZero360TripCnt',
         },
         {
-            title: '보간트립비율',
-            dataIndex: 'sumInterpolationTripRt',
+            title: '6-7분',
+            dataIndex: 'sumZero420TripCnt',
+        },
+        {
+            title: '7-8분',
+            dataIndex: 'sumZero480TripCnt',
+        },
+        {
+            title: '8-9분',
+            dataIndex: 'sumZero540TripCnt',
+        },
+        {
+            title: '9-10분',
+            dataIndex: 'sumZero600TripCnt',
+        },
+        {
+            title: '10-15분',
+            dataIndex: 'sumZero900TripCnt',
+        },
+        {
+            title: '15-20분',
+            dataIndex: 'sumZero1200TripCnt',
+        },
+        {
+            title: '20-25분',
+            dataIndex: 'sumZero1500TripCnt',
+        },
+        {
+            title: '25-30분',
+            dataIndex: 'sumZero1800TripCnt',
+        },
+        {
+            title: '30분이상',
+            dataIndex: 'sumZero1800OverTripCnt',
         },
     ];
 
@@ -163,12 +181,11 @@ const PlugInterpolationMonthlyTable = (props: Props): React.ReactElement => {
     return (
         <div>
             <Spin spinning={loading} indicator={<LoadingOutlined/>} tip="로딩 중...">
-                <Table columns={interpolationMonthlyColumn} dataSource={interpolationMonthlyTableData}
-                       onChange={onChange}/>
+                <Table columns={zeroGpsDailyColumn} dataSource={zeroGpsDailyTableData} onChange={onChange}/>
             </Spin>
 
         </div>
     )
 };
 
-export default PlugInterpolationMonthlyTable;
+export default PlugZeroGpsDailyTable;

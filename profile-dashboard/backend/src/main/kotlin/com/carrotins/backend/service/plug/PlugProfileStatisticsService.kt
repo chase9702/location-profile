@@ -44,37 +44,19 @@ class PlugProfileStatisticsService(
         return updateCarProductNameData
     }
 
-    fun getZeroGpsTripInfo(): List<ZeroGpsTripInfo> {
-        val zeroGpsData = plugStatisticsRepository.getZeroGpsTripInfoData()
-
-        val groupZeroGpsData = zeroGpsData
-            .groupBy { Pair(it.dvc_gb, it.part_dt) }
-            .map { (key, value) ->
-                ZeroGpsTripInfo(
-                    dvc_gb = key.first,
-                    part_dt = key.second,
-                    value.sumOf { it.trip_total },
-                    value.sumOf { it.trip_01 },
-                    value.sumOf { it.trip_98 },
-                    value.sumOf { it.trip_rt }
-                )
-            }
-
-        val updateZeroGpsData = groupZeroGpsData.map { item ->
-            val zeroGpsRatio = if (item.trip_98 != 0) BigDecimal((item.trip_98.toDouble() / item.trip_total) * 100).setScale(2, BigDecimal.ROUND_HALF_UP).toDouble() else 0.0
-            item.copy(trip_rt = zeroGpsRatio)
-        }
-
-        return updateZeroGpsData
+    fun getZeroGpsTripMonthlyInfo(): List<ZeroGpsTripMonthlyInfo> {
+        return plugStatisticsRepository.getZeroGpsTripMonthlyInfoData()
     }
 
-    fun getInterpolationTripMonthlyInfo(ctgry: String): List<InterpolationTripMonthlyInfo>{
-        val allData = plugStatisticsRepository.getInterpolationTripMonthlyInfoData()
-        return allData.filter { it.ctgry == ctgry }
+    fun getZeroGpsTripDailyInfo(): List<ZeroGpsTripDailyInfo> {
+        return plugStatisticsRepository.getZeroGpsTripDailyInfoData()
     }
-    fun getInterpolationTripDailyInfo(ctgry: String): List<InterpolationTripDailyInfo> {
-        val allData = plugStatisticsRepository.getInterpolationTripDailyInfoData()
-        return allData.filter { it.ctgry == ctgry }
+
+    fun getInterpolationTripMonthlyInfo(): List<InterpolationTripMonthlyInfo>{
+        return plugStatisticsRepository.getInterpolationTripMonthlyInfoData()
+    }
+    fun getInterpolationTripDailyInfo(): List<InterpolationTripDailyInfo> {
+        return plugStatisticsRepository.getInterpolationTripDailyInfoData()
     }
 
 }

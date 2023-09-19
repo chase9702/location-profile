@@ -490,23 +490,23 @@ const PlugProfileDashBoard = (props: Props): React.ReactElement => {
         children: [
             {
                 name: '分类 1',
-                trip_rt: 560,
+                sumZeroTripRt: 560,
             },
             {
                 name: '分类 2',
-                trip_rt: 500,
+                sumZeroTripRt: 500,
             },
             {
                 name: '分类 3',
-                trip_rt: 150,
+                sumZeroTripRt: 150,
             },
             {
                 name: '分类 4',
-                trip_rt: 140,
+                sumZeroTripRt: 140,
             },
             {
                 name: '分类 5',
-                trip_rt: 115,
+                sumZeroTripRt: 115,
             },
             {
                 name: '分类 6',
@@ -514,15 +514,15 @@ const PlugProfileDashBoard = (props: Props): React.ReactElement => {
             },
             {
                 name: '分类 7',
-                trip_rt: 90,
+                sumZeroTripRt: 90,
             },
             {
                 name: '分类 8',
-                trip_rt: 75,
+                sumZeroTripRt: 75,
             },
             {
                 name: '分类 9',
-                trip_rt: 98,
+                sumZeroTripRt: 98,
             },
         ],
     };
