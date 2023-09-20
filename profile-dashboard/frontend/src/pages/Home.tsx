@@ -1,9 +1,7 @@
-import React, {Suspense, useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {withRouter} from "react-router-dom";
-import {Line} from '@ant-design/plots';
-import {Card} from 'antd';
-
-// const CustomKeplerMap = React.lazy(() => import('../components/common/CustomKeplerMap'));
+import Line from '@ant-design/plots/lib/components/line';
+import Card from 'antd/lib/card';
 import CustomKeplerMap from "@src/components/common/CustomKeplerMap";
 import {store} from "@src/index";
 import {addDataToMap, updateMap} from "kepler.gl/actions";

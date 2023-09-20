@@ -1,7 +1,7 @@
-import React, {Component, useEffect} from 'react';
-import {Link, RouteComponentProps, withRouter} from 'react-router-dom';
-import {Button, Menu} from 'antd';
-import {HomeOutlined, LogoutOutlined} from '@ant-design/icons';
+import React, {useEffect} from 'react';
+import {Link, withRouter} from 'react-router-dom';
+import Menu from 'antd/lib/menu';
+import HomeOutlined from '@ant-design/icons/lib/icons/HomeOutlined';
 import RouteMenu from '@src/routes/RouteMenu';
 import {useDispatch, useSelector} from "react-redux";
 import {setSelectMenu} from "@src/actions/MenuSelectAction";
@@ -10,7 +10,6 @@ import {authGet, authPut} from "@src/api";
 import {NotifyError} from "@src/components/common/Notification";
 import {setAccessToken, setAuthInfo, setRefreshToken, setSSOId} from "@src/actions/AuthAction";
 import {StoreState} from "@src/reducers";
-import axios from "axios";
 
 const {SubMenu} = Menu;
 
