@@ -7,13 +7,14 @@ interface Props {
 }
 
 const PlugZeroGpsMonthlyChart = (props: { zeroGpsMonthlyChartData: any[] }): React.ReactElement => {
+
     const {zeroGpsMonthlyChartData} = props;
     const zeroGpsMonthlyGroupData = _.groupBy(zeroGpsMonthlyChartData, (item) => `${item.dvcMdl}-${item.bsDt}`);
 
     const zeroGpsMonthlyChartDataResult = _.map(zeroGpsMonthlyGroupData, (group) => {
-        const sumTotalcnt = _.sumBy(group, 'sumTotalTripCnt');
+        const sumTotalCnt = _.sumBy(group, 'sumTotalTripCnt');
         const sumZeroTripCnt = _.sumBy(group, 'sumZeroTripCnt');
-        const sumZeroTripRt = sumTotalcnt !== 0 ? (sumZeroTripCnt / sumTotalcnt) * 100 : 0;
+        const sumZeroTripRt = sumTotalCnt !== 0 ? (sumZeroTripCnt / sumTotalCnt) * 100 : 0;
 
         return {
             dvc_Mdl: group[0].dvcMdl,

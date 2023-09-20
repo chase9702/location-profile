@@ -7,6 +7,7 @@ interface Props {
 }
 
 const PlugZeroGpsDailyChart = (props: { zeroGpsDailyChartData: any[] }): React.ReactElement => {
+
     const { zeroGpsDailyChartData } = props;
     const zeroGpsDailyGroupData = _.groupBy(zeroGpsDailyChartData, (item) => `${item.dvcMdl}-${item.bsDt}`);
 

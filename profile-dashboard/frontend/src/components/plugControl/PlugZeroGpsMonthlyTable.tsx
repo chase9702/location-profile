@@ -7,14 +7,8 @@ interface Props {
 
 }
 
-// interface DataType {
-//     key: React.Key;
-//     name: string;
-//     age: number;
-//     address: string;
-// }
-
 const PlugZeroGpsMonthlyTable = (props: { zeroGpsMonthlyTableData: any[] }): React.ReactElement => {
+
     const { zeroGpsMonthlyTableData } = props;
     const uniqueDailyArray = [];
     const seenDailyKeys = new Set();
@@ -122,7 +116,6 @@ const PlugZeroGpsMonthlyTable = (props: { zeroGpsMonthlyTableData: any[] }): Rea
             align: 'center' as const,
         },
     ];
-
 
     const onChange: TableProps<any>['onChange'] = (pagination, filters, sorter, extra) => {
         console.log('params', pagination, filters, sorter, extra);

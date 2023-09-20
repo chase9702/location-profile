@@ -36,11 +36,4 @@ class PlugProfileStatisticsController(
     fun getInterpolationTripMonthlyInfoData():List<InterpolationTripMonthlyInfo>{
         return plugProfileStatisticsService.getInterpolationTripMonthlyInfo()
     }
-
-    @PostMapping("/click-test")
-    fun search(@RequestBody searchData: String): String {
-        val result = searchData.toUpperCase()
-
-        return "서버에서 받은 데이터: $result"
-    }
 }

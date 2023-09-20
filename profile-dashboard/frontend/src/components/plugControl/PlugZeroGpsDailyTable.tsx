@@ -15,6 +15,7 @@ interface Props {
 // }
 
 const PlugZeroGpsDailyTable = (props: { zeroGpsDailyTableData: any[] }): React.ReactElement => {
+
     const { zeroGpsDailyTableData } = props;
     const uniqueDailyArray = [];
     const seenDailyKeys = new Set();

@@ -7,8 +7,8 @@ interface Props {
 }
 
 const PlugInterpolationDailyChart = (props: { interpolationDailyChartData: any[] }): React.ReactElement => {
-    const { interpolationDailyChartData } = props;
 
+    const { interpolationDailyChartData } = props;
     const interpolationDailyGroupData = _.groupBy(interpolationDailyChartData, (item) => `${item.dvcGb}-${item.bsDt}`);
 
     const interpolationDailyChartDataResult = _.map(interpolationDailyGroupData, (group) => {
@@ -36,9 +36,9 @@ const PlugInterpolationDailyChart = (props: { interpolationDailyChartData: any[]
         },
         label: {
             position: 'middle',
-            content: (item) => `${item.sumInterpolationTripCnt}`, // 각 데이터의 값을 라벨로 표시
+            content: (item) => `${item.sumInterpolationTripCnt}`,
             style: {
-                fill: '#000', // 라벨 색상 설정
+                fill: '#000',
                 fontSize: 12,
             },
         },

@@ -17,8 +17,6 @@ interface Props {
 const PlugInterpolationMonthlyTable = (props: { interpolationMonthlyTableData: any[] }): React.ReactElement => {
 
     const { interpolationMonthlyTableData } = props;
-
-    const [loading, setLoading] = useState(true);
     const uniqueMonthlyArray = [];
     const seenMonthlyKeys = new Set();
 

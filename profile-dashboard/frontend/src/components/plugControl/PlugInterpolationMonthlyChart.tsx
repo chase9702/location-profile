@@ -7,8 +7,8 @@ interface Props {
 }
 
 const PlugInterpolationMonthlyChart = (props: { interpolationMonthlyChartData: any[] }): React.ReactElement => {
-    const { interpolationMonthlyChartData } = props;
 
+    const { interpolationMonthlyChartData } = props;
     const interpolationMonthlyGroupData = _.groupBy(interpolationMonthlyChartData, (item) => `${item.dvcMdl}-${item.bsDt}`);
 
     const interpolationMonthlyChartDataResult = _.map(interpolationMonthlyGroupData, (group) => {
@@ -23,8 +23,6 @@ const PlugInterpolationMonthlyChart = (props: { interpolationMonthlyChartData: a
             sumInterpolationTripRt: parseFloat(sumInterpolationTripRt.toFixed(2)), // 숫자로 변환
         };
     });
-    console.log("monthly")
-    console.log(interpolationMonthlyChartDataResult)
 
     const interpolationMonthlyChartConfig = {
         data: interpolationMonthlyChartDataResult,

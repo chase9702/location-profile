@@ -12,9 +12,6 @@ const PlugInterpolationDailyTable = (props: { interpolationDailyTableData: any[]
     const { interpolationDailyTableData } = props;
     const uniqueDailyArray = [];
     const seenDailyKeys = new Set();
-    console.log("Table Data")
-    console.log(interpolationDailyTableData)
-    console.log(uniqueDailyArray)
 
     for (const item of interpolationDailyTableData) {
         if (!seenDailyKeys.has(item.bsDt)) {
