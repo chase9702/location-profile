@@ -1,13 +1,16 @@
-import React, {useEffect, useState} from 'react';
+import React, {Suspense, useEffect, useState} from 'react';
 import {withRouter} from "react-router-dom";
 import {Line} from '@ant-design/plots';
 import {Card} from 'antd';
+
+// const CustomKeplerMap = React.lazy(() => import('../components/common/CustomKeplerMap'));
 import CustomKeplerMap from "@src/components/common/CustomKeplerMap";
 import {store} from "@src/index";
 import {addDataToMap, updateMap} from "kepler.gl/actions";
 import {processCsvData} from "kepler.gl/processors";
 import {get} from "@src/api";
 import {NotifyError} from "@src/components/common/Notification";
+import PageTitle from "@src/components/common/PageTitle";
 
 
 interface State {
@@ -162,10 +165,20 @@ const Home = (): React.ReactElement => {
 
     return (
         <div>
+            <PageTitle
+                title="Location Intelligence (LI)"
+                description={[
+                    'LI는 캐롯의 위치정보를 분석할 수 있는 플랫폼입니다.',
+                    '플러그관제를 하실 수 있습니다.',
+                    '위치정보 데이터들을 이용하여 다양한 인사이트를 얻을 수 있습니다.',
+                ]}
+            />
+
             <CustomKeplerMap
                 heightRatio={70}
                 id={"homeMap"}
             />
+
             <Card style={{padding: '10px'}}>
                 <div>
                     일자별, 디바이스별 현황

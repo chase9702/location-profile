@@ -40,7 +40,7 @@ const AuthProvider = ({children}) => {
             if (response.resultCode === "1") {
                 authPost<any>("/auth/login", {
                     id: response.ssoId,
-                    realm: "location_intelligence",
+                    realm: "alocation_intelligence",
                 }).then((jsonData) => {
                     console.log(jsonData)
                     setJwtLoginInfo(jsonData);

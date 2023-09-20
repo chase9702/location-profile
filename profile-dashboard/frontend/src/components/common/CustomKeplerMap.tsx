@@ -27,17 +27,11 @@ const CustomKeplerMap = (props: Props): React.ReactElement => {
                 id={props.id}
                 width={"100%"}
                 height={height}
-                // mapStyles={mapStyles2}
-                // mapStylesReplaceDefault={true}
             />
-            {/*<KeplerGl*/}
-            {/*    mapboxApiAccessToken={token}*/}
-            {/*    mapStyles={mapStyles2}*/}
-            {/*    mapStylesReplaceDefault={true}*/}
-            {/*    id="map"*/}
-            {/*/>*/}
+
         </div>
     )
 }
 
+// export type CustomerKeplerMap = typeof ttt;
 export default CustomKeplerMap;
