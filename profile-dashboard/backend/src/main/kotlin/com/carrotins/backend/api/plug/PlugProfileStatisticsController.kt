@@ -1,11 +1,8 @@
 package com.carrotins.backend.api.plug
 
-import com.carrotins.backend.repository.plug.DeviceProductCount
-import com.carrotins.backend.repository.plug.InterpolationTripInfo
+import com.carrotins.backend.repository.plug.*
 import com.carrotins.backend.service.plug.PlugProfileStatisticsService
 import io.swagger.v3.oas.annotations.tags.Tag
-import com.carrotins.backend.repository.plug.ZeroGpsTripInfo
-import com.carrotins.backend.repository.plug.CarProductNameInfo
 import org.springframework.web.bind.annotation.*
 
 
@@ -18,27 +15,25 @@ import org.springframework.web.bind.annotation.*
 class PlugProfileStatisticsController(
     private val plugProfileStatisticsService: PlugProfileStatisticsService
 ) {
-    @GetMapping("/device-info")
-    fun getDeviceData():List<DeviceProductCount>{
-        return plugProfileStatisticsService.getDeviceProductCount()
+    @GetMapping("/firmware-version-info")
+    fun getFirmwareVersionInfoData():List<FirmwareVersionInfo>{
+        return plugProfileStatisticsService.getFirmwareVersionInfo()
     }
-    @GetMapping("/car-product-name-info")
-    fun getCarnmData():List<CarProductNameInfo>{
-        return plugProfileStatisticsService.getCarProductNameInfo()
+    @GetMapping("/zero-gps-trip-monthly-info")
+    fun getZeroGpsTripMonthlyInfoData():List<ZeroGpsTripMonthlyInfo>{
+        return plugProfileStatisticsService.getZeroGpsTripMonthlyInfo()
     }
-    @GetMapping("/zero-gps-trip-info")
-    fun getZgpsRTData():List<ZeroGpsTripInfo>{
-        return plugProfileStatisticsService.getZeroGpsTripInfo()
+    @GetMapping("/zero-gps-trip-daily-info")
+    fun getZeroGpsTripDailyInfoData():List<ZeroGpsTripDailyInfo>{
+        return plugProfileStatisticsService.getZeroGpsTripDailyInfo()
     }
-    @GetMapping("/interpolation-trip-info")
-    fun gettrip02RTData():List<InterpolationTripInfo>{
-        return plugProfileStatisticsService.getInterpolationTripInfo()
+    @GetMapping("/interpolation-trip-daily-info")
+    fun getInterpolationTripDailyInfoData():List<InterpolationTripDailyInfo>{
+        return plugProfileStatisticsService.getInterpolationTripDailyInfo()
     }
 
-    @PostMapping("/click-test")
-    fun search(@RequestBody searchData: String): String {
-        val result = searchData.toUpperCase()
-
-        return "서버에서 받은 데이터: $result"
+    @GetMapping("/interpolation-trip-monthly-info")
+    fun getInterpolationTripMonthlyInfoData():List<InterpolationTripMonthlyInfo>{
+        return plugProfileStatisticsService.getInterpolationTripMonthlyInfo()
     }
 }

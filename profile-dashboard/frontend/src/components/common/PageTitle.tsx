@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Typography } from 'antd';
+import Typography from 'antd/lib/typography';
 
 import './page-title.css';
 
