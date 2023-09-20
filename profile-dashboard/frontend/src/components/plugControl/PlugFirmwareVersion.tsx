@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from "react";
-import {Spin} from "antd";
+import Spin from "antd/lib/spin";
 import {get} from "@src/api";
-import {Column} from "@ant-design/plots";
-import {LoadingOutlined} from "@ant-design/icons";
+import Column from "@ant-design/plots/lib/components/column";
+import LoadingOutlined from "@ant-design/icons/lib/icons/LoadingOutlined";
 
 interface Props {
 

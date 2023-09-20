@@ -1,5 +1,7 @@
 import React, {useEffect, useState} from "react";
-import {Card, Spin, Tabs} from "antd";
+import Card from "antd/lib/card";
+import Tabs from "antd/lib/tabs";
+import Spin from "antd/lib/spin";
 import PageTitle from "@src/components/common/PageTitle";
 import {get} from "@src/api";
 import PlugInterpolationDailyTable from "@src/components/plugControl/PlugInterpolationDailyTable";
@@ -11,7 +13,7 @@ import PlugZeroGpsDailyChart from "@src/components/plugControl/PlugZeroGpsDailyC
 import PlugZeroGpsDailyTable from "@src/components/plugControl/PlugZeroGpsDailyTable";
 import PlugZeroGpsMonthlyChart from "@src/components/plugControl/PlugZeroGpsMonthlyChart";
 import PlugZeroGpsMonthlyTable from "@src/components/plugControl/PlugZeroGpsMonthlyTable";
-import {LoadingOutlined} from "@ant-design/icons";
+import LoadingOutlined from "@ant-design/icons/LoadingOutlined";
 import PlugFirmwareVersion from "@src/components/plugControl/PlugFirmwareVersion";
 
 

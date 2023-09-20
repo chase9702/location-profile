@@ -1,5 +1,5 @@
 import React from "react";
-import {Table} from "antd";
+import Table from "antd/lib/table";
 import type {ColumnsType, TableProps} from 'antd/es/table';
 
 
@@ -184,9 +184,7 @@ const PlugInterpolationDailyTable = (props: { interpolationDailyTableData: any[]
 
     return (
         <div>
-            {/*<Spin spinning={loading} indicator={<LoadingOutlined/>} tip="로딩 중...">*/}
                 <Table columns={interpolationDailyColumn} dataSource={interpolationDailyTableData} onChange={onChange}/>
-            {/*</Spin>*/}
         </div>
     )
 };

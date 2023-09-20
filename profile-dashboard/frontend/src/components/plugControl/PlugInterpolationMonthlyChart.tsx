@@ -1,6 +1,6 @@
 import React from "react";
 import _ from 'lodash';
-import {Column} from "@ant-design/plots";
+import Column from "@ant-design/plots/lib/components/column";
 
 interface Props {
 
