@@ -15,7 +15,6 @@ interface Props {
 const DeviceTop100Table = (props: Props): React.ReactElement => {
 
     const [excelDownLoading, setExcelDownLoading] = useState(false);
-    const [deviceInfo, setDeviceInfo] = useState([]);
     const [selectedDeviceModel, setSelectedDeviceModel] = useState("");
     const [loading, setLoading] = useState(false);
     const [tripInfo, setTripInfo] = useState([]);
@@ -75,7 +74,7 @@ const DeviceTop100Table = (props: Props): React.ReactElement => {
     const handleClickExcelDownload = async () => {
         setExcelDownLoading(true);
 
-        const values = deviceInfo.map((data) => {
+        const values = props.deviceInfoList.map((data) => {
             const tmpList = [];
             for (const [key, value] of Object.entries(data)) {
                 tmpList.push(value);

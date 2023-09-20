@@ -35,19 +35,19 @@ const RouteMenu: MenuInfo[] = [
             }
         ],
     },
-    {
-        name: 'Location Profile',
-        key: 'location',
-        desc: 'Location Profile 제공.',
-        submenu: [
-            {
-                name: 'Location Dashboard',
-                key: 'location-dashboard',
-                to: '/location/dashboard',
-                component: LocationProfileDashBoard,
-             }
-        ],
-    }
+    // {
+    //     name: 'Location Profile',
+    //     key: 'location',
+    //     desc: 'Location Profile 제공.',
+    //     submenu: [
+    //         {
+    //             name: 'Location Dashboard',
+    //             key: 'location-dashboard',
+    //             to: '/location/dashboard',
+    //             component: LocationProfileDashBoard,
+    //          }
+    //     ],
+    // }
 ];
 
 export default RouteMenu;
