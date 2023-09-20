@@ -1,8 +1,6 @@
-import React, {useEffect, useState} from "react";
-import {Spin, Table} from "antd";
+import React from "react";
+import {Table} from "antd";
 import type {ColumnsType, TableProps} from 'antd/es/table';
-import {get} from "@src/api";
-import {LoadingOutlined} from "@ant-design/icons";
 
 
 interface Props {

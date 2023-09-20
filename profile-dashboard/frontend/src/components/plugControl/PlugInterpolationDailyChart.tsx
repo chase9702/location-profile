@@ -1,9 +1,6 @@
-import React, {useEffect, useState} from "react";
-import {get} from "@src/api";
+import React from "react";
 import _ from 'lodash';
 import {Column} from "@ant-design/plots";
-import {Spin} from "antd";
-import {LoadingOutlined} from '@ant-design/icons';
 
 
 interface Props {

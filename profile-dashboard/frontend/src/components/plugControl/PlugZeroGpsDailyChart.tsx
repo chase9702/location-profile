@@ -1,33 +1,13 @@
-import React, {useEffect, useState} from "react";
-import {get} from "@src/api";
+import React from "react";
 import _ from 'lodash';
 import {Column} from "@ant-design/plots";
-import {Spin} from "antd";
-import {LoadingOutlined} from "@ant-design/icons";
 
 interface Props {
 
 }
 
-const PlugZeroGpsDailyChart = (props: Props): React.ReactElement => {
-    const [zeroGpsDailyChartData, setZeroGpsDailyChartData] = useState([]);
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        zeroGpsTableDailyChartFetch();
-    }, []);
-
-    const zeroGpsTableDailyChartFetch = () => {
-        get<[]>("/api/plug/statistic/zero-gps-trip-daily-info")
-            .then((jsonData) => {
-                console.log(jsonData)
-                setZeroGpsDailyChartData(jsonData)
-            })
-            .finally(() => {
-                setLoading(false);
-            });
-    };
-
+const PlugZeroGpsDailyChart = (props: { zeroGpsDailyChartData: any[] }): React.ReactElement => {
+    const { zeroGpsDailyChartData } = props;
     const zeroGpsDailyGroupData = _.groupBy(zeroGpsDailyChartData, (item) => `${item.dvcMdl}-${item.bsDt}`);
 
     const zeroGpsDailyChartDataResult = _.map(zeroGpsDailyGroupData, (group) => {
@@ -65,10 +45,7 @@ const PlugZeroGpsDailyChart = (props: Props): React.ReactElement => {
 
     return (
         <div>
-            <Spin spinning={loading} indicator={<LoadingOutlined/>} tip="로딩 중...">
                 <Column {...zeroGpsDailyChartConfig} />
-            </Spin>
-
         </div>
     )
 };

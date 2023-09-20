@@ -1,32 +1,13 @@
-import React, {useEffect, useState} from "react";
-import {get} from "@src/api";
+import React from "react";
 import _ from 'lodash';
 import {Column} from "@ant-design/plots";
-import {Spin} from "antd";
-import {LoadingOutlined} from "@ant-design/icons";
 
 interface Props {
 
 }
 
-const PlugInterpolationMonthlyChart = (props: Props): React.ReactElement => {
-    const [interpolationMonthlyChartData, setInterpolationMonthlyChartData] = useState([]);
-    const [loading, setLoading] = useState(true);
-
-
-    useEffect(() => {
-        interpolationTableMonthlyChartFetch();
-    }, []);
-
-    const interpolationTableMonthlyChartFetch = () => {
-        get<[]>("/api/plug/statistic/interpolation-trip-monthly-info")
-            .then((jsonData1) => {
-                setInterpolationMonthlyChartData(jsonData1)
-            })
-            .finally(() => {
-                setLoading(false);
-            });
-    };
+const PlugInterpolationMonthlyChart = (props: { interpolationMonthlyChartData: any[] }): React.ReactElement => {
+    const { interpolationMonthlyChartData } = props;
 
     const interpolationMonthlyGroupData = _.groupBy(interpolationMonthlyChartData, (item) => `${item.dvcMdl}-${item.bsDt}`);
 
@@ -65,10 +46,7 @@ const PlugInterpolationMonthlyChart = (props: Props): React.ReactElement => {
     };
     return (
         <div>
-            <Spin spinning={loading} indicator={<LoadingOutlined/>} tip="로딩 중...">
                 <Column {...interpolationMonthlyChartConfig} />
-            </Spin>
-
         </div>
     )
 };

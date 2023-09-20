@@ -1,8 +1,6 @@
-import React, {useEffect, useState} from "react";
-import {Spin, Table} from "antd";
+import React from "react";
+import {Table} from "antd";
 import type {ColumnsType, TableProps} from 'antd/es/table';
-import {get} from "@src/api";
-import {LoadingOutlined} from "@ant-design/icons";
 
 
 interface Props {
@@ -16,25 +14,10 @@ interface Props {
 //     address: string;
 // }
 
-const PlugZeroGpsDailyTable = (props: Props): React.ReactElement => {
-    const [zeroGpsDailyTableData, setZeroGpsDailyTableData] = useState([]);
-    const [loading, setLoading] = useState(true);
+const PlugZeroGpsDailyTable = (props: { zeroGpsDailyTableData: any[] }): React.ReactElement => {
+    const { zeroGpsDailyTableData } = props;
     const uniqueDailyArray = [];
     const seenDailyKeys = new Set();
-
-    useEffect(() => {
-        zeroGpsDailyTableDataFetch();
-    }, []);
-
-    const zeroGpsDailyTableDataFetch = () => {
-        get<[]>("/api/plug/statistic/zero-gps-trip-daily-info")
-            .then((jsonData) => {
-                setZeroGpsDailyTableData(jsonData)
-            })
-            .finally(() => {
-                setLoading(false); // 로딩을 완료로 설정
-            });
-    };
 
     for (const item of zeroGpsDailyTableData) {
         if (!seenDailyKeys.has(item.bsDt)) {
@@ -197,10 +180,7 @@ const PlugZeroGpsDailyTable = (props: Props): React.ReactElement => {
 
     return (
         <div>
-            <Spin spinning={loading} indicator={<LoadingOutlined/>} tip="로딩 중...">
                 <Table columns={zeroGpsDailyColumn} dataSource={zeroGpsDailyTableData} onChange={onChange}/>
-            </Spin>
-
         </div>
     )
 };

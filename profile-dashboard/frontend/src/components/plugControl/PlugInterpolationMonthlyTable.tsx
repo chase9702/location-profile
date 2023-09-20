@@ -1,8 +1,6 @@
-import React, {useEffect, useState} from "react";
-import {Spin, Table} from "antd";
+import React, {useState} from "react";
+import {Table} from "antd";
 import type {ColumnsType, TableProps} from 'antd/es/table';
-import {get} from "@src/api";
-import {LoadingOutlined} from "@ant-design/icons";
 
 
 interface Props {
@@ -16,26 +14,13 @@ interface Props {
 //     address: string;
 // }
 
-const PlugInterpolationMonthlyTable = (props: Props): React.ReactElement => {
+const PlugInterpolationMonthlyTable = (props: { interpolationMonthlyTableData: any[] }): React.ReactElement => {
 
-    const [interpolationMonthlyTableData, setInterpolationMonthlyTableData] = useState([]);
+    const { interpolationMonthlyTableData } = props;
+
     const [loading, setLoading] = useState(true);
     const uniqueMonthlyArray = [];
     const seenMonthlyKeys = new Set();
-
-    useEffect(() => {
-        interpolationMonthlyTableDataFetch();
-    }, []);
-
-    const interpolationMonthlyTableDataFetch = () => {
-        get<[]>("/api/plug/statistic/interpolation-trip-monthly-info")
-            .then((jsonData) => {
-                setInterpolationMonthlyTableData(jsonData)
-            })
-            .finally(() => {
-                setLoading(false);
-            })
-    };
 
     for (const item of interpolationMonthlyTableData) {
         if (!seenMonthlyKeys.has(item.bsDt)) {
@@ -174,11 +159,8 @@ const PlugInterpolationMonthlyTable = (props: Props): React.ReactElement => {
 
     return (
         <div>
-            <Spin spinning={loading} indicator={<LoadingOutlined/>} tip="로딩 중...">
                 <Table columns={interpolationMonthlyColumn} dataSource={interpolationMonthlyTableData}
                        onChange={onChange}/>
-            </Spin>
-
         </div>
     )
 };

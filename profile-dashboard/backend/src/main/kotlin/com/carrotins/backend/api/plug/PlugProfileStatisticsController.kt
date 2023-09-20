@@ -15,13 +15,9 @@ import org.springframework.web.bind.annotation.*
 class PlugProfileStatisticsController(
     private val plugProfileStatisticsService: PlugProfileStatisticsService
 ) {
-    @GetMapping("/device-info")
-    fun getDeviceData():List<DeviceProductCount>{
-        return plugProfileStatisticsService.getDeviceProductCount()
-    }
-    @GetMapping("/car-product-name-info")
-    fun getCarnmData():List<CarProductNameInfo>{
-        return plugProfileStatisticsService.getCarProductNameInfo()
+    @GetMapping("/firmware-version-info")
+    fun getFirmwareVersionInfoData():List<FirmwareVersionInfo>{
+        return plugProfileStatisticsService.getFirmwareVersionInfo()
     }
     @GetMapping("/zero-gps-trip-monthly-info")
     fun getZeroGpsTripMonthlyInfoData():List<ZeroGpsTripMonthlyInfo>{

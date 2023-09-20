@@ -4,20 +4,11 @@ package com.carrotins.backend.repository.plug
  * Created by alvin on 2023/07/19.
  */
 
-data class DeviceProductCount(
-    val dvcgb: String, // 제조사
-    val cnt01: Int,    // cnt
+data class FirmwareVersionInfo(
+    val bsDt: String,
+    val firmwareVersion: String,
+    val sumFirmwareVersion: Int,
 )
-
-data class CarProductNameInfo(
-    val cr_prd_cmpcd_nm: String, // 자동차 생산 회사명
-    val part_dt: String,     // 파티션 날짜
-    val trip_total : Int,    // 01(정상) + 98(Zero GPS) 트립 수 합
-    val trip_01: Int,        // 01(정상) 트립 수
-    val trip_98: Int,        // 98(Zero GPS) 트립 수
-    var trip_rt: Double=0.0, // Zero GPS 비율
-)
-
 data class ZeroGpsTripDailyInfo(
     val bsDt: String,      // 제조사
     val dvcGb: String,     // 파티션 날짜
@@ -36,15 +27,6 @@ data class ZeroGpsTripDailyInfo(
     val sumZero1800TripCnt: Int,
     val sumZero1800OverTripCnt: Int,
     val sumZeroTripRt: Double,
-)
-
-data class InterpolationTrip(
-    val DvcGb: String,      // 제조사
-    val part_dt: String,     // 파티션 날짜
-    val trip_total : Int,    // 01(정상) + 98(Zero GPS) 트립 수 합
-    val trip_01: Int,        // 01(정상) 트립 수
-    val trip_98: Int,        // 98(Zero GPS) 트립 수
-    var trip_rt: Double=0.0, // Zero GPS 비율
 )
 
 data class ZeroGpsTripMonthlyInfo(

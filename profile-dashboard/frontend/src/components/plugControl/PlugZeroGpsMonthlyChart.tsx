@@ -1,34 +1,14 @@
-import React, {useEffect, useState} from "react";
-import {get} from "@src/api";
+import React from "react";
 import _ from 'lodash';
 import {Column} from "@ant-design/plots";
-import {Spin} from "antd";
-import {LoadingOutlined} from "@ant-design/icons";
 
 interface Props {
 
 }
 
-const PlugZeroGpsMonthlyChart = (props: Props): React.ReactElement => {
-    const [zeroGpsMonthlyData, setZeroGpsMonthlyData] = useState([]);
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        zeroGpsTableMonthlyChartFetch();
-    }, []);
-
-    const zeroGpsTableMonthlyChartFetch = () => {
-        get<[]>("/api/plug/statistic/zero-gps-trip-monthly-info")
-            .then((jsonData) => {
-                console.log(jsonData)
-                setZeroGpsMonthlyData(jsonData)
-            })
-            .finally(() => {
-                setLoading(false); // 로딩을 완료로 설정
-            });
-    };
-
-    const zeroGpsMonthlyGroupData = _.groupBy(zeroGpsMonthlyData, (item) => `${item.dvcMdl}-${item.bsDt}`);
+const PlugZeroGpsMonthlyChart = (props: { zeroGpsMonthlyChartData: any[] }): React.ReactElement => {
+    const {zeroGpsMonthlyChartData} = props;
+    const zeroGpsMonthlyGroupData = _.groupBy(zeroGpsMonthlyChartData, (item) => `${item.dvcMdl}-${item.bsDt}`);
 
     const zeroGpsMonthlyChartDataResult = _.map(zeroGpsMonthlyGroupData, (group) => {
         const sumTotalcnt = _.sumBy(group, 'sumTotalTripCnt');
@@ -65,9 +45,7 @@ const PlugZeroGpsMonthlyChart = (props: Props): React.ReactElement => {
 
     return (
         <div>
-            <Spin spinning={loading} indicator={<LoadingOutlined/>} tip="로딩 중...">
-                <Column {...zeroGpsMonthlyChartConfig} />
-            </Spin>
+            <Column {...zeroGpsMonthlyChartConfig} />
         </div>
     )
 };
