@@ -41,7 +41,7 @@ const Menus = (): React.ReactElement => {
                 if (jsonData.redirectUrl === undefined) {
                     console.log("log out redirect undefined")
                     return;
-            2    } else {
+                } else {
 
                     authGet(jsonData.redirectUrl)
                         .then(() => {
@@ -75,12 +75,10 @@ const Menus = (): React.ReactElement => {
                 </Menu.Item>
                 {RouteMenu.map((menu) => {
                     return (
-
                         <SubMenu key={menu.key} title={menu.name}>
                             {menu.submenu &&
                                 menu.submenu.map((sub) => {
                                     return (
-
                                         <Menu.Item key={sub.key}
                                                    onClick={() => dispatch(setSelectMenu(sub.key))}>
                                             <span>{sub.name}</span>
@@ -94,9 +92,6 @@ const Menus = (): React.ReactElement => {
                     );
                 })}
             </Menu>
-            {/*<Button type="link" icon={<LogoutOutlined/>} className="logout-button" onClick={logout}>*/}
-            {/*    Logout*/}
-            {/*</Button>*/}
         </div>
     );
 

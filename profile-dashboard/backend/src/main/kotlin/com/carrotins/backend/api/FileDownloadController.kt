@@ -20,12 +20,11 @@ class FileDownloadController(
 ) {
 
     @PostMapping("/location/data")
-    fun downloadFunnelData(
+    fun downloadLocationData(
         @RequestBody locationFileData: LocationFileData,
         model: Model
     ): ModelAndView {
         model.addAttribute(ProfileDataView.KEY_DATA, locationFileData)
         return ModelAndView("xlsxView", model.asMap())
     }
-
 }
