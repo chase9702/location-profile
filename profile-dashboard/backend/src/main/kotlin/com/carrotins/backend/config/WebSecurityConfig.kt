@@ -28,7 +28,8 @@ import java.util.stream.Collectors
 /**
  * Created by alvin on 2023/08/22.
  */
-@EnableWebSecurity(debug=true)
+//@EnableWebSecurity(debug=true)
+@EnableWebSecurity
 class WebSecurityConfig(
     private val restAuthenticationEntryPoint: RestAuthenticationEntryPoint,
     private val restAccessDeniedHandler: RestAccessDeniedHandler,
