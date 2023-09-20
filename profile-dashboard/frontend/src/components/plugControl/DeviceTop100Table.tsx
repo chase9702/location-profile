@@ -8,7 +8,7 @@ import {deviceTop100Data} from "@src/components/plugControl/types";
 
 interface Props {
     deviceGb: string,
-    handleClickGetData: boolean
+    deviceInfoList:any[],
 }
 
 const DeviceTop100Table = (props: Props): React.ReactElement => {
@@ -71,31 +71,6 @@ const DeviceTop100Table = (props: Props): React.ReactElement => {
 
     ];
 
-
-    useEffect(() => {
-        getDailyDeviceInfo(props.deviceGb);
-    }, [])
-    useEffect(() => {
-        setSelectedDeviceModel("");
-        if (props.handleClickGetData == true) {
-            getDailyDeviceInfo(props.deviceGb);
-        } else {
-            console.log("제조사 선택했다. ")
-        }
-    }, [props.deviceGb, props.handleClickGetData])
-
-    const getDailyDeviceInfo = (deviceGb) => {
-        setLoading(true);
-        get<any>(`/api/plug/device/top/${deviceGb}`)
-            .then(jsonData => {
-                setDeviceInfo(jsonData)
-                setLoading(false);
-            })
-            .catch((error) => {
-                NotifyError(error)
-            })
-    }
-
     const handleClickExcelDownload = async () => {
         setExcelDownLoading(true);
 
@@ -141,7 +116,8 @@ const DeviceTop100Table = (props: Props): React.ReactElement => {
         if (tableContainer) {
             tableContainer.scrollTo({top: 3000, behavior: 'smooth'});
 
-            getDailyTripDeviceInfo("ALL")
+            //TODO 여기 트립 정보 가져오는 걸로 제대로 수정 해야 함.
+            getDailyTripDeviceInfo(props.deviceGb)
         }
 
 
@@ -163,7 +139,7 @@ const DeviceTop100Table = (props: Props): React.ReactElement => {
                 </h3>
             </Tooltip>
             <Table columns={columns}
-                   dataSource={deviceInfo}
+                   dataSource={props.deviceInfoList}
                    scroll={{y: 600}}
                    loading={{
                        spinning: loading,

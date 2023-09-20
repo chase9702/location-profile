@@ -30,9 +30,9 @@ const PlugProfileDashBoardDevice = (): React.ReactElement => {
     const [data, setData] = useState([]);
     const [homeMapData, setHomeMapData] = useState("");
     const [loading, setLoading] = useState(false);
-    const [deviceGbValue, setDeviceGbValue] = useState("ALL");
+    const [deviceGbValue, setDeviceGbValue] = useState("TOTAL");
     const [clickGetData, setClickGetData] = useState(false);
-
+    const [deviceInfo, setDeviceInfo] = useState([]);
 
     const testData = `no,eid,source,target,tunnel,geometry,source_lt,source_ln,target_lt,target_ln,length,reversed,eid_idx     
 20720,166681831,1781121772,1781121730,yes,"LINESTRING (126.9889 37.5658, 126.9889 37.5658)",37.5658,126.9889,37.5658,126.9889,60.903,False,166681831 
@@ -50,6 +50,8 @@ const PlugProfileDashBoardDevice = (): React.ReactElement => {
     }
 
     useEffect(() => {
+
+        getDailyDeviceInfo("TOTAL")
         store.dispatch(updateMap({
             latitude: 37.5658, longitude: 126.9889, // 캐롯 좌표
         }))
@@ -78,7 +80,19 @@ const PlugProfileDashBoardDevice = (): React.ReactElement => {
 
     const handleClickGetDeviceGbInfo = () => {
         console.log(deviceGbValue)
-        setClickGetData(true);
+        getDailyDeviceInfo(deviceGbValue)
+    }
+
+    const getDailyDeviceInfo = (deviceGb) => {
+        setLoading(true);
+        get<any>(`/api/plug/device/top/${deviceGb}`)
+            .then(jsonData => {
+                setDeviceInfo(jsonData)
+                setLoading(false);
+            })
+            .catch((error) => {
+                NotifyError(error)
+            })
     }
 
     return (
@@ -142,7 +156,7 @@ const PlugProfileDashBoardDevice = (): React.ReactElement => {
                 <div>
                     <DeviceTop100Table
                         deviceGb={deviceGbValue}
-                        handleClickGetData={clickGetData}
+                        deviceInfoList={deviceInfo}
                     />
                 </div>
             </Card>

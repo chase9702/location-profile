@@ -17,7 +17,7 @@ class PlugDeviceRepository(
 
         val fromQuery = """
             
-            FROM dw.li_plug_stats_dly_${deviceGb.uppercase()}_top_100
+            FROM dw.li_plug_stats_dly_${deviceGb.lowercase()}_top_100
         """.trimIndent()
         val query = SELECT_QUERY + fromQuery
         return hiveJdbcTemplate.query(query, DeviceTop100DataMapper())
