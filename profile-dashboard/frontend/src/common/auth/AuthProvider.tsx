@@ -44,7 +44,6 @@ const AuthProvider = ({children}) => {
                 }).then((jsonData) => {
                     console.log(jsonData)
                     setJwtLoginInfo(jsonData);
-
                 }).catch((e) => {
                     NotifyError(e);
                 })
