@@ -1,6 +1,7 @@
 package com.carrotins.backend.repository.mapper
 
 import com.carrotins.backend.repository.plug.DeviceTop100Data
+import com.carrotins.backend.utils.transformNullToEmptyString
 import org.springframework.jdbc.core.RowMapper
 import java.sql.ResultSet
 
@@ -10,8 +11,8 @@ import java.sql.ResultSet
 class DeviceTop100DataMapper : RowMapper<DeviceTop100Data> {
     override fun mapRow(rs: ResultSet, rowNum: Int): DeviceTop100Data {
         return DeviceTop100Data(
-            rs.getString("dvc_id"),
-            rs.getString("plyno"),
+            transformNullToEmptyString(rs.getString("dvc_id")),
+            transformNullToEmptyString(rs.getString("plyno")),
             rs.getInt("trip_cnt"),
             rs.getFloat("lag_mean"),
             rs.getFloat("lag_std"),
@@ -26,10 +27,10 @@ class DeviceTop100DataMapper : RowMapper<DeviceTop100Data> {
             rs.getInt("rcv_data_cnt_sum"),
             rs.getInt("invld_gps_cnt_sum"),
             rs.getInt("rcv_lag_time_sum"),
-            rs.getString("cr_prd_cmpcd_nm"), // 자동차 제조사 이름
+            transformNullToEmptyString(rs.getString("cr_prd_cmpcd_nm")), // 자동차 제조사 이름
             rs.getInt("zero_trip_cnt"), // zero gps trip 수
             rs.getFloat("zero_trip_ratio"), // zero gps trip 비율
-            rs.getString("ver"), // 펌웨어 버전
+            transformNullToEmptyString(rs.getString("ver")), // 펌웨어 버전
             rs.getFloat("tp_mean"),
             rs.getFloat("tp_std"),
             rs.getFloat("tp_min"),
@@ -67,7 +68,7 @@ class DeviceTop100DataMapper : RowMapper<DeviceTop100Data> {
             rs.getInt("ac_100_cnt"),
             rs.getFloat("invld_gps_cnt_ratio"), // 비정상 gps비율
             rs.getFloat("invld_rcv_lag_time_ratio"), // 서버 수신 지연시간 비율
-            rs.getString("part_dt")
+            transformNullToEmptyString(rs.getString("part_dt"))
         )
     }
 }

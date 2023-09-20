@@ -81,6 +81,7 @@ const PlugProfileDashBoardDevice = (): React.ReactElement => {
     const handleClickGetDeviceGbInfo = () => {
         console.log(deviceGbValue)
         getDailyDeviceInfo(deviceGbValue)
+        setClickGetData(true)
     }
 
     const getDailyDeviceInfo = (deviceGb) => {
@@ -157,6 +158,7 @@ const PlugProfileDashBoardDevice = (): React.ReactElement => {
                     <DeviceTop100Table
                         deviceGb={deviceGbValue}
                         deviceInfoList={deviceInfo}
+                        handleClickGetData={clickGetData}
                     />
                 </div>
             </Card>

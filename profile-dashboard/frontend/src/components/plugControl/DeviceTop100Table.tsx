@@ -9,6 +9,7 @@ import {deviceTop100Data} from "@src/components/plugControl/types";
 interface Props {
     deviceGb: string,
     deviceInfoList:any[],
+    handleClickGetData: boolean
 }
 
 const DeviceTop100Table = (props: Props): React.ReactElement => {
@@ -119,9 +120,11 @@ const DeviceTop100Table = (props: Props): React.ReactElement => {
             //TODO 여기 트립 정보 가져오는 걸로 제대로 수정 해야 함.
             getDailyTripDeviceInfo(props.deviceGb)
         }
-
-
     }, [selectedDeviceModel]);
+
+    useEffect(() => {
+        setSelectedDeviceModel("");
+    }, [props.deviceGb, props.handleClickGetData])
 
     return (
         <div>
