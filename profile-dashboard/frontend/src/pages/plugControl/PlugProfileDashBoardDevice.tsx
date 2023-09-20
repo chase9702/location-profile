@@ -1,6 +1,10 @@
 import React, {useEffect, useState} from 'react';
 import {withRouter} from "react-router-dom";
-import {Button, Card, Col, Row, Select} from 'antd';
+import Col from 'antd/lib/col';
+import Row from 'antd/lib/row';
+import Select from 'antd/lib/select';
+import Button from "antd/lib/button";
+import Card from "antd/lib/card";
 import CustomKeplerMap from "@src/components/common/CustomKeplerMap";
 import {store} from "@src/index";
 import {addDataToMap, updateMap} from "kepler.gl/actions";

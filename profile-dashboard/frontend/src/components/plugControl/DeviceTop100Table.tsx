@@ -1,9 +1,13 @@
 import React, {useEffect, useState} from "react";
-import {Button, Card, Table, Tooltip} from "antd";
+import Button from "antd/lib/button";
+import Card from "antd/lib/card";
+import Table from "antd/lib/table";
+import Tooltip from "antd/lib/tooltip";
+
 import {downloadFileFromFrontendData} from "@src/common/file-download";
 import {NotifyError} from "@src/components/common/Notification";
 import {get} from "@src/api";
-import {LoadingOutlined} from '@ant-design/icons';
+import LoadingOutlined from '@ant-design/icons/lib/icons/LoadingOutlined';
 import {deviceTop100Data} from "@src/components/plugControl/types";
 
 interface Props {
