@@ -1,6 +1,7 @@
 package com.carrotins.backend.service.plug
 
 import com.carrotins.backend.repository.plug.DeviceTop100Data
+import com.carrotins.backend.repository.plug.DeviceTripData
 import com.carrotins.backend.repository.plug.PlugDeviceRepository
 import org.springframework.stereotype.Service
 
@@ -14,5 +15,9 @@ class PlugProfileDeviceService(
     fun getDeviceTopData(deviceGb: String): List<DeviceTop100Data> {
 
         return plugDeviceRepository.getDeviceTopData(deviceGb)
+    }
+
+    fun getTripDataFromTopDevice(deviceId: String, deviceGb: String): List<DeviceTripData> {
+        return plugDeviceRepository.getTripDataFromTopDevice(deviceId, deviceGb)
     }
 }

@@ -2,26 +2,81 @@ import React, {useEffect, useState} from "react";
 import Button from "antd/lib/button";
 import Card from "antd/lib/card";
 import Table from "antd/lib/table";
-import Tooltip from "antd/lib/tooltip";
-
+import {useDispatch} from "react-redux";
 import {downloadFileFromFrontendData} from "@src/common/file-download";
 import {NotifyError} from "@src/components/common/Notification";
-import {get} from "@src/api";
-import LoadingOutlined from '@ant-design/icons/lib/icons/LoadingOutlined';
-import {deviceTop100Data} from "@src/components/plugControl/types";
+import {deviceTop100Data, deviceTripData} from "@src/components/plugControl/types";
+import {setSelectDeviceId} from "@src/actions/DeviceAction";
 
 interface Props {
     deviceGb: string,
-    deviceInfoList:any[],
+    deviceInfoList: any[],
     handleClickGetData: boolean
 }
 
 const DeviceTop100Table = (props: Props): React.ReactElement => {
 
+    const dispatch = useDispatch();
     const [excelDownLoading, setExcelDownLoading] = useState(false);
     const [selectedDeviceModel, setSelectedDeviceModel] = useState("");
-    const [loading, setLoading] = useState(false);
-    const [tripInfo, setTripInfo] = useState([]);
+
+    // useEffect(() => {
+    //     const tableContainer = document.querySelector('.ant-card-body');
+    //     if (tableContainer && selectedDeviceModel !== "") {
+    //         tableContainer.scrollTo({top: 3000, behavior: 'smooth'});
+    //         getDailyTripDeviceInfo()
+    //     }
+    // }, [selectedDeviceModel]);
+
+    useEffect(() => {
+        setSelectedDeviceModel("");
+    }, [props.deviceGb, props.handleClickGetData])
+
+    const handleClickDeviceExcelDownload = () => {
+        handleClickExcelDownload(props.deviceInfoList, "DEVICE")
+            .catch(error => {
+                NotifyError(error)
+            })
+    }
+    //
+    // const handleClickTripExcelDownload = () => {
+    //     handleClickExcelDownload(tripInfo, selectedDeviceModel)
+    //         .catch(error => {
+    //             NotifyError(error)
+    //         })
+    // }
+
+    const handleClickExcelDownload = async (extractData, dataName) => {
+        setExcelDownLoading(true);
+
+        const values = extractData.map((data) => {
+            const tmpList = [];
+            for (const [key, value] of Object.entries(data)) {
+                tmpList.push(value);
+            }
+            return tmpList;
+        });
+
+        try {
+            await downloadFileFromFrontendData(`/api/file/location/data`, {
+                chartName: `${dataName}_${props.deviceGb}_Top100`,
+                columns: dataName === "DEVICE" ? deviceTop100Data : deviceTripData,
+                values: values
+            });
+        } catch (e) {
+            NotifyError(e);
+        }
+
+        setExcelDownLoading(false);
+    }
+
+    const handleClickRowData = (record) => {
+
+        // setSelectedDeviceModel(record.dvc_id)
+
+        dispatch(setSelectDeviceId(record.dvc_id))
+
+    }
 
     const columns = [
         {
@@ -75,106 +130,53 @@ const DeviceTop100Table = (props: Props): React.ReactElement => {
 
     ];
 
-    const handleClickExcelDownload = async () => {
-        setExcelDownLoading(true);
-
-        const values = props.deviceInfoList.map((data) => {
-            const tmpList = [];
-            for (const [key, value] of Object.entries(data)) {
-                tmpList.push(value);
-            }
-            return tmpList;
-        });
-
-        try {
-            await downloadFileFromFrontendData(`/api/file/location/data`, {
-                chartName: `${props.deviceGb}_Top100`,
-                columns: deviceTop100Data,
-                values: values
-            });
-        } catch (e) {
-            NotifyError(e);
-        }
-
-        setExcelDownLoading(false);
-    };
-    const handleClickRowData = (record) => {
-        console.log(record)
-        setSelectedDeviceModel(record.key);
-    }
-
-    const getDailyTripDeviceInfo = (deviceGb) => {
-        setLoading(true);
-        get<any>(`/api/plug/device/top/${deviceGb}`)
-            .then(jsonData => {
-                setTripInfo(jsonData)
-                setLoading(false);
-            })
-            .catch((error) => {
-                NotifyError(error)
-            })
-    }
-
-    useEffect(() => {
-        const tableContainer = document.querySelector('.ant-card-body');
-        if (tableContainer) {
-            tableContainer.scrollTo({top: 3000, behavior: 'smooth'});
-
-            //TODO 여기 트립 정보 가져오는 걸로 제대로 수정 해야 함.
-            getDailyTripDeviceInfo(props.deviceGb)
-        }
-    }, [selectedDeviceModel]);
-
-    useEffect(() => {
-        setSelectedDeviceModel("");
-    }, [props.deviceGb, props.handleClickGetData])
-
     return (
         <div>
-            <Button
-                type={'primary'}
-                disabled={excelDownLoading}
-                onClick={handleClickExcelDownload}
-                style={{float: "right"}}
-            >
-                엑셀다운로드
-            </Button>
-            <Tooltip placement="topLeft" title={"Trip 개수가 2개 이상,Zero trip 비율 기준"} arrow={false}>
-                <h3>
-                    제조사별 디바이스 Top 100
-                </h3>
-            </Tooltip>
-            <Table columns={columns}
-                   dataSource={props.deviceInfoList}
-                   scroll={{y: 600}}
-                   loading={{
-                       spinning: loading,
-                       indicator: <LoadingOutlined/>,
-                   }}
-                   onRow={(record, rowIndex) => {
-                       return {
-                           onClick: (event) => {
-                               handleClickRowData(record)
-                           }, // click row
-                       };
-                   }}
-            />
-            <div>
-                {selectedDeviceModel === "" ?
-                    <div></div> :
-                    <Card>
-                        <Table
-                            columns={columns}
-                            dataSource={tripInfo}
-                            scroll={{y: 600}}
-                            loading={{
-                                spinning: loading,
-                                indicator: <LoadingOutlined/>,
-                            }}
-                        />
-                    </Card>
-                }
-            </div>
+            <Card>
+                <Button
+                    type={'primary'}
+                    disabled={excelDownLoading}
+                    onClick={handleClickDeviceExcelDownload}
+                    style={{float: "right"}}
+                >
+                    엑셀다운로드
+                </Button>
+                <Table columns={columns}
+                       dataSource={props.deviceInfoList}
+                       scroll={{y: 600}}
+                       onRow={(record, rowIndex) => {
+                           return {
+                               onClick: (event) => {
+                                   handleClickRowData(record)
+                               }, // click row
+                           };
+                       }}
+                />
+            </Card>
+            {/*<div>*/}
+            {/*    {selectedDeviceModel === "" ?*/}
+            {/*        <div></div> :*/}
+            {/*        <Card>*/}
+            {/*            <Button*/}
+            {/*                type={'primary'}*/}
+            {/*                disabled={excelDownLoading}*/}
+            {/*                onClick={handleClickTripExcelDownload}*/}
+            {/*                style={{float: "right"}}*/}
+            {/*            >*/}
+            {/*                엑셀다운로드*/}
+            {/*            </Button>*/}
+            {/*            <Table*/}
+            {/*                columns={columns}*/}
+            {/*                dataSource={tripInfo}*/}
+            {/*                scroll={{y: 600}}*/}
+            {/*                loading={{*/}
+            {/*                    spinning: loading,*/}
+            {/*                    indicator: <LoadingOutlined/>,*/}
+            {/*                }}*/}
+            {/*            />*/}
+            {/*        </Card>*/}
+            {/*    }*/}
+            {/*</div>*/}
         </div>
     )
 };
