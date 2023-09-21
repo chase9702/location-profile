@@ -52,8 +52,8 @@ class WebSecurityConfig(
     @Bean
     @Throws(Exception::class)
     fun defaultSecurityFilterChain(httpSecurity: HttpSecurity): SecurityFilterChain {
-        applyBasic(httpSecurity)
-        applyRestApiSecurity(httpSecurity)
+//        applyBasic(httpSecurity)
+//        applyRestApiSecurity(httpSecurity)
 //        applyFinallyAnyRequestDenyAll(httpSecurity)
         return httpSecurity.build()
     }

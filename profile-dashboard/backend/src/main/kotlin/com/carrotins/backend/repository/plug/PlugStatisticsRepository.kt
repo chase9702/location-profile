@@ -86,8 +86,6 @@ class PlugStatisticsRepository(
 
         """.trimIndent()
 
-        hiveJdbcTemplate.fetchSize = 100000
-
         return hiveJdbcTemplate.query(query){ rs, _ ->
             ZeroGpsTripDailyInfo(
                 bsDt = rs.getString("bs_dt"),
