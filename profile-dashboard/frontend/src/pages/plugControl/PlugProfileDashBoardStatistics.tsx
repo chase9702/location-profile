@@ -90,8 +90,8 @@ const PlugProfileDashBoardStatistics = (props: Props): React.ReactElement => {
             <PageTitle
                 title="Plug Statistics DashBoard"
                 description={[
-                    '일별/월별 에 대한 보간트립, Zero GPS를 제조사, 모델별로 확인할 수 있습니다.',
-                    '일자별 펌웨어 버젼을 확인해 업데이트 추이를 확인하실 수 있습니다.',
+                    '일별/월별 에 대한 보간트립, Zero GPS를 제조사, 모델별로 확인 할 수 있습니다.',
+                    '일자별 펌웨어 버젼을 확인해 업데이트 추이를 확인 할 수 있습니다.',
                 ]}
 
             />
@@ -166,7 +166,7 @@ const PlugProfileDashBoardStatistics = (props: Props): React.ReactElement => {
             </Card>
             <Card style={{padding: '10px'}}>
                 <h3>
-                    펌웨어 버전 정보
+                    펌웨어 버전 정보 TOP 7
                 </h3>
                 <PlugFirmwareVersion/>
             </Card>

@@ -3,13 +3,15 @@ import Spin from "antd/lib/spin";
 import {get} from "@src/api";
 import Column from "@ant-design/plots/lib/components/column";
 import LoadingOutlined from "@ant-design/icons/lib/icons/LoadingOutlined";
+import {Button} from "antd";
+import {downloadFileFromFrontendData} from "@src/common/file-download";
+import {NotifyError} from "@src/components/common/Notification";
 
 interface Props {
 
 }
 
 const PlugFirmwareVersion = (props: Props): React.ReactElement => {
-
     const [plugFirmwareVersionData, setPlugFirmwareVersionData] = useState([]);
     const [plugFirmwareVersionLoading, setZeroGpsMonthlyLoading] = useState(true);
 
@@ -35,13 +37,13 @@ const PlugFirmwareVersion = (props: Props): React.ReactElement => {
         isGroup: true,
         columnStyle: {
             radius: [20, 20, 0, 0],
+            barWidthRatio: 0.9,
         },
         label: {
-            position: 'middle',
-            content: (item) => `${item.sumFirmwareVersion}`,
+            position: 'top',
             style: {
                 fill: '#000',
-                fontSize: 12,
+                fontSize: 10,
             },
         },
     };

@@ -9,6 +9,8 @@ import {processCsvData} from "kepler.gl/processors";
 import {get} from "@src/api";
 import {NotifyError} from "@src/components/common/Notification";
 import PageTitle from "@src/components/common/PageTitle";
+import LoadingOutlined from "@ant-design/icons/LoadingOutlined";
+import Spin from "antd/lib/spin";
 
 
 interface State {
@@ -27,20 +29,24 @@ interface DataType {
 
 const Home = (): React.ReactElement => {
     const [data, setData] = useState([]);
+    const [homeDeviceCountData, setHomeDeviceCountData] = useState([]);
+    const [homeDeviceLoading, setHomeDeviceLoading] = useState(true);
     const [deviceInfo, setDeviceInfo] = useState([]);
     const [homeMapData, setHomeMapData] = useState("");
 
 
     useEffect(() => {
-        asyncFetch();
+        homeDeviceCountFetch();
     }, []);
 
-    const asyncFetch = () => {
-        fetch('https://gw.alipayobjects.com/os/bmw-prod/e00d52f4-2fa6-47ee-a0d7-105dd95bde20.json')
-            .then((response) => response.json())
-            .then((json) => setData(json))
-            .catch((error) => {
-                console.log('fetch data failed', error);
+    const homeDeviceCountFetch = () => {
+        get<[]>("/api/home/device-count-info")
+            .then((jsonData) => {
+                console.log(jsonData)
+                setHomeDeviceCountData(jsonData)
+            })
+            .finally(() => {
+                setHomeDeviceLoading(false);
             });
     };
 
@@ -55,14 +61,14 @@ const Home = (): React.ReactElement => {
             })
     }
 
-    const config = {
-        data,
-        xField: 'year',
-        yField: 'gdp',
-        seriesField: 'name',
+    const homeDeviceCountConfig = {
+        data: homeDeviceCountData,
+        xField: 'bsDt',
+        yField: 'dvcCount',
+        seriesField: 'dvcGb',
         yAxis: {
             label: {
-                formatter: (v) => `${(v / 10e8).toFixed(1)} B`,
+                content: (item) => `${item.dvcCount}`, // 각 데이터의 값을 라벨로 표시
             },
         },
         legend: {
@@ -180,12 +186,14 @@ const Home = (): React.ReactElement => {
             <Card style={{padding: '10px'}}>
                 <div>
                     일자별, 디바이스별 현황
-                    <Line {...config} />
+                    <Spin spinning={homeDeviceLoading} indicator={<LoadingOutlined/>} tip="로딩 중...">
+                        <Line {...homeDeviceCountConfig} />
+                    </Spin>
                 </div>
             </Card>
         </div>
 
-    )
+)
 
 };
 
