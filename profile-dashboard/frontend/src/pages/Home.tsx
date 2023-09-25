@@ -185,7 +185,9 @@ const Home = (): React.ReactElement => {
 
             <Card style={{padding: '10px'}}>
                 <div>
-                    일자별, 디바이스별 현황
+                    <h3>
+                        월별 디바이스 현황
+                    </h3>
                     <Spin spinning={homeDeviceLoading} indicator={<LoadingOutlined/>} tip="로딩 중...">
                         <Line {...homeDeviceCountConfig} />
                     </Spin>
