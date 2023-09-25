@@ -2,7 +2,7 @@ import React from 'react';
 import {withRouter} from "react-router-dom";
 import './plug.less';
 import PageTitle from "@src/components/common/PageTitle";
-import DeviceTopTab from "@src/components/plugControl/DeviceTopTab";
+import DeviceTopTab from "@src/components/plugControl/device/DeviceTopTab";
 
 const PlugProfileDashBoardDevice = (): React.ReactElement => {
 

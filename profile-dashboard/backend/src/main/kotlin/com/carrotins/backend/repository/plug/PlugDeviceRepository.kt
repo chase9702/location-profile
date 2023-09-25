@@ -16,10 +16,11 @@ class PlugDeviceRepository(
 
     fun getDeviceTopData(deviceGb: String): List<DeviceTop100Data> {
 
+//        FROM dw.li_plug_stats_dly
         //FROM dw.li_plug_stats_dly_${deviceGb.lowercase()}_top_100
         val fromQuery = """
             
-            FROM dw.li_plug_stats_dly
+            FROM dw.li_plug_stats_dly_${deviceGb.lowercase()}_top_100
         """.trimIndent()
         val query = SELECT_DEVICE_QUERY + fromQuery
         return hiveJdbcTemplate.query(query, DeviceTop100DataMapper())
@@ -27,14 +28,14 @@ class PlugDeviceRepository(
 
     fun getTripDataFromTopDevice(deviceId: String, deviceGb: String): List<DeviceTripData> {
 
-//        FROM dw.li_plug_stats_trip_${deviceGb.lowercase()}_top_100
-//                WHERE dvc_id = '$deviceId'
 
+//        FROM dw.li_plug_stats_trip_total_top_100
+//                WHERE dvc_id = 'LUX1_359627100716452'
 
         val fromQuery = """
-            
-            FROM dw.li_plug_stats_trip_total_top_100
-            WHERE dvc_id = 'TLK1_867199041014277'
+           
+            FROM dw.li_plug_stats_trip_${deviceGb.lowercase()}_top_100
+                WHERE dvc_id = '$deviceId'
         """.trimIndent()
         val query = SELECT_TRIP_QUERY + fromQuery
         return hiveJdbcTemplate.query(query, DeviceTripDataMapper())

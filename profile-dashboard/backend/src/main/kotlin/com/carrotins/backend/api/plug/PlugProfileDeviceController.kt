@@ -24,8 +24,8 @@ class PlugProfileDeviceController(
 
     @GetMapping("/top/trip")
     fun getTripDataFromTopDevice(
-        @RequestParam("deviceId") deviceId: String,
-        @RequestParam("deviceGb") deviceGb: String
+        @RequestParam("device_id") deviceId: String,
+        @RequestParam("device_gb") deviceGb: String
     ): List<DeviceTripData> {
         return plugProfileDeviceService.getTripDataFromTopDevice(deviceId, deviceGb)
     }

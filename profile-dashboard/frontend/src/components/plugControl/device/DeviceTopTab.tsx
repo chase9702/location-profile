@@ -9,14 +9,13 @@ import Row from "antd/lib/row";
 import Col from "antd/lib/col";
 import Select from "antd/lib/select";
 import Tabs from "antd/lib/tabs";
-import DeviceTop100Table from "@src/components/plugControl/DeviceTop100Table";
+import DeviceTop100Table from "@src/components/plugControl/device/DeviceTop100Table";
 import {StoreState} from "@src/reducers";
 import {get} from "@src/api";
-import {encodeQueryData} from "@src/common/utils";
 import TabPane from "antd/es/tabs/TabPane";
 import Spin from "antd/lib/spin";
-import {setSelectDeviceId} from "@src/actions/DeviceAction";
-import DeviceTopTripChart from "@src/components/plugControl/DeviceTopTripChart";
+import {setSelectDeviceGb, setSelectDeviceId} from "@src/actions/DeviceAction";
+import DeviceChart from "@src/components/plugControl/device/DeviceChart";
 
 interface Props {
 
@@ -26,15 +25,16 @@ const DeviceTopTab = (props: Props): React.ReactElement => {
 
     const dispatch = useDispatch();
     const selectedDeviceId = useSelector((state: StoreState) => state.device.selectedDeviceId)
+
     const [deviceLoading, setDeviceLoading] = useState(false);
     const [tripLoading, setTripLoading] = useState(false);
     const [deviceGbValue, setDeviceGbValue] = useState("TOTAL");
     const [clickGetData, setClickGetData] = useState(false);
     const [deviceInfo, setDeviceInfo] = useState([]);
-    const [tripInfo, setTripInfo] = useState([]);
 
     useEffect(() => {
         getDailyDeviceInfo("TOTAL")
+        dispatch(setSelectDeviceId(''))
     }, []);
 
     const handleSelectChange = (value: string, option: { value: string; label: string; } | {
@@ -43,6 +43,7 @@ const DeviceTopTab = (props: Props): React.ReactElement => {
     }[]) => {
         console.log(`selected ${value}`);
         setClickGetData(false);
+        dispatch(setSelectDeviceGb(value))
         setDeviceGbValue(value);
     };
 
@@ -65,32 +66,8 @@ const DeviceTopTab = (props: Props): React.ReactElement => {
             })
     }
 
-    useEffect(() => {
-        if (selectedDeviceId !== '') {
-            getDailyTripDeviceInfo()
-        }
-    }, [selectedDeviceId]);
-
-    const getDailyTripDeviceInfo = () => {
-
-        setTripLoading(true);
-        const requestData = {
-            deviceId: selectedDeviceId,
-            deviceGb: deviceGbValue,
-        };
-
-        get<any>(`/api/plug/device/top/trip?` + encodeQueryData(requestData))
-            .then(jsonData => {
-                setTripInfo(jsonData)
-                setTripLoading(false);
-            })
-            .catch((error) => {
-                NotifyError(error)
-            })
-    }
-
     const renderTabTitle = () => {
-        return `${selectedDeviceId}_디바이스 및 트립 차트`
+        return `${selectedDeviceId} 디바이스 및 트립 차트`
     }
 
     const onChangeTab = (key: string) => {
@@ -161,10 +138,10 @@ const DeviceTopTab = (props: Props): React.ReactElement => {
                         <div></div> :
                         <TabPane tab={renderTabTitle()} key="2">
                             <Spin spinning={tripLoading} indicator={<LoadingOutlined/>} tip="로딩 중...">
-                                <DeviceTopTripChart
+                                <DeviceChart
                                     selectedDeviceId={selectedDeviceId}
                                     deviceDataList={deviceInfo}
-                                    tripDataList={tripInfo}
+                                    // tripDataList={tripInfo}
                                 />
                             </Spin>
                         </TabPane>

@@ -20,36 +20,15 @@ const DeviceTop100Table = (props: Props): React.ReactElement => {
     const [excelDownLoading, setExcelDownLoading] = useState(false);
     const [selectedDeviceModel, setSelectedDeviceModel] = useState("");
 
-    // useEffect(() => {
-    //     const tableContainer = document.querySelector('.ant-card-body');
-    //     if (tableContainer && selectedDeviceModel !== "") {
-    //         tableContainer.scrollTo({top: 3000, behavior: 'smooth'});
-    //         getDailyTripDeviceInfo()
-    //     }
-    // }, [selectedDeviceModel]);
-
     useEffect(() => {
         setSelectedDeviceModel("");
     }, [props.deviceGb, props.handleClickGetData])
 
-    const handleClickDeviceExcelDownload = () => {
-        handleClickExcelDownload(props.deviceInfoList, "DEVICE")
-            .catch(error => {
-                NotifyError(error)
-            })
-    }
-    //
-    // const handleClickTripExcelDownload = () => {
-    //     handleClickExcelDownload(tripInfo, selectedDeviceModel)
-    //         .catch(error => {
-    //             NotifyError(error)
-    //         })
-    // }
 
-    const handleClickExcelDownload = async (extractData, dataName) => {
+    const handleClickExcelDownload = async () => {
         setExcelDownLoading(true);
 
-        const values = extractData.map((data) => {
+        const values = props.deviceInfoList.map((data) => {
             const tmpList = [];
             for (const [key, value] of Object.entries(data)) {
                 tmpList.push(value);
@@ -59,8 +38,8 @@ const DeviceTop100Table = (props: Props): React.ReactElement => {
 
         try {
             await downloadFileFromFrontendData(`/api/file/location/data`, {
-                chartName: `${dataName}_${props.deviceGb}_Top100`,
-                columns: dataName === "DEVICE" ? deviceTop100Data : deviceTripData,
+                chartName: `DEVICE_${props.deviceGb}_Top100`,
+                columns: deviceTop100Data,
                 values: values
             });
         } catch (e) {
@@ -71,11 +50,7 @@ const DeviceTop100Table = (props: Props): React.ReactElement => {
     }
 
     const handleClickRowData = (record) => {
-
-        // setSelectedDeviceModel(record.dvc_id)
-
         dispatch(setSelectDeviceId(record.dvc_id))
-
     }
 
     const columns = [
@@ -136,7 +111,7 @@ const DeviceTop100Table = (props: Props): React.ReactElement => {
                 <Button
                     type={'primary'}
                     disabled={excelDownLoading}
-                    onClick={handleClickDeviceExcelDownload}
+                    onClick={handleClickExcelDownload}
                     style={{float: "right"}}
                 >
                     엑셀다운로드
@@ -153,30 +128,6 @@ const DeviceTop100Table = (props: Props): React.ReactElement => {
                        }}
                 />
             </Card>
-            {/*<div>*/}
-            {/*    {selectedDeviceModel === "" ?*/}
-            {/*        <div></div> :*/}
-            {/*        <Card>*/}
-            {/*            <Button*/}
-            {/*                type={'primary'}*/}
-            {/*                disabled={excelDownLoading}*/}
-            {/*                onClick={handleClickTripExcelDownload}*/}
-            {/*                style={{float: "right"}}*/}
-            {/*            >*/}
-            {/*                엑셀다운로드*/}
-            {/*            </Button>*/}
-            {/*            <Table*/}
-            {/*                columns={columns}*/}
-            {/*                dataSource={tripInfo}*/}
-            {/*                scroll={{y: 600}}*/}
-            {/*                loading={{*/}
-            {/*                    spinning: loading,*/}
-            {/*                    indicator: <LoadingOutlined/>,*/}
-            {/*                }}*/}
-            {/*            />*/}
-            {/*        </Card>*/}
-            {/*    }*/}
-            {/*</div>*/}
         </div>
     )
 };
