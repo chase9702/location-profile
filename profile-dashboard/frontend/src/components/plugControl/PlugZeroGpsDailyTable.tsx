@@ -21,29 +21,29 @@ const PlugZeroGpsDailyTable = (props: { zeroGpsDailyTableData: any[] }): React.R
     const seenDailyKeys = new Set();
 
     for (const item of zeroGpsDailyTableData) {
-        if (!seenDailyKeys.has(item.bsDt)) {
+        if (!seenDailyKeys.has(item.bs_dt)) {
             uniqueDailyArray.push({
-                text: item.bsDt,
-                value: item.bsDt,
+                text: item.bs_dt,
+                value: item.bs_dt,
             });
-            seenDailyKeys.add(item.bsDt);
+            seenDailyKeys.add(item.bs_dt);
         }
     }
 
     const zeroGpsDailyColumn: ColumnsType<any> = [
         {
             title: '날짜',
-            dataIndex: 'bsDt',
+            dataIndex: 'bs_dt',
             align: 'center' as const,
             filters: uniqueDailyArray.map(option => ({
                 text: option.text,
                 value: option.value,
             })),
-            onFilter: (value: string, record) => record.bsDt.indexOf(value) === 0,
+            onFilter: (value: string, record) => record.bs_dt.indexOf(value) === 0,
         },
         {
             title: '제조사',
-            dataIndex: 'dvcGb',
+            dataIndex: 'dvc_gb',
             align: 'center' as const,
             filters: [
                 {
@@ -67,11 +67,11 @@ const PlugZeroGpsDailyTable = (props: { zeroGpsDailyTableData: any[] }): React.R
                     value: 'UNK',
                 },
             ],
-            onFilter: (value: string, record) => record.dvcGb.indexOf(value) === 0,
+            onFilter: (value: string, record) => record.dvc_gb.indexOf(value) === 0,
         },
         {
             title: '모델명',
-            dataIndex: 'dvcMdl',
+            dataIndex: 'dvc_mdl',
             align: 'center' as const,
             filters: [
                 {
@@ -99,77 +99,77 @@ const PlugZeroGpsDailyTable = (props: { zeroGpsDailyTableData: any[] }): React.R
                     value: 'UNK1',
                 },
             ],
-            onFilter: (value: string, record) => record.dvcMdl.indexOf(value) === 0,
+            onFilter: (value: string, record) => record.dvc_mdl.indexOf(value) === 0,
 
         },
         {
             title: '전체트립',
-            dataIndex: 'sumTotalTripCnt',
+            dataIndex: 'sum_total_trip_cnt',
             align: 'center' as const,
         },
         {
             title: '정상트립',
-            dataIndex: 'sumNormalTripCnt',
+            dataIndex: 'sum_normal_trip_cnt',
             align: 'center' as const,
         },
         {
             title: 'ZGPS트립',
-            dataIndex: 'sumZeroTripCnt',
+            dataIndex: 'sum_zero_trip_cnt',
             align: 'center' as const,
         },
         {
             title: 'ZGPS비율',
-            dataIndex: 'sumZeroTripRt',
+            dataIndex: 'sum_zero_trip_rt',
             align: 'center' as const,
         },
         {
             title: '5-6분',
-            dataIndex: 'sumZero360TripCnt',
+            dataIndex: 'sum_zero360_trip_cnt',
             align: 'center' as const,
         },
         {
             title: '6-7분',
-            dataIndex: 'sumZero420TripCnt',
+            dataIndex: 'sum_zero420_trip_cnt',
             align: 'center' as const,
         },
         {
             title: '7-8분',
-            dataIndex: 'sumZero480TripCnt',
+            dataIndex: 'sum_zero480_trip_cnt',
             align: 'center' as const,
         },
         {
             title: '8-9분',
-            dataIndex: 'sumZero540TripCnt',
+            dataIndex: 'sum_zero540_trip_cnt',
             align: 'center' as const,
         },
         {
             title: '9-10분',
-            dataIndex: 'sumZero600TripCnt',
+            dataIndex: 'sum_zero600_trip_cnt',
             align: 'center' as const,
         },
         {
             title: '10-15분',
-            dataIndex: 'sumZero900TripCnt',
+            dataIndex: 'sum_zero900_trip_cnt',
             align: 'center' as const,
         },
         {
             title: '15-20분',
-            dataIndex: 'sumZero1200TripCnt',
+            dataIndex: 'sum_zero1200_trip_cnt',
             align: 'center' as const,
         },
         {
             title: '20-25분',
-            dataIndex: 'sumZero1500TripCnt',
+            dataIndex: 'sum_zero1500_trip_cnt',
             align: 'center' as const,
         },
         {
             title: '25-30분',
-            dataIndex: 'sumZero1800TripCnt',
+            dataIndex: 'sum_zero1800_trip_cnt',
             align: 'center' as const,
         },
         {
             title: '30분이상',
-            dataIndex: 'sumZero1800OverTripCnt',
+            dataIndex: 'sum_zero1800_over_trip_cnt',
             align: 'center' as const,
         },
     ];

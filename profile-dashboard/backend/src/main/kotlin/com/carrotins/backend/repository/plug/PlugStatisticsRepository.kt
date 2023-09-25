@@ -2,6 +2,8 @@ package com.carrotins.backend.repository.plug
 
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Repository
+import com.carrotins.backend.utils.transformNullToEmptyString
+
 
 /**
  * Created by alvin on 2023/07/19.
@@ -25,8 +27,8 @@ class PlugStatisticsRepository(
 
         return hiveJdbcTemplate.query(query){ rs, _ ->
             FirmwareVersionInfo(
-                bsDt = rs.getString("bs_dt"),
-                firmwareVersion = rs.getString("fota_ver_vl"),
+                bsDt = transformNullToEmptyString(rs.getString("bs_dt")),
+                firmwareVersion = transformNullToEmptyString(rs.getString("fota_ver_vl")),
                 sumFirmwareVersion = rs.getInt("fota_ver_cnt"),
             )
         }
@@ -50,9 +52,9 @@ class PlugStatisticsRepository(
 
         return hiveJdbcTemplate.query(query){ rs, _ ->
             ZeroGpsTripMonthlyInfo(
-                bsDt = rs.getString("bs_dt"),
-                dvcGb = rs.getString("dvc_gb"),
-                dvcMdl = rs.getString("dvc_mdl"),
+                bsDt = transformNullToEmptyString(rs.getString("bs_dt")),
+                dvcGb = transformNullToEmptyString(rs.getString("dvc_gb")),
+                dvcMdl = transformNullToEmptyString(rs.getString("dvc_mdl")),
                 sumTotalTripCnt = rs.getInt("sum_total_trip_cnt"),
                 sumNormalTripCnt = rs.getInt("sum_01_trip_cnt"),
                 sumZeroTripCnt = rs.getInt("sum_03_trip_cnt"),
@@ -88,9 +90,9 @@ class PlugStatisticsRepository(
 
         return hiveJdbcTemplate.query(query){ rs, _ ->
             ZeroGpsTripDailyInfo(
-                bsDt = rs.getString("bs_dt"),
-                dvcGb = rs.getString("dvc_gb"),
-                dvcMdl = rs.getString("dvc_mdl"),
+                bsDt = transformNullToEmptyString(rs.getString("bs_dt")),
+                dvcGb = transformNullToEmptyString(rs.getString("dvc_gb")),
+                dvcMdl = transformNullToEmptyString(rs.getString("dvc_mdl")),
                 sumTotalTripCnt = rs.getInt("sum_total_trip_cnt"),
                 sumNormalTripCnt = rs.getInt("sum_01_trip_cnt"),
                 sumZeroTripCnt = rs.getInt("sum_03_trip_cnt"),
@@ -130,9 +132,9 @@ class PlugStatisticsRepository(
 
         return hiveJdbcTemplate.query(query){ rs, _ ->
             InterpolationTripMonthlyInfo(
-                dvcGb = rs.getString("dvc_gb"),
-                dvcMdl = rs.getString("dvc_mdl"),
-                bsDt = rs.getString("bs_dt"),
+                dvcGb = transformNullToEmptyString(rs.getString("dvc_gb")),
+                dvcMdl = transformNullToEmptyString(rs.getString("dvc_mdl")),
+                bsDt = transformNullToEmptyString(rs.getString("bs_dt")),
                 dvcCnt = rs.getInt("divc_cnt"),
                 sumTotalDist = rs.getInt("sum_total_dist"),
                 sumNormalDist = rs.getInt("sum_01_dist"),
@@ -174,9 +176,9 @@ class PlugStatisticsRepository(
 
         return hiveJdbcTemplate.query(query){ rs, _ ->
             InterpolationTripDailyInfo(
-                dvcGb = rs.getString("dvc_gb"),
-                dvcMdl = rs.getString("dvc_mdl"),
-                bsDt = rs.getString("bs_dt"),
+                dvcGb = transformNullToEmptyString(rs.getString("dvc_gb")),
+                dvcMdl = transformNullToEmptyString(rs.getString("dvc_mdl")),
+                bsDt = transformNullToEmptyString(rs.getString("bs_dt")),
                 dvcCnt = rs.getInt("divc_cnt"),
                 sumTotalDist = rs.getInt("sum_total_dist"),
                 sumNormalDist = rs.getInt("sum_01_dist"),

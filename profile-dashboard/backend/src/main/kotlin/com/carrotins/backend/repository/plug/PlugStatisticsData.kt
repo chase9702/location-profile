@@ -1,14 +1,19 @@
 package com.carrotins.backend.repository.plug
+import com.fasterxml.jackson.databind.PropertyNamingStrategies
+import com.fasterxml.jackson.databind.annotation.JsonNaming
 
 /**
  * Created by alvin on 2023/07/19.
  */
 
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy::class)
 data class FirmwareVersionInfo(
     val bsDt: String,
     val firmwareVersion: String,
     val sumFirmwareVersion: Int,
 )
+
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy::class)
 data class ZeroGpsTripDailyInfo(
     val bsDt: String,      // 제조사
     val dvcGb: String,     // 파티션 날짜
@@ -28,7 +33,7 @@ data class ZeroGpsTripDailyInfo(
     val sumZero1800OverTripCnt: Int,
     val sumZeroTripRt: Double,
 )
-
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy::class)
 data class ZeroGpsTripMonthlyInfo(
     val bsDt: String,      // 제조사
     val dvcGb: String,     // 파티션 날짜
@@ -38,7 +43,7 @@ data class ZeroGpsTripMonthlyInfo(
     var sumZeroTripCnt: Int,
     val sumZeroTripRt: Double,
 )
-
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy::class)
 data class InterpolationTripMonthlyInfo(
     val dvcGb: String,
     val dvcMdl: String,
@@ -53,6 +58,7 @@ data class InterpolationTripMonthlyInfo(
     val sumInterpolationTripCnt: Int,
     val sumInterpolationTripRt: Double,
 )
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy::class)
 data class InterpolationTripDailyInfo(
     val dvcGb: String,
     val dvcMdl: String,
