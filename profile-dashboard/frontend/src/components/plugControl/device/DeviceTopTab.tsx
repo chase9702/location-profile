@@ -14,10 +14,11 @@ import {StoreState} from "@src/reducers";
 import {get} from "@src/api";
 import TabPane from "antd/es/tabs/TabPane";
 import Spin from "antd/lib/spin";
-import {setSelectDeviceGb, setSelectDeviceId} from "@src/actions/DeviceAction";
+import {setSelectDate, setSelectDeviceGb, setSelectDeviceId} from "@src/actions/DeviceAction";
 import DeviceChart from "@src/components/plugControl/device/DeviceChart";
 import DatePicker from "antd/lib/date-picker";
 import dayjs, {Dayjs} from 'dayjs';
+import {encodeQueryData} from "@src/common/utils";
 
 interface Props {
 
@@ -25,7 +26,7 @@ interface Props {
 
 const DeviceTopTab = (props: Props): React.ReactElement => {
 
-    const dateFormat = 'YYYY-MM-DD';
+    const dateFormat = 'YYYYMMDD';
     const dispatch = useDispatch();
     const selectedDeviceId = useSelector((state: StoreState) => state.device.selectedDeviceId)
     const [deviceLoading, setDeviceLoading] = useState(false);
@@ -33,10 +34,12 @@ const DeviceTopTab = (props: Props): React.ReactElement => {
     const [deviceGbValue, setDeviceGbValue] = useState("TOTAL");
     const [clickGetData, setClickGetData] = useState(false);
     const [deviceInfo, setDeviceInfo] = useState([]);
+    const [selectedDateValue, setSelectedDateValue] = useState(dayjs().subtract(1, 'day'));
 
     useEffect(() => {
         getDailyDeviceInfo("TOTAL")
         dispatch(setSelectDeviceId(''))
+        dispatch(setSelectDate(selectedDateValue.format(dateFormat)))
     }, []);
 
     const handleSelectChange = (value: string, option: { value: string; label: string; } | {
@@ -58,7 +61,7 @@ const DeviceTopTab = (props: Props): React.ReactElement => {
 
     const getDailyDeviceInfo = (deviceGb) => {
         setDeviceLoading(true);
-        get<any>(`/api/plug/device/top/${deviceGb}`)
+        get<any>(`/api/plug/device/top/${deviceGb}?` + encodeQueryData({date: selectedDateValue.format(dateFormat)}))
             .then(jsonData => {
                 setDeviceInfo(jsonData)
                 setDeviceLoading(false);
@@ -76,17 +79,14 @@ const DeviceTopTab = (props: Props): React.ReactElement => {
         dispatch(setSelectDeviceId(''))
     };
 
-    const getLastDayValue = () => {
-        return dayjs().subtract(1, 'day').format(dateFormat)
-    }
-
     const disabledDate = (current: Dayjs) => {
-        return current.diff(dayjs(), 'days') == 0 || current.isAfter() || current.diff(dayjs(), 'days') <= -8;
+        return current.diff(dayjs(), 'days') == 0 || current.isAfter();
     };
 
-    const selectedDateValue = (value) =>{
-
-    }
+    const onChangeSelectedDateValue = (date, dateString) => {
+        dispatch(setSelectDate(dateString))
+        setSelectedDateValue(date)
+    };
 
     return (
         <div>
@@ -123,10 +123,10 @@ const DeviceTopTab = (props: Props): React.ReactElement => {
                     <Col span={8}>
                         <DatePicker
                             className={"h3-margin"}
-                            defaultValue={dayjs(getLastDayValue(), dateFormat)}
+                            defaultValue={selectedDateValue}
                             disabledDate={disabledDate}
                             format={dateFormat}
-                            // onChange={selectedDateValue(value)}
+                            onChange={onChangeSelectedDateValue}
                         />
                     </Col>
                     <Col span={4}>

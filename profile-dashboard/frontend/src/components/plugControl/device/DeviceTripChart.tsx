@@ -1,5 +1,10 @@
 import React, {useEffect, useState} from 'react';
-import {boxPlotField, deviceTop100Data, deviceTripData} from "@src/components/plugControl/types";
+import {
+    boxPlotField,
+    deviceTop100Data,
+    deviceTripData,
+    transFormAcValueToString, transFormRsValueToString
+} from "@src/components/plugControl/types";
 import Row from "antd/lib/row";
 import Col from "antd/lib/col";
 import Card from "antd/lib/card";
@@ -22,6 +27,7 @@ const DeviceTripChart = (props: Props): React.ReactElement => {
 
     const selectedDeviceGb = useSelector((state: StoreState) => state.device.selectedDeviceGb)
     const selectedDeviceId = useSelector((state: StoreState) => state.device.selectedDeviceId)
+    const selectedDate = useSelector((state: StoreState) => state.device.date)
     const [excelDownLoading, setExcelDownLoading] = useState(false);
     const [tripLoading, setTripLoading] = useState(false);
     const [tripDataList, setTripDataList] = useState([]);
@@ -58,6 +64,7 @@ const DeviceTripChart = (props: Props): React.ReactElement => {
         const requestData = {
             device_id: selectedDeviceId,
             device_gb: selectedDeviceGb,
+            date: selectedDate
         };
 
         get<any>(`/api/plug/device/top/trip?` + encodeQueryData(requestData))
@@ -342,7 +349,7 @@ const DeviceTripChart = (props: Props): React.ReactElement => {
                         rsDataList.push({
                             xFieldName: 'trip_' + tripNumber,
                             tripId: data.trip_id,
-                            type: key.replace("_cnt", "_비율"),
+                            type: transFormRsValueToString(key) + "_비율",
                             value: data[key]
                         });
                     }
@@ -350,7 +357,7 @@ const DeviceTripChart = (props: Props): React.ReactElement => {
                         acDataList.push({
                             xFieldName: 'trip_' + tripNumber,
                             tripId: data.trip_id,
-                            type: key.replace("_cnt", "_비율"),
+                            type: transFormAcValueToString(key) + "_비율",
                             value: data[key]
                         });
                     }
@@ -392,6 +399,10 @@ const DeviceTripChart = (props: Props): React.ReactElement => {
         columnStyle: {
             radius: [20, 20, 0, 0],
         },
+        slider: {
+            start: 0.0,
+            end: 0.7,
+        },
         yAxis: {
             label: {
                 formatter: (text) => numberFormat(text),
@@ -428,7 +439,8 @@ const DeviceTripChart = (props: Props): React.ReactElement => {
                                             justifyContent: 'space-between',
                                         }}
                                     >
-                                    <span className="g2-tooltip-list-item-value">{'tripId:'+items[0].data.tripId}</span>
+                                    <span
+                                        className="g2-tooltip-list-item-value">{'tripId:' + items[0].data.tripId}</span>
                                     </span>
                                 </li>
                                 : <></>
@@ -473,7 +485,7 @@ const DeviceTripChart = (props: Props): React.ReactElement => {
         },
         slider: {
             start: 0.0,
-            end: 1,
+            end: 0.5,
         },
         tooltip: {
             customContent: (title, items) => {
@@ -497,7 +509,8 @@ const DeviceTripChart = (props: Props): React.ReactElement => {
                                             justifyContent: 'space-between',
                                         }}
                                     >
-                                    <span className="g2-tooltip-list-item-value">{'tripId:'+items[0].data.tripId}</span>
+                                    <span
+                                        className="g2-tooltip-list-item-value">{'tripId:' + items[0].data.tripId}</span>
                                     </span>
                                 </li>
                                 : <></>

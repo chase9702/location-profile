@@ -1,19 +1,22 @@
 import {
     SET_SELECT_DEVICE_ID,
     SET_TRIP_DATA,
-    SET_SELECT_DEVICE_GB
+    SET_SELECT_DEVICE_GB,
+    SET_SELECT_DATE
 } from "@src/actions/DeviceAction"
 
 export interface DeviceState {
     selectedDeviceId: string
     selectedDeviceGb: string
-    tripData:[]
+    tripData: [],
+    date: string,
 }
 
 export const initialState: DeviceState = {
     selectedDeviceId: '',
     selectedDeviceGb: 'TOTAL',
-    tripData:[]
+    tripData: [],
+    date: '',
 }
 
 const deviceReducer = (state = initialState, action) => {
@@ -22,6 +25,12 @@ const deviceReducer = (state = initialState, action) => {
             return {
                 ...state,
                 selectedDeviceId: action.deviceId
+            }
+        }
+        case SET_SELECT_DATE: {
+            return {
+                ...state,
+                date: action.date
             }
         }
         case SET_SELECT_DEVICE_GB: {

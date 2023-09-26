@@ -7,7 +7,7 @@ import com.carrotins.backend.security.RestAuthenticationEntryPoint
 import com.carrotins.backend.utils.logger
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
-import org.springframework.context.annotation.Profile
+import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer
@@ -76,22 +76,42 @@ class WebSecurityConfig(
             .authenticationProvider(JwtAuthenticationProvider(jwtDecoder(), jwkUrl))
     }
 
+//    @Bean
+//    fun jwtDecoder(): JwtDecoder {
+//        return run {
+//            val jwtDecoder = NimbusJwtDecoder.withJwkSetUri(jwkUrl).build()
+//            val tokenTypeValidator: OAuth2TokenValidator<Jwt> =
+//                JwtTokenValidator()
+//            val defaultValidator = JwtValidators.createDefault()
+//            val delegatedValidator: OAuth2TokenValidator<Jwt> =
+//                DelegatingOAuth2TokenValidator(
+//                    tokenTypeValidator,
+//                    defaultValidator,
+//                )
+//            jwtDecoder.setJwtValidator(delegatedValidator)
+//            jwtDecoder
+//        }
+//    }
+
     @Bean
     fun jwtDecoder(): JwtDecoder {
-        return run {
-            val jwtDecoder = NimbusJwtDecoder.withJwkSetUri(jwkUrl).build()
-            val tokenTypeValidator: OAuth2TokenValidator<Jwt> =
-                JwtTokenValidator()
-            val defaultValidator = JwtValidators.createDefault()
-            val delegatedValidator: OAuth2TokenValidator<Jwt> =
-                DelegatingOAuth2TokenValidator(
-                    tokenTypeValidator,
-                    defaultValidator,
-                )
-            jwtDecoder.setJwtValidator(delegatedValidator)
-            jwtDecoder
+        val jwtDecoder = NimbusJwtDecoder.withJwkSetUri(jwkUrl).build()
+        val tokenTypeValidator: OAuth2TokenValidator<Jwt> = JwtTokenValidator()
+        val defaultValidator = JwtValidators.createDefault()
+        val delegatedValidator: OAuth2TokenValidator<Jwt> =
+            DelegatingOAuth2TokenValidator(tokenTypeValidator, defaultValidator)
+        // JWT 유효성 검사 실패 시 예외 처리를 추가합니다.
+        jwtDecoder.setJwtValidator { jwt ->
+            try {
+                delegatedValidator.validate(jwt)
+            } catch (e: Exception) {
+                // 유효성 검사 실패 시 401 Unauthorized 응답을 생성합니다.
+                throw BadCredentialsException("Invalid token")
+            }
         }
+        return jwtDecoder
     }
+
 
     @Throws(Exception::class)
     private fun applyRestApiSecurity(httpSecurity: HttpSecurity) {
