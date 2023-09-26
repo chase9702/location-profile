@@ -16,6 +16,8 @@ import TabPane from "antd/es/tabs/TabPane";
 import Spin from "antd/lib/spin";
 import {setSelectDeviceGb, setSelectDeviceId} from "@src/actions/DeviceAction";
 import DeviceChart from "@src/components/plugControl/device/DeviceChart";
+import DatePicker from "antd/lib/date-picker";
+import dayjs, {Dayjs} from 'dayjs';
 
 interface Props {
 
@@ -23,9 +25,9 @@ interface Props {
 
 const DeviceTopTab = (props: Props): React.ReactElement => {
 
+    const dateFormat = 'YYYY-MM-DD';
     const dispatch = useDispatch();
     const selectedDeviceId = useSelector((state: StoreState) => state.device.selectedDeviceId)
-
     const [deviceLoading, setDeviceLoading] = useState(false);
     const [tripLoading, setTripLoading] = useState(false);
     const [deviceGbValue, setDeviceGbValue] = useState("TOTAL");
@@ -74,22 +76,33 @@ const DeviceTopTab = (props: Props): React.ReactElement => {
         dispatch(setSelectDeviceId(''))
     };
 
+    const getLastDayValue = () => {
+        return dayjs().subtract(1, 'day').format(dateFormat)
+    }
+
+    const disabledDate = (current: Dayjs) => {
+        return current.diff(dayjs(), 'days') == 0 || current.isAfter() || current.diff(dayjs(), 'days') <= -8;
+    };
+
+    const selectedDateValue = (value) =>{
+
+    }
 
     return (
         <div>
             <Card>
                 <Row>
                     <Col span={2}>
-                        <h3>제조사 선택 : </h3>
+                        <h3>제조사 : </h3>
                     </Col>
-                    <Col span={16}>
+                    <Col span={8}>
                         <Select
                             className={"h3-margin"}
                             showSearch
                             placeholder="제조사 선택"
                             optionFilterProp="children"
                             style={{
-                                width: '50%', float: 'left',
+                                width: '80%', float: 'left',
                             }}
                             onChange={handleSelectChange}
                             defaultValue={'TOTAL'}
@@ -104,7 +117,19 @@ const DeviceTopTab = (props: Props): React.ReactElement => {
                             })}
                         </Select>
                     </Col>
-                    <Col span={6}>
+                    <Col span={2}>
+                        <h3>날짜 : </h3>
+                    </Col>
+                    <Col span={8}>
+                        <DatePicker
+                            className={"h3-margin"}
+                            defaultValue={dayjs(getLastDayValue(), dateFormat)}
+                            disabledDate={disabledDate}
+                            format={dateFormat}
+                            // onChange={selectedDateValue(value)}
+                        />
+                    </Col>
+                    <Col span={4}>
                         <Button
                             className={"h3-margin"}
                             type={'primary'}
