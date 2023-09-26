@@ -3,23 +3,6 @@ import {NotifyError} from "@src/components/common/Notification";
 import {authUrl, baseUrl} from "@src/common/auth/constantValue";
 
 
-//response 인터셉터
-axios.interceptors.response.use(
-    (response) => {
-        return response;
-    },
-    (error) => {
-        if (error.response.status === 401 || error.response.status === 302) {
-            console.log("401, 302 error relocation!")
-            window.location.href = baseUrl
-        } else if (error.response.status === 400) {
-            NotifyError(error.response.data);
-        }
-
-        return Promise.reject(error);
-    }
-);
-
 //request용 인터셉터
 const tokenInterceptor = (config) => {
     const accessToken = window.localStorage.getItem('profileAccessToken');
@@ -46,11 +29,45 @@ const authApi = axios.create({
 api.interceptors.request.use(tokenInterceptor);
 authApi.interceptors.request.use(tokenInterceptor);
 
+//response 인터셉터
+api.interceptors.response.use(
+    (response) => {
+        return response;
+    },
+    (error) => {
+        if (error.response.status === 401 || error.response.status === 302) {
+            console.log("401, 302 error relocation!")
+            window.location.href = baseUrl
+        } else if (error.response.status === 400) {
+            NotifyError(error.response.data);
+        }
+
+        return Promise.reject(error);
+    }
+);
+//response 인터셉터
+authApi.interceptors.response.use(
+    (response) => {
+        return response;
+    },
+    (error) => {
+        if (error.response.status === 401 || error.response.status === 302) {
+            console.log("401, 302 error relocation!")
+            window.location.href = baseUrl
+        } else if (error.response.status === 400) {
+            NotifyError(error.response.data);
+        }
+
+        return Promise.reject(error);
+    }
+);
+
 export const get = async <T>(url: string): Promise<T> => {
     try {
         const response: AxiosResponse<T> = await api.get(url);
         return response.data;
     } catch (e) {
+        debugger
         const error = e as AxiosError<T>;
         return Promise.reject(error.response.data);
     }

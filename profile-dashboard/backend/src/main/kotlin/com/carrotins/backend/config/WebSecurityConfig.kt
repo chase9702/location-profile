@@ -7,7 +7,6 @@ import com.carrotins.backend.security.RestAuthenticationEntryPoint
 import com.carrotins.backend.utils.logger
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
-import org.springframework.context.annotation.Profile
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer
@@ -99,15 +98,53 @@ class WebSecurityConfig(
         println(jwtList)
         if (jwtList.isNotEmpty()) {
             val jwtUrlList = jwtList.toTypedArray()
+            val anyPaths = anyUrlList.toTypedArray()
+
             httpSecurity
-                .authorizeRequests()
-                .antMatchers(*jwtUrlList)
-                .access(
-                    "isAuthenticated() and " +
-                            getAttributeByIpList(whiteIpList)
-                )
-                .anyRequest().permitAll()
-            httpSecurity.oauth2ResourceServer { oauth2ResourceServer: OAuth2ResourceServerConfigurer<HttpSecurity?> -> oauth2ResourceServer.jwt() }
+                .authorizeRequests { authorizeRequests ->
+                    authorizeRequests
+                        .antMatchers(*jwtUrlList)
+                        .access(
+                            "isAuthenticated() and " +
+                                    getAttributeByIpList(whiteIpList)
+                        )
+                        .antMatchers(*anyPaths)
+                        .access(getAttributeByIpList(whiteIpList))
+                        .anyRequest().permitAll()
+                        .and()
+                        .oauth2ResourceServer { oauth2ResourceServer: OAuth2ResourceServerConfigurer<HttpSecurity?> -> oauth2ResourceServer.jwt() }
+                }
+//
+//            httpSecurity
+//                .authorizeRequests()
+//                .antMatchers(*jwtUrlList)
+//                .access(
+//                    "isAuthenticated() and " +
+//                            getAttributeByIpList(whiteIpList)
+//                )
+//                .and()
+//                .authorizeRequests()
+//                .antMatchers(*anyPaths) // anyPaths는 JWT 토큰 확인을 하지 않을 경로입니다.
+//                .access(getAttributeByIpList(whiteIpList)) // JWT 토큰 확인을 하지 않음
+//                .and()
+//                .oauth2ResourceServer { oauth2ResourceServer: OAuth2ResourceServerConfigurer<HttpSecurity?> -> oauth2ResourceServer.jwt() }
+//                .authorizeRequests()
+//                .anyRequest().permitAll()
+
+
+//            httpSecurity
+//                .authorizeRequests()
+//                .antMatchers(*jwtUrlList)
+//                .access(
+//                    "isAuthenticated() and " +
+//                            getAttributeByIpList(whiteIpList)
+//                )
+//            httpSecurity.oauth2ResourceServer { oauth2ResourceServer: OAuth2ResourceServerConfigurer<HttpSecurity?> -> oauth2ResourceServer.jwt() }
+//
+//            httpSecurity
+//                .authorizeRequests()
+//                .antMatchers(*anyPaths) // anyPaths는 JWT 토큰 확인을 하지 않을 경로입니다.
+//                .permitAll()
         } else {
             log.info("Authenticated API not allowed")
         }
