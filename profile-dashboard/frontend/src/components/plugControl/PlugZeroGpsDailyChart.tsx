@@ -21,7 +21,7 @@ const PlugZeroGpsDailyChart = (props: { zeroGpsDailyChartData: any[] }): React.R
             bs_dt: group[0].bs_dt,
             sum_zero_trip_rt: parseFloat(sum_zero_trip_rt.toFixed(2)),
         };
-    });
+    }).sort((a, b) => a.dvc_mdl.localeCompare(b.dvc_mdl));
 
     console.log(zeroGpsDailyChartDataResult)
 
@@ -29,6 +29,16 @@ const PlugZeroGpsDailyChart = (props: { zeroGpsDailyChartData: any[] }): React.R
         data: zeroGpsDailyChartDataResult,
         xField: 'bs_dt',
         yField: 'sum_zero_trip_rt',
+        xAxis: {
+            title: {
+                text: '일자', 
+            },
+        },
+        yAxis: {
+            title: {
+                text: 'Zero 트립 비율',
+            },
+        },
         seriesField: 'dvc_mdl',
         isGroup: true,
         columnStyle: {

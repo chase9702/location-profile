@@ -55,6 +55,16 @@ const PlugFirmwareVersion = (props: Props): React.ReactElement => {
         data: plugFirmwareVersionData,
         xField: 'bs_dt',
         yField: 'sum_firmware_version',
+        xAxis: {
+            title: {
+                text: '일자', 
+            },
+        },
+        yAxis: {
+            title: {
+                text: '펌웨어 버젼 수', 
+            },
+        },
         seriesField: 'firmware_version',
         isGroup: true,
         columnStyle: {

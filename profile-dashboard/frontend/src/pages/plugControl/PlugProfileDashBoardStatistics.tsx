@@ -132,15 +132,15 @@ const PlugProfileDashBoardStatistics = (props: Props): React.ReactElement => {
             </Card>
             <Card style={{padding: '10px'}}>
                 <h3>
-                    일별 Zero Gps 정보
+                    일별 Zero 트립 정보
                 </h3>
                 <Tabs defaultActiveKey="1">
-                    <TabPane tab="모델별 Zero Gps 그래프" key="1">
+                    <TabPane tab="모델별 Zero Gps 트립 그래프" key="1">
                         <Spin spinning={zeroGpsDailyLoading} indicator={<LoadingOutlined/>} tip="로딩 중...">
                             <PlugZeroGpsDailyChart zeroGpsDailyChartData={zeroGpsDailyData}/>
                         </Spin>
                     </TabPane>
-                    <TabPane tab="모델별 Zero Gps 데이터" key="2">
+                    <TabPane tab="모델별 Zero Gps 트립 데이터" key="2">
                         <Spin spinning={zeroGpsDailyLoading} indicator={<LoadingOutlined/>} tip="로딩 중...">
                             <PlugZeroGpsDailyTable zeroGpsDailyTableData={zeroGpsDailyData}/>
                         </Spin>
@@ -149,15 +149,15 @@ const PlugProfileDashBoardStatistics = (props: Props): React.ReactElement => {
             </Card>
             <Card style={{padding: '10px'}}>
                 <h3>
-                    월별 Zero Gps 정보
+                    월별 Zero 트립 정보
                 </h3>
                 <Tabs defaultActiveKey="2">
-                    <TabPane tab="모델별 Zero Gps 그래프" key="1">
+                    <TabPane tab="모델별 Zero 트립 그래프" key="1">
                         <Spin spinning={zeroGpsMonthlyLoading} indicator={<LoadingOutlined/>} tip="로딩 중...">
                             <PlugZeroGpsMonthlyChart zeroGpsMonthlyChartData={zeroGpsMonthlyData}/>
                         </Spin>
                     </TabPane>
-                    <TabPane tab="모델별 Zero Gps 데이터" key="2">
+                    <TabPane tab="모델별 Zero 트립 데이터" key="2">
                         <Spin spinning={zeroGpsMonthlyLoading} indicator={<LoadingOutlined/>} tip="로딩 중...">
                             <PlugZeroGpsMonthlyTable zeroGpsMonthlyTableData={zeroGpsMonthlyData}/>
                         </Spin>
