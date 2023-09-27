@@ -1,3 +1,17 @@
+export const transFormRsValueToString = (rsValue: string) => {
+    if (rsValue === "rs0_cnt") return "No Service"
+    else if (rsValue === "rs1_cnt") return "Poor"
+    else if (rsValue === "rs2_cnt") return "Fair"
+    else return "Good"
+}
+export const transFormAcValueToString = (acValue: string) => {
+    const acString = acValue.match(/\d+/);
+    const acNumber = parseInt(acString[0], 10);
+    if (acNumber === 100) return acNumber + 'M 초과'
+    else if (acNumber === 0) return '1M 미만'
+    else return acNumber + 'M 이하'
+}
+
 export const deviceGb = [
     {value: 'TOTAL', label: 'TOTAL'},
     {value: 'AMT1', label: 'AMT1'},

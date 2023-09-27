@@ -18,16 +18,20 @@ class PlugProfileDeviceController(
 ) {
 
     @GetMapping("/top/{deviceGb}")
-    fun getDeviceTopData(@PathVariable("deviceGb") deviceGb: String): List<DeviceTop100Data> {
-        return plugProfileDeviceService.getDeviceTopData(deviceGb)
+    fun getDeviceTopData(
+        @PathVariable("deviceGb") deviceGb: String,
+        @RequestParam("date") date: String
+    ): List<DeviceTop100Data> {
+        return plugProfileDeviceService.getDeviceTopData(deviceGb, date)
     }
 
     @GetMapping("/top/trip")
     fun getTripDataFromTopDevice(
         @RequestParam("device_id") deviceId: String,
-        @RequestParam("device_gb") deviceGb: String
+        @RequestParam("device_gb") deviceGb: String,
+        @RequestParam("date") date: String
     ): List<DeviceTripData> {
-        return plugProfileDeviceService.getTripDataFromTopDevice(deviceId, deviceGb)
+        return plugProfileDeviceService.getTripDataFromTopDevice(deviceId, deviceGb, date)
     }
 
 }

@@ -14,8 +14,11 @@ import {StoreState} from "@src/reducers";
 import {get} from "@src/api";
 import TabPane from "antd/es/tabs/TabPane";
 import Spin from "antd/lib/spin";
-import {setSelectDeviceGb, setSelectDeviceId} from "@src/actions/DeviceAction";
+import {setSelectDate, setSelectDeviceGb, setSelectDeviceId} from "@src/actions/DeviceAction";
 import DeviceChart from "@src/components/plugControl/device/DeviceChart";
+import DatePicker from "antd/lib/date-picker";
+import dayjs, {Dayjs} from 'dayjs';
+import {encodeQueryData} from "@src/common/utils";
 
 interface Props {
 
@@ -23,18 +26,20 @@ interface Props {
 
 const DeviceTopTab = (props: Props): React.ReactElement => {
 
+    const dateFormat = 'YYYYMMDD';
     const dispatch = useDispatch();
     const selectedDeviceId = useSelector((state: StoreState) => state.device.selectedDeviceId)
-
     const [deviceLoading, setDeviceLoading] = useState(false);
     const [tripLoading, setTripLoading] = useState(false);
     const [deviceGbValue, setDeviceGbValue] = useState("TOTAL");
     const [clickGetData, setClickGetData] = useState(false);
     const [deviceInfo, setDeviceInfo] = useState([]);
+    const [selectedDateValue, setSelectedDateValue] = useState(dayjs().subtract(1, 'day'));
 
     useEffect(() => {
         getDailyDeviceInfo("TOTAL")
         dispatch(setSelectDeviceId(''))
+        dispatch(setSelectDate(selectedDateValue.format(dateFormat)))
     }, []);
 
     const handleSelectChange = (value: string, option: { value: string; label: string; } | {
@@ -56,7 +61,7 @@ const DeviceTopTab = (props: Props): React.ReactElement => {
 
     const getDailyDeviceInfo = (deviceGb) => {
         setDeviceLoading(true);
-        get<any>(`/api/plug/device/top/${deviceGb}`)
+        get<any>(`/api/plug/device/top/${deviceGb}?` + encodeQueryData({date: selectedDateValue.format(dateFormat)}))
             .then(jsonData => {
                 setDeviceInfo(jsonData)
                 setDeviceLoading(false);
@@ -74,22 +79,30 @@ const DeviceTopTab = (props: Props): React.ReactElement => {
         dispatch(setSelectDeviceId(''))
     };
 
+    const disabledDate = (current: Dayjs) => {
+        return current.diff(dayjs(), 'days') == 0 || current.isAfter();
+    };
+
+    const onChangeSelectedDateValue = (date, dateString) => {
+        dispatch(setSelectDate(dateString))
+        setSelectedDateValue(date)
+    };
 
     return (
         <div>
             <Card>
                 <Row>
                     <Col span={2}>
-                        <h3>제조사 선택 : </h3>
+                        <h3>제조사 : </h3>
                     </Col>
-                    <Col span={16}>
+                    <Col span={8}>
                         <Select
                             className={"h3-margin"}
                             showSearch
                             placeholder="제조사 선택"
                             optionFilterProp="children"
                             style={{
-                                width: '50%', float: 'left',
+                                width: '80%', float: 'left',
                             }}
                             onChange={handleSelectChange}
                             defaultValue={'TOTAL'}
@@ -104,7 +117,19 @@ const DeviceTopTab = (props: Props): React.ReactElement => {
                             })}
                         </Select>
                     </Col>
-                    <Col span={6}>
+                    <Col span={2}>
+                        <h3>날짜 : </h3>
+                    </Col>
+                    <Col span={8}>
+                        <DatePicker
+                            className={"h3-margin"}
+                            defaultValue={selectedDateValue}
+                            disabledDate={disabledDate}
+                            format={dateFormat}
+                            onChange={onChangeSelectedDateValue}
+                        />
+                    </Col>
+                    <Col span={4}>
                         <Button
                             className={"h3-margin"}
                             type={'primary'}

@@ -11,6 +11,8 @@ import {NotifyError} from "@src/components/common/Notification";
 import PageTitle from "@src/components/common/PageTitle";
 import LoadingOutlined from "@ant-design/icons/LoadingOutlined";
 import Spin from "antd/lib/spin";
+import {useSelector} from "react-redux";
+import {StoreState} from "@src/reducers";
 
 
 interface State {
@@ -28,7 +30,9 @@ interface DataType {
 }
 
 const Home = (): React.ReactElement => {
+
     const [data, setData] = useState([]);
+    const accessToken = useSelector((state: StoreState) => state.auth.accessToken)
     const [homeDeviceCountData, setHomeDeviceCountData] = useState([]);
     const [homeDeviceLoading, setHomeDeviceLoading] = useState(true);
     const [deviceInfo, setDeviceInfo] = useState([]);
@@ -36,8 +40,10 @@ const Home = (): React.ReactElement => {
 
 
     useEffect(() => {
-        homeDeviceCountFetch();
-    }, []);
+        if (accessToken !== null) {
+            homeDeviceCountFetch();
+        }
+    }, [accessToken]);
 
     const homeDeviceCountFetch = () => {
         get<[]>("/api/home/device-count-info")
@@ -195,7 +201,7 @@ const Home = (): React.ReactElement => {
             </Card>
         </div>
 
-)
+    )
 
 };
 

@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {boxPlotField} from "@src/components/plugControl/types";
+import {boxPlotField, transFormAcValueToString, transFormRsValueToString} from "@src/components/plugControl/types";
 import Row from "antd/lib/row";
 import Col from "antd/lib/col";
 import Card from "antd/lib/card";
@@ -159,13 +159,13 @@ const DeviceStatisticChart = (props: Props): React.ReactElement => {
                 for (const key in data) {
                     if (key.startsWith('rs')) {
                         rsDataList.push({
-                            type: key,
+                            type: transFormRsValueToString(key),
                             value: data[key]
                         });
                     }
                     if (key.startsWith('ac')) {
                         acDataList.push({
-                            type: key,
+                            type: transFormAcValueToString(key),
                             value: data[key]
                         });
                     }
