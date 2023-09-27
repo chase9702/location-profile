@@ -23,8 +23,6 @@ const PlugZeroGpsDailyChart = (props: { zeroGpsDailyChartData: any[] }): React.R
         };
     }).sort((a, b) => a.dvc_mdl.localeCompare(b.dvc_mdl));
 
-    console.log(zeroGpsDailyChartDataResult)
-
     const zeroGpsDailyChartConfig = {
         data: zeroGpsDailyChartDataResult,
         xField: 'bs_dt',

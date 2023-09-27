@@ -15,6 +15,8 @@ import PlugZeroGpsMonthlyChart from "@src/components/plugControl/PlugZeroGpsMont
 import PlugZeroGpsMonthlyTable from "@src/components/plugControl/PlugZeroGpsMonthlyTable";
 import LoadingOutlined from "@ant-design/icons/LoadingOutlined";
 import PlugFirmwareVersion from "@src/components/plugControl/PlugFirmwareVersion";
+import { Col, Select } from "antd";
+import {deviceModel} from "@src/components/plugControl/types";
 
 
 interface State {
@@ -28,6 +30,10 @@ const PlugProfileDashBoardStatistics = (props: Props): React.ReactElement => {
     const [interpolationMonthlyData, setInterpolationMonthlyData] = useState([]);
     const [zeroGpsDailyData, setZeroGpsDailyData] = useState([]);
     const [zeroGpsMonthlyData, setZeroGpsMonthlyData] = useState([]);
+    const [plugFirmwareVersionData, setPlugFirmwareVersionData] = useState([]);
+    const [selectDeviceModelData, setSelectDeviceModelData] = useState<string>('TOTAL');
+
+    const [plugFirmwareVersionLoading, setPlugFirmwareVersionLoading] = useState(true);
     const [interpolationMonthlyLoading, setInterpolationMonthlyLoading] = useState(true);
     const [interpolationDailyLoading, setInterpolationDailyLoading] = useState(true);
     const [zeroGpsDailyLoading, setZeroGpsDailyLoading] = useState(true);
@@ -77,6 +83,17 @@ const PlugProfileDashBoardStatistics = (props: Props): React.ReactElement => {
             });
     };
 
+    const firmwareVersionFetch = () => {
+        get<[]>(`/api/plug/statistic/firmware-version-info?deviceModel=${selectDeviceModelData}`)
+            .then((jsonData) => {
+                setPlugFirmwareVersionData(jsonData)
+                console.log(jsonData)
+            })
+            .finally(() => {
+                setPlugFirmwareVersionLoading(false);
+            });
+    };
+
     useEffect(() => {
         interpolationDailyFetch();
         interpolationTableMonthlyFetch();
@@ -84,7 +101,17 @@ const PlugProfileDashBoardStatistics = (props: Props): React.ReactElement => {
         zeroGpsMonthlyFetch();
     }, []);
 
-    // @ts-ignore
+    useEffect(() => {
+        firmwareVersionFetch();
+        handleDeviceModelChange(selectDeviceModelData); // selectDeviceModelData가 변경될 때마다 실행
+    }, [selectDeviceModelData]);
+
+    const handleDeviceModelChange = (value: any) => {
+        console.log(value)
+        setSelectDeviceModelData(value);
+    };
+
+
     return (
         <div>
             <PageTitle
@@ -166,9 +193,30 @@ const PlugProfileDashBoardStatistics = (props: Props): React.ReactElement => {
             </Card>
             <Card style={{padding: '10px'}}>
                 <h3>
-                    펌웨어 버전 정보 TOP 7
+                    펌웨어 버전 정보
                 </h3>
-                <PlugFirmwareVersion/>
+                <Spin spinning={plugFirmwareVersionLoading} indicator={<LoadingOutlined/>} tip="로딩 중...">
+                    <Col span={8}>
+                        <Select
+                            showSearch
+                            placeholder="제조사 선택"
+                            optionFilterProp="children"
+                            style={{width: '100%'}}
+                            value={selectDeviceModelData}
+                            onChange={handleDeviceModelChange}
+                            options={deviceModel}
+                        >
+                            {deviceModel.map((data, index) => {
+                                return (
+                                    <Select.Option value={data.value} key={index}>
+                                        {data.value}
+                                    </Select.Option>
+                                );
+                            })}
+                        </Select>
+                    </Col>
+                    <PlugFirmwareVersion plugFirmwareVersionData={plugFirmwareVersionData}/>
+                </Spin>
             </Card>
         </div>
     )

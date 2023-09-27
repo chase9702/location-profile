@@ -22,8 +22,6 @@ const PlugInterpolationDailyChart = (props: { interpolationDailyChartData: any[]
         };
     }).sort((a, b) => a.dvc_mdl.localeCompare(b.dvc_mdl));
 
-    console.log(interpolationDailyChartDataResult)
-
     const interpolationDailyChartConfig = {
         data: interpolationDailyChartDataResult,
         xField: 'bs_dt',

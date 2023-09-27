@@ -4,7 +4,7 @@ import Card from "antd/lib/card";
 import {useDispatch, useSelector} from "react-redux";
 import {NotifyError} from "@src/components/common/Notification";
 import LoadingOutlined from '@ant-design/icons/lib/icons/LoadingOutlined';
-import {deviceGb} from "@src/components/plugControl/types";
+import {deviceModel} from "@src/components/plugControl/types";
 import Row from "antd/lib/row";
 import Col from "antd/lib/col";
 import Select from "antd/lib/select";
@@ -106,9 +106,9 @@ const DeviceTopTab = (props: Props): React.ReactElement => {
                             }}
                             onChange={handleSelectChange}
                             defaultValue={'TOTAL'}
-                            options={deviceGb}
+                            options={deviceModel}
                         >
-                            {deviceGb.map((data, index) => {
+                            {deviceModel.map((data, index) => {
                                 return (
                                     <Select.Option value={data.value} key={index}>
                                         {data.value}

@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy::class)
 data class FirmwareVersionInfo(
     val bsDt: String,
+    val dvcMdl: String,
     val firmwareVersion: String,
     val sumFirmwareVersion: Int,
 )

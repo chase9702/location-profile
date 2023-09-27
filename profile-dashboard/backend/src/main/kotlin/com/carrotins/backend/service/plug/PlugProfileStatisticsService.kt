@@ -11,20 +11,12 @@ import org.springframework.stereotype.Service
 class PlugProfileStatisticsService(
     private val plugStatisticsRepository: PlugStatisticsRepository
 ) {
-    // 펌워에 버전 Top 7 처리 로직
-//    fun getFirmwareVersionInfo(): List<FirmwareVersionInfo> {
-//        val firmwareVersionData = plugStatisticsRepository.getFirmwareVersionInfoData()
-//        val groupFirmwareData = firmwareVersionData.groupBy { it.bsDt }
-//
-//        val top7FirmwareVersionData = groupFirmwareData.flatMap { (_, group) ->
-//            group.sortedByDescending { it.sumFirmwareVersion }
-//                .take(7)
-//        }
-//
-//        return top7FirmwareVersionData
-//    }
-    fun getFirmwareVersionInfo(): List<FirmwareVersionInfo> {
-        return plugStatisticsRepository.getFirmwareVersionInfoData()
+    fun getAllFirmwareVersionInfo(): List<FirmwareVersionInfo> {
+        return plugStatisticsRepository.getAllFirmwareVersionInfoData()
+    }
+
+    fun getFilterFirmwareVersionInfo(deviceModel: String): List<FirmwareVersionInfo> {
+        return plugStatisticsRepository.getFilterFirmwareVersionInfoData(deviceModel)
     }
 
     fun getZeroGpsTripMonthlyInfo(): List<ZeroGpsTripMonthlyInfo> {
