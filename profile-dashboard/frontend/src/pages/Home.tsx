@@ -46,6 +46,7 @@ const Home = (): React.ReactElement => {
     }, [accessToken]);
 
     const homeDeviceCountFetch = () => {
+        console.log("여기가 홈페이지 2222")
         get<[]>("/api/home/device-count-info")
             .then((jsonData) => {
                 console.log(jsonData)

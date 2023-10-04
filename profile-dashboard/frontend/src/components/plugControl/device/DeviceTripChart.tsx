@@ -440,7 +440,7 @@ const DeviceTripChart = (props: Props): React.ReactElement => {
                                         }}
                                     >
                                     <span
-                                        className="g2-tooltip-list-item-value">{'tripId:' + items[0].data.tripId}</span>
+                                        className="g2-tooltip-list-item-value">{'tripId: ' + items[0].data.tripId}</span>
                                     </span>
                                 </li>
                                 : <></>

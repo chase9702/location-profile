@@ -37,6 +37,9 @@ api.interceptors.response.use(
     (error) => {
         if (error.response.status === 401 || error.response.status === 302) {
             console.log("401, 302 error relocation!")
+            window.localStorage.removeItem("profileAccessToken");
+            window.localStorage.removeItem("profileRefreshToken");
+            //여기서 로컬캐시 삭제 해보기
             window.location.href = baseUrl
         } else if (error.response.status === 400) {
             NotifyError(error.response.data);
@@ -52,7 +55,10 @@ authApi.interceptors.response.use(
     },
     (error) => {
         if (error.response.status === 401 || error.response.status === 302) {
-            console.log("401, 302 error relocation!")
+            console.log("***********401, 302 error relocation!**************")
+            window.localStorage.removeItem("profileAccessToken");
+            window.localStorage.removeItem("profileRefreshToken");
+
             window.location.href = baseUrl
         } else if (error.response.status === 400) {
             NotifyError(error.response.data);
@@ -67,7 +73,6 @@ export const get = async <T>(url: string): Promise<T> => {
         const response: AxiosResponse<T> = await api.get(url);
         return response.data;
     } catch (e) {
-        debugger
         const error = e as AxiosError<T>;
         return Promise.reject(error.response.data);
     }
