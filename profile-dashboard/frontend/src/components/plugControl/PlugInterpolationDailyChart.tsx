@@ -1,6 +1,7 @@
 import React from "react";
 import _ from 'lodash';
 import Column from "@ant-design/plots/lib/components/column";
+import {numberFormat} from "@src/common/utils";
 
 
 interface Props {
@@ -33,7 +34,10 @@ const PlugInterpolationDailyChart = (props: { interpolationDailyChartData: any[]
         },
         yAxis: {
             title: {
-                text: '보간 트립 비율',
+                text: '보간 트립 비율(%)',
+            },
+            label: {
+                formatter: (text) => numberFormat(text),
             },
         },
         seriesField: 'dvc_mdl',

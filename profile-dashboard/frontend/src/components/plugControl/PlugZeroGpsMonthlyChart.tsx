@@ -36,7 +36,7 @@ const PlugZeroGpsMonthlyChart = (props: { zeroGpsMonthlyChartData: any[] }): Rea
         },
         yAxis: {
             title: {
-                text: 'Zero 트립 비율', 
+                text: 'Zero 트립 비율(%)',
             },
         },
         seriesField: 'dvc_mdl',

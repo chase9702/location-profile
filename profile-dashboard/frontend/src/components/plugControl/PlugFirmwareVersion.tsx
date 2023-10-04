@@ -1,5 +1,6 @@
 import React from "react";
 import Column from "@ant-design/plots/lib/components/column";
+import {numberFormat} from "@src/common/utils";
 
 
 interface Props {
@@ -21,6 +22,9 @@ const PlugFirmwareVersion = (props: { plugFirmwareVersionData: any[] }): React.R
         yAxis: {
             title: {
                 text: '펌웨어 버젼 수',
+            },
+            label: {
+                formatter: (text) => numberFormat(text),
             },
         },
         seriesField: 'firmware_version',

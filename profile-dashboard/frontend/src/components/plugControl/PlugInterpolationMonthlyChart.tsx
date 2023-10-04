@@ -36,7 +36,7 @@ const PlugInterpolationMonthlyChart = (props: { interpolationMonthlyChartData: a
         },
         yAxis: {
             title: {
-                text: '보간트립 비율',
+                text: '보간 트립 비율(%)',
             },
         },
         seriesField: 'dvc_mdl',

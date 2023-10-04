@@ -34,7 +34,7 @@ const PlugZeroGpsDailyChart = (props: { zeroGpsDailyChartData: any[] }): React.R
         },
         yAxis: {
             title: {
-                text: 'Zero 트립 비율',
+                text: 'Zero 트립 비율(%)',
             },
         },
         seriesField: 'dvc_mdl',

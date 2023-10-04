@@ -15,8 +15,10 @@ import PlugZeroGpsMonthlyChart from "@src/components/plugControl/PlugZeroGpsMont
 import PlugZeroGpsMonthlyTable from "@src/components/plugControl/PlugZeroGpsMonthlyTable";
 import LoadingOutlined from "@ant-design/icons/LoadingOutlined";
 import PlugFirmwareVersion from "@src/components/plugControl/PlugFirmwareVersion";
-import { Col, Select } from "antd";
+import {Col, Row, Select} from "antd";
 import {deviceModel} from "@src/components/plugControl/types";
+import Button from "antd/lib/button";
+import './plug.less';
 
 
 interface State {
@@ -38,6 +40,7 @@ const PlugProfileDashBoardStatistics = (props: Props): React.ReactElement => {
     const [interpolationDailyLoading, setInterpolationDailyLoading] = useState(true);
     const [zeroGpsDailyLoading, setZeroGpsDailyLoading] = useState(true);
     const [zeroGpsMonthlyLoading, setZeroGpsMonthlyLoading] = useState(true);
+    const [fetchData, setFetchData] = useState(true);
 
 
     const interpolationDailyFetch = () => {
@@ -53,8 +56,8 @@ const PlugProfileDashBoardStatistics = (props: Props): React.ReactElement => {
 
     const interpolationTableMonthlyFetch = () => {
         get<[]>("/api/plug/statistic/interpolation-trip-monthly-info")
-            .then((jsonData1) => {
-                setInterpolationMonthlyData(jsonData1)
+            .then((jsonData) => {
+                setInterpolationMonthlyData(jsonData)
             })
             .finally(() => {
                 setInterpolationMonthlyLoading(false);
@@ -79,11 +82,12 @@ const PlugProfileDashBoardStatistics = (props: Props): React.ReactElement => {
                 setZeroGpsMonthlyData(jsonData)
             })
             .finally(() => {
-                setZeroGpsMonthlyLoading(false); // 로딩을 완료로 설정
+                setZeroGpsMonthlyLoading(false);
             });
     };
 
     const firmwareVersionFetch = () => {
+        setPlugFirmwareVersionLoading(true);
         get<[]>(`/api/plug/statistic/firmware-version-info?deviceModel=${selectDeviceModelData}`)
             .then((jsonData) => {
                 setPlugFirmwareVersionData(jsonData)
@@ -102,15 +106,20 @@ const PlugProfileDashBoardStatistics = (props: Props): React.ReactElement => {
     }, []);
 
     useEffect(() => {
-        firmwareVersionFetch();
-        handleDeviceModelChange(selectDeviceModelData); // selectDeviceModelData가 변경될 때마다 실행
-    }, [selectDeviceModelData]);
+        if (fetchData) {
+            firmwareVersionFetch();
+            setFetchData(false);
+        }
+    }, [fetchData, selectDeviceModelData]);
 
     const handleDeviceModelChange = (value: any) => {
         console.log(value)
         setSelectDeviceModelData(value);
     };
 
+    const handleFetchData = () => {
+        setFetchData(true);
+    };
 
     return (
         <div>
@@ -195,10 +204,14 @@ const PlugProfileDashBoardStatistics = (props: Props): React.ReactElement => {
                 <h3>
                     펌웨어 버전 정보
                 </h3>
-                <Spin spinning={plugFirmwareVersionLoading} indicator={<LoadingOutlined/>} tip="로딩 중...">
+                <Row>
+                    <Col span={4}>
+                        <h4>제조사 : </h4>
+                    </Col>
                     <Col span={8}>
                         <Select
                             showSearch
+                            className={"h3-margin"}
                             placeholder="제조사 선택"
                             optionFilterProp="children"
                             style={{width: '100%'}}
@@ -215,6 +228,21 @@ const PlugProfileDashBoardStatistics = (props: Props): React.ReactElement => {
                             })}
                         </Select>
                     </Col>
+                    <Col span={4}>
+                        <Button
+                            className={"h3-margin"}
+                            type={'primary'}
+                            // disabled={deviceLoading}
+                            onClick={handleFetchData}
+                            style={{
+                                float: "right",
+                            }}
+                        >
+                            조회
+                        </Button>
+                    </Col>
+                </Row>
+                <Spin spinning={plugFirmwareVersionLoading} indicator={<LoadingOutlined/>} tip="로딩 중...">
                     <PlugFirmwareVersion plugFirmwareVersionData={plugFirmwareVersionData}/>
                 </Spin>
             </Card>
