@@ -106,12 +106,12 @@ const PlugZeroGpsMonthlyTable = (props: { zeroGpsMonthlyTableData: any[] }): Rea
             align: 'center' as const,
         },
         {
-            title: 'ZGPS트립',
+            title: 'Zero 트립',
             dataIndex: 'sum_zero_trip_cnt',
             align: 'center' as const,
         },
         {
-            title: 'ZGPS비율',
+            title: 'Zero 트립비율',
             dataIndex: 'sum_zero_trip_rt',
             align: 'center' as const,
         },

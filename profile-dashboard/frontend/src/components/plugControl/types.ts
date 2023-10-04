@@ -12,7 +12,7 @@ export const transFormAcValueToString = (acValue: string) => {
     else return acNumber + 'M 이하'
 }
 
-export const deviceGb = [
+export const deviceModel = [
     {value: 'TOTAL', label: 'TOTAL'},
     {value: 'AMT1', label: 'AMT1'},
     {value: 'TLK1', label: 'TLK1'},

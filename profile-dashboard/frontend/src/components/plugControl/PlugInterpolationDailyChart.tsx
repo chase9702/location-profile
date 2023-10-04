@@ -1,15 +1,15 @@
 import React from "react";
 import _ from 'lodash';
 import Column from "@ant-design/plots/lib/components/column";
+import {numberFormat} from "@src/common/utils";
 
 
 interface Props {
 }
 
 const PlugInterpolationDailyChart = (props: { interpolationDailyChartData: any[] }): React.ReactElement => {
-
     const { interpolationDailyChartData } = props;
-    const interpolationDailyGroupData = _.groupBy(interpolationDailyChartData, (item) => `${item.dvc_gb}-${item.bs_dt}`);
+    const interpolationDailyGroupData = _.groupBy(interpolationDailyChartData, (item) => `${item.dvc_mdl}-${item.bs_dt}`);
 
     const interpolationDailyChartDataResult = _.map(interpolationDailyGroupData, (group) => {
         const sumTotalcnt = _.sumBy(group, 'sum_total_trip_cnt');
@@ -21,14 +21,25 @@ const PlugInterpolationDailyChart = (props: { interpolationDailyChartData: any[]
             bs_dt: group[0].bs_dt,
             sum_interpolation_trip_cnt: parseFloat(tripInterpolationRt.toFixed(2)), // 숫자로 변환
         };
-    });
-
-    console.log(interpolationDailyChartDataResult)
+    }).sort((a, b) => a.dvc_mdl.localeCompare(b.dvc_mdl));
 
     const interpolationDailyChartConfig = {
         data: interpolationDailyChartDataResult,
         xField: 'bs_dt',
         yField: 'sum_interpolation_trip_cnt',
+        xAxis: {
+            title: {
+                text: '일자',
+            },
+        },
+        yAxis: {
+            title: {
+                text: '보간 트립 비율(%)',
+            },
+            label: {
+                formatter: (text) => numberFormat(text),
+            },
+        },
         seriesField: 'dvc_mdl',
         isGroup: true,
         columnStyle: {
@@ -50,7 +61,7 @@ const PlugInterpolationDailyChart = (props: { interpolationDailyChartData: any[]
 
     return (
         <div>
-                <Column {...interpolationDailyChartConfig} />
+            <Column {...interpolationDailyChartConfig} />
         </div>
     )
 };

@@ -12,10 +12,11 @@ import com.carrotins.backend.utils.transformNullToEmptyString
 class PlugStatisticsRepository(
     private val hiveJdbcTemplate: JdbcTemplate
 ) {
-    fun getFirmwareVersionInfoData(): List<FirmwareVersionInfo> {
+    fun getAllFirmwareVersionInfoData(): List<FirmwareVersionInfo> {
         val query: String = """
              SELECT 
                  bs_dt,
+                 dvc_mdl,
                  fota_ver_vl,
                  fota_ver_cnt
                FROM DW.LI_PLUG_FOTA_VER
@@ -23,16 +24,40 @@ class PlugStatisticsRepository(
 
         """.trimIndent()
 
-        hiveJdbcTemplate.fetchSize = 100000
-
         return hiveJdbcTemplate.query(query){ rs, _ ->
             FirmwareVersionInfo(
                 bsDt = transformNullToEmptyString(rs.getString("bs_dt")),
+                dvcMdl = transformNullToEmptyString(rs.getString("dvc_mdl")),
                 firmwareVersion = transformNullToEmptyString(rs.getString("fota_ver_vl")),
                 sumFirmwareVersion = rs.getInt("fota_ver_cnt"),
             )
         }
     }
+
+    fun getFilterFirmwareVersionInfoData(deviceModel: String): List<FirmwareVersionInfo> {
+        val query: String = """
+             SELECT 
+                 bs_dt,
+                 dvc_mdl,
+                 fota_ver_vl,
+                 fota_ver_cnt
+               FROM DW.LI_PLUG_FOTA_VER
+              WHERE dvc_mdl = '$deviceModel'
+
+
+        """.trimIndent()
+
+        return hiveJdbcTemplate.query(query){ rs, _ ->
+            FirmwareVersionInfo(
+                bsDt = transformNullToEmptyString(rs.getString("bs_dt")),
+                dvcMdl = transformNullToEmptyString(rs.getString("dvc_mdl")),
+                firmwareVersion = transformNullToEmptyString(rs.getString("fota_ver_vl")),
+                sumFirmwareVersion = rs.getInt("fota_ver_cnt"),
+            )
+        }
+    }
+
+
     fun getZeroGpsTripMonthlyInfoData(): List<ZeroGpsTripMonthlyInfo> {
         val query: String = """
              SELECT 
