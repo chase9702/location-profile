@@ -17,11 +17,11 @@ const PlugZeroGpsMonthlyChart = (props: { zeroGpsMonthlyChartData: any[] }): Rea
         const sumZeroTripRt = sumTotalCnt !== 0 ? (sumZeroTripCnt / sumTotalCnt) * 100 : 0;
 
         return {
-            dvc_Mdl: group[0].dvc_mdl,
+            dvc_mdl: group[0].dvc_mdl,
             bs_dt: group[0].bs_dt,
             sum_zero_trip_rt: parseFloat(sumZeroTripRt.toFixed(2)), // 숫자로 변환
         };
-    });
+    }).sort((a, b) => a.dvc_mdl.localeCompare(b.dvc_mdl));
 
     console.log(zeroGpsMonthlyChartDataResult)
 
@@ -29,7 +29,17 @@ const PlugZeroGpsMonthlyChart = (props: { zeroGpsMonthlyChartData: any[] }): Rea
         data: zeroGpsMonthlyChartDataResult,
         xField: 'bs_dt',
         yField: 'sum_zero_trip_rt',
-        seriesField: 'dvc_Mdl',
+        xAxis: {
+            title: {
+                text: '일자', 
+            },
+        },
+        yAxis: {
+            title: {
+                text: 'Zero 트립 비율(%)',
+            },
+        },
+        seriesField: 'dvc_mdl',
         isGroup: true,
         columnStyle: {
             radius: [20, 20, 0, 0],
