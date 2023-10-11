@@ -16,12 +16,8 @@ class PlugProfileStatisticsController(
     private val plugProfileStatisticsService: PlugProfileStatisticsService
 ) {
     @GetMapping("/firmware-version-info")
-    fun getFirmwareVersionInfoData(@RequestParam("deviceModel") deviceModel: String):List<FirmwareVersionInfo>{
-        return if (deviceModel.isNullOrEmpty() || deviceModel == "TOTAL") {
-            plugProfileStatisticsService.getAllFirmwareVersionInfo()
-        } else {
-            plugProfileStatisticsService.getFilterFirmwareVersionInfo(deviceModel)
-        }
+    fun getFirmwareVersionInfoData(@RequestParam("dvc_mdl") deviceModel: String):List<FirmwareVersionInfo>{
+        return plugProfileStatisticsService.getFirmwareVersionInfo(deviceModel)
     }
     @GetMapping("/zero-gps-trip-monthly-info")
     fun getZeroGpsTripMonthlyInfoData():List<ZeroGpsTripMonthlyInfo>{

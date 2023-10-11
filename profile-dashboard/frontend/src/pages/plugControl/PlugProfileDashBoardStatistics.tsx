@@ -88,7 +88,7 @@ const PlugProfileDashBoardStatistics = (props: Props): React.ReactElement => {
 
     const firmwareVersionFetch = () => {
         setPlugFirmwareVersionLoading(true);
-        get<[]>(`/api/plug/statistic/firmware-version-info?deviceModel=${selectDeviceModelData}`)
+        get<[]>(`/api/plug/statistic/firmware-version-info?dvc_mdl=${selectDeviceModelData}`)
             .then((jsonData) => {
                 setPlugFirmwareVersionData(jsonData)
                 console.log(jsonData)

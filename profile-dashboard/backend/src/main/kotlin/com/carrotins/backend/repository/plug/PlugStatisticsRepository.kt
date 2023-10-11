@@ -5,26 +5,18 @@ import org.springframework.stereotype.Repository
 import com.carrotins.backend.utils.transformNullToEmptyString
 
 
-/**
- * Created by alvin on 2023/07/19.
- */
 @Repository
 class PlugStatisticsRepository(
     private val hiveJdbcTemplate: JdbcTemplate
 ) {
-    fun getAllFirmwareVersionInfoData(): List<FirmwareVersionInfo> {
-        val query: String = """
-             SELECT 
-                 bs_dt,
-                 dvc_mdl,
-                 fota_ver_vl,
-                 fota_ver_cnt
-               FROM DW.LI_PLUG_FOTA_VER
+    fun getFirmwareVersionInfoData(deviceModel: String): List<FirmwareVersionInfo> {
+        val query: String = if (deviceModel == "TOTAL") {
+            firmwareVersionQuery
+        } else {
+            "$firmwareVersionQuery\nWHERE dvc_mdl = '$deviceModel'"
+        }
 
-
-        """.trimIndent()
-
-        return hiveJdbcTemplate.query(query){ rs, _ ->
+        return hiveJdbcTemplate.query(query) { rs, _ ->
             FirmwareVersionInfo(
                 bsDt = transformNullToEmptyString(rs.getString("bs_dt")),
                 dvcMdl = transformNullToEmptyString(rs.getString("dvc_mdl")),
@@ -34,29 +26,16 @@ class PlugStatisticsRepository(
         }
     }
 
-    fun getFilterFirmwareVersionInfoData(deviceModel: String): List<FirmwareVersionInfo> {
-        val query: String = """
+    companion object {
+        val firmwareVersionQuery = """
              SELECT 
                  bs_dt,
                  dvc_mdl,
                  fota_ver_vl,
                  fota_ver_cnt
-               FROM DW.LI_PLUG_FOTA_VER
-              WHERE dvc_mdl = '$deviceModel'
-
-
+               FROM DW.LI_PLUG_FOTA_VER  
         """.trimIndent()
-
-        return hiveJdbcTemplate.query(query){ rs, _ ->
-            FirmwareVersionInfo(
-                bsDt = transformNullToEmptyString(rs.getString("bs_dt")),
-                dvcMdl = transformNullToEmptyString(rs.getString("dvc_mdl")),
-                firmwareVersion = transformNullToEmptyString(rs.getString("fota_ver_vl")),
-                sumFirmwareVersion = rs.getInt("fota_ver_cnt"),
-            )
-        }
     }
-
 
     fun getZeroGpsTripMonthlyInfoData(): List<ZeroGpsTripMonthlyInfo> {
         val query: String = """

@@ -31,12 +31,9 @@ interface DataType {
 
 const Home = (): React.ReactElement => {
 
-    const [data, setData] = useState([]);
     const accessToken = useSelector((state: StoreState) => state.auth.accessToken)
     const [homeDeviceCountData, setHomeDeviceCountData] = useState([]);
     const [homeDeviceLoading, setHomeDeviceLoading] = useState(true);
-    const [deviceInfo, setDeviceInfo] = useState([]);
-    const [homeMapData, setHomeMapData] = useState("");
 
 
     useEffect(() => {
@@ -56,25 +53,14 @@ const Home = (): React.ReactElement => {
             });
     };
 
-
-    const getDailyDeviceInfo = () => {
-        get<any>("/api/home/~~~~~")
-            .then(jsonData => {
-                setDeviceInfo(jsonData)
-            })
-            .catch((error) => {
-                NotifyError(error)
-            })
-    }
-
     const homeDeviceCountConfig = {
         data: homeDeviceCountData,
-        xField: 'bsDt',
-        yField: 'dvcCount',
-        seriesField: 'dvcGb',
+        xField: 'bs_dt',
+        yField: 'dvc_count',
+        seriesField: 'dvc_gb',
         yAxis: {
             label: {
-                content: (item) => `${item.dvcCount}`, // 각 데이터의 값을 라벨로 표시
+                content: (item) => `${item.dvc_count}`, // 각 데이터의 값을 라벨로 표시
             },
         },
         legend: {
@@ -89,7 +75,6 @@ const Home = (): React.ReactElement => {
             },
         },
     };
-
 
     const testData = `no,eid,source,target,tunnel,geometry,source_lt,source_ln,target_lt,target_ln,length,reversed,eid_idx 
     20689,166681831,1781121730,1781121772,yes,"LINESTRING (126.2859336000000070 34.4983530000000016, 126.2855303999999990 34.4987884000000022)",34.498353,126.2859336,34.4987884,126.2855304,60.903,True,166681831
@@ -143,17 +128,6 @@ const Home = (): React.ReactElement => {
 72935,724117267,6791116742,6791116741,yes,"LINESTRING (126.5504442000000012 34.4652474999999967, 126.5507056000000006 34.4652091000000027)",34.4652475,126.5504442,34.4652091,126.5507056,24.342,True,724117267
 72936,724117267,6791116741,6791116742,yes,"LINESTRING (126.5507056000000006 34.4652091000000027, 126.5504442000000012 34.4652474999999967)",34.4652091,126.5507056,34.4652475,126.5504442,24.342,False,724117267
 74039,724310983,6792799874,6792799873,yes,"LINESTRING (126.5451546999999977 34.5119806000000011, 126.5448200000000014 34.5122495999999970)",34.5119806,126.5451547,34.5122496,126.54482,42.839,True,724310983`
-
-    const homeMapColumnName = 'no,eid,source,target,tunnel,geometry,source_lt,source_ln,target_lt,target_ln,length,reversed,eid_idx '
-    const getHomeMapData = () => {
-        get<string>("/api/home/~~~~")
-            .then((jsonData) => {
-                setHomeMapData(homeMapColumnName + jsonData)
-            })
-            .catch(error => {
-                NotifyError(error)
-            })
-    }
 
     useEffect(() => {
         store.dispatch(updateMap({
