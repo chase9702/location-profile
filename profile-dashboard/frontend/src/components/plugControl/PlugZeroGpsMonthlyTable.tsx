@@ -9,34 +9,34 @@ interface Props {
 
 const PlugZeroGpsMonthlyTable = (props: { zeroGpsMonthlyTableData: any[] }): React.ReactElement => {
 
-    const { zeroGpsMonthlyTableData } = props;
+    const {zeroGpsMonthlyTableData} = props;
     const uniqueDailyArray = [];
     const seenDailyKeys = new Set();
 
     for (const item of zeroGpsMonthlyTableData) {
-        if (!seenDailyKeys.has(item.bsDt)) {
+        if (!seenDailyKeys.has(item.bs_dt)) {
             uniqueDailyArray.push({
-                text: item.bsDt,
-                value: item.bsDt,
+                text: item.bs_dt,
+                value: item.bs_dt,
             });
-            seenDailyKeys.add(item.bsDt);
+            seenDailyKeys.add(item.bs_dt);
         }
     }
 
     const zeroGpsMonthlyColumn: ColumnsType<any> = [
         {
             title: '날짜',
-            dataIndex: 'bsDt',
+            dataIndex: 'bs_dt',
             align: 'center' as const,
             filters: uniqueDailyArray.map(option => ({
                 text: option.text,
                 value: option.value,
             })),
-            onFilter: (value: string, record) => record.bsDt.indexOf(value) === 0,
+            onFilter: (value: string, record) => record.bs_dt.indexOf(value) === 0,
         },
         {
             title: '제조사',
-            dataIndex: 'dvcGb',
+            dataIndex: 'dvc_gb',
             align: 'center' as const,
             filters: [
                 {
@@ -60,11 +60,11 @@ const PlugZeroGpsMonthlyTable = (props: { zeroGpsMonthlyTableData: any[] }): Rea
                     value: 'UNK',
                 },
             ],
-            onFilter: (value: string, record) => record.dvcGb.indexOf(value) === 0,
+            onFilter: (value: string, record) => record.dvc_gb.indexOf(value) === 0,
         },
         {
             title: '모델명',
-            dataIndex: 'dvcMdl',
+            dataIndex: 'dvc_mdl',
             align: 'center' as const,
             filters: [
                 {
@@ -92,27 +92,27 @@ const PlugZeroGpsMonthlyTable = (props: { zeroGpsMonthlyTableData: any[] }): Rea
                     value: 'UNK1',
                 },
             ],
-            onFilter: (value: string, record) => record.dvcMdl.indexOf(value) === 0,
+            onFilter: (value: string, record) => record.dvc_mdl.indexOf(value) === 0,
 
         },
         {
             title: '전체트립',
-            dataIndex: 'sumTotalTripCnt',
+            dataIndex: 'sum_total_trip_cnt',
             align: 'center' as const,
         },
         {
             title: '정상트립',
-            dataIndex: 'sumNormalTripCnt',
+            dataIndex: 'sum_normal_trip_cnt',
             align: 'center' as const,
         },
         {
-            title: 'ZGPS트립',
-            dataIndex: 'sumZeroTripCnt',
+            title: 'Zero 트립',
+            dataIndex: 'sum_zero_trip_cnt',
             align: 'center' as const,
         },
         {
-            title: 'ZGPS비율',
-            dataIndex: 'sumZeroTripRt',
+            title: 'Zero 트립비율',
+            dataIndex: 'sum_zero_trip_rt',
             align: 'center' as const,
         },
     ];
@@ -123,7 +123,7 @@ const PlugZeroGpsMonthlyTable = (props: { zeroGpsMonthlyTableData: any[] }): Rea
 
     return (
         <div>
-                <Table columns={zeroGpsMonthlyColumn} dataSource={zeroGpsMonthlyTableData} onChange={onChange}/>
+            <Table columns={zeroGpsMonthlyColumn} dataSource={zeroGpsMonthlyTableData} onChange={onChange}/>
         </div>
     )
 };

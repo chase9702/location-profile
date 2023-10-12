@@ -9,34 +9,42 @@ interface Props {
 const PlugZeroGpsDailyChart = (props: { zeroGpsDailyChartData: any[] }): React.ReactElement => {
 
     const { zeroGpsDailyChartData } = props;
-    const zeroGpsDailyGroupData = _.groupBy(zeroGpsDailyChartData, (item) => `${item.dvcMdl}-${item.bsDt}`);
+    const zeroGpsDailyGroupData = _.groupBy(zeroGpsDailyChartData, (item) => `${item.dvc_mdl}-${item.bs_dt}`);
 
     const zeroGpsDailyChartDataResult = _.map(zeroGpsDailyGroupData, (group) => {
-        const sumTotalTripCnt = _.sumBy(group, 'sumTotalTripCnt');
-        const sumZeroTripCnt = _.sumBy(group, 'sumZeroTripCnt');
-        const sumZeroTripRt = sumTotalTripCnt !== 0 ? (sumZeroTripCnt / sumTotalTripCnt) * 100 : 0;
+        const sum_total_trip_cnt = _.sumBy(group, 'sum_total_trip_cnt');
+        const sum_zero_trip_cnt = _.sumBy(group, 'sum_zero_trip_cnt');
+        const sum_zero_trip_rt = sum_total_trip_cnt !== 0 ? (sum_zero_trip_cnt / sum_total_trip_cnt) * 100 : 0;
 
         return {
-            dvcMdl: group[0].dvcMdl,
-            bsDt: group[0].bsDt,
-            sumZeroTripRt: parseFloat(sumZeroTripRt.toFixed(2)),
+            dvc_mdl: group[0].dvc_mdl,
+            bs_dt: group[0].bs_dt,
+            sum_zero_trip_rt: parseFloat(sum_zero_trip_rt.toFixed(2)),
         };
-    });
-
-    console.log(zeroGpsDailyChartDataResult)
+    }).sort((a, b) => a.dvc_mdl.localeCompare(b.dvc_mdl));
 
     const zeroGpsDailyChartConfig = {
         data: zeroGpsDailyChartDataResult,
-        xField: 'bsDt',
-        yField: 'sumZeroTripRt',
-        seriesField: 'dvcMdl',
+        xField: 'bs_dt',
+        yField: 'sum_zero_trip_rt',
+        xAxis: {
+            title: {
+                text: '일자', 
+            },
+        },
+        yAxis: {
+            title: {
+                text: 'Zero 트립 비율(%)',
+            },
+        },
+        seriesField: 'dvc_mdl',
         isGroup: true,
         columnStyle: {
             radius: [20, 20, 0, 0],
         },
         label: {
             position: 'middle',
-            content: (item) => `${item.sumZeroTripRt}`, // 각 데이터의 값을 라벨로 표시
+            content: (item) => `${item.sum_zero_trip_rt}`, // 각 데이터의 값을 라벨로 표시
             style: {
                 fill: '#000', // 라벨 색상 설정
                 fontSize: 12,

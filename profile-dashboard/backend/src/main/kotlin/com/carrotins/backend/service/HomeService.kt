@@ -1,5 +1,6 @@
 package com.carrotins.backend.service
 
+import com.carrotins.backend.repository.HomeDeviceInfo
 import com.carrotins.backend.repository.HomeRepository
 import org.springframework.stereotype.Service
 
@@ -10,15 +11,7 @@ import org.springframework.stereotype.Service
 class HomeService(
     private val homeRepository: HomeRepository
 ) {
-
-
-//    val myObjectList = listOf(
-//        MyObject(1, "aaa"),
-//        MyObject(2, "bbb")
-//    )
-//
-//    val result = myObjectList.joinToString("\n") { "${it.id},\"${it.name}\"" }
-//    println(result)
-
-
+    fun getHomeDeviceInfo(): List<HomeDeviceInfo> {
+        return homeRepository.getHomeDeviceInfo()
+    }
 }

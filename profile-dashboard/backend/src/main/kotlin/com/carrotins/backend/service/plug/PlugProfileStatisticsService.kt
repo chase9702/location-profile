@@ -2,7 +2,6 @@ package com.carrotins.backend.service.plug
 
 import com.carrotins.backend.repository.plug.*
 import org.springframework.stereotype.Service
-import java.math.BigDecimal
 
 
 /**
@@ -12,9 +11,14 @@ import java.math.BigDecimal
 class PlugProfileStatisticsService(
     private val plugStatisticsRepository: PlugStatisticsRepository
 ) {
-    fun getFirmwareVersionInfo(): List<FirmwareVersionInfo>{
-        return plugStatisticsRepository.getFirmwareVersionInfoData()
+    fun getAllFirmwareVersionInfo(): List<FirmwareVersionInfo> {
+        return plugStatisticsRepository.getAllFirmwareVersionInfoData()
     }
+
+    fun getFilterFirmwareVersionInfo(deviceModel: String): List<FirmwareVersionInfo> {
+        return plugStatisticsRepository.getFilterFirmwareVersionInfoData(deviceModel)
+    }
+
     fun getZeroGpsTripMonthlyInfo(): List<ZeroGpsTripMonthlyInfo> {
         return plugStatisticsRepository.getZeroGpsTripMonthlyInfoData()
     }
