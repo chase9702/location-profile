@@ -2,6 +2,8 @@ package com.carrotins.backend.repository
 
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Repository
+import com.carrotins.backend.utils.transformNullToEmptyString
+
 
 /**
  * Created by alvin on 2023/09/18.
@@ -22,8 +24,8 @@ class HomeRepository(
         """.trimIndent()
         return hiveJdbcTemplate.query(query) { rs, _ ->
             HomeDeviceInfo(
-                bsDt = rs.getString("bs_dt"),
-                dvcGb = rs.getString("dvc_gb"),
+                bsDt = transformNullToEmptyString(rs.getString("bs_dt")),
+                dvcGb = transformNullToEmptyString(rs.getString("dvc_gb")),
                 dvcCount = rs.getInt("divc_no_cnt"),
             )
         }

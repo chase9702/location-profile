@@ -11,12 +11,8 @@ import org.springframework.stereotype.Service
 class PlugProfileStatisticsService(
     private val plugStatisticsRepository: PlugStatisticsRepository
 ) {
-    fun getAllFirmwareVersionInfo(): List<FirmwareVersionInfo> {
-        return plugStatisticsRepository.getAllFirmwareVersionInfoData()
-    }
-
-    fun getFilterFirmwareVersionInfo(deviceModel: String): List<FirmwareVersionInfo> {
-        return plugStatisticsRepository.getFilterFirmwareVersionInfoData(deviceModel)
+    fun getFirmwareVersionInfo(deviceModel: String): List<FirmwareVersionInfo> {
+        return plugStatisticsRepository.getFirmwareVersionInfoData(deviceModel)
     }
 
     fun getZeroGpsTripMonthlyInfo(): List<ZeroGpsTripMonthlyInfo> {
