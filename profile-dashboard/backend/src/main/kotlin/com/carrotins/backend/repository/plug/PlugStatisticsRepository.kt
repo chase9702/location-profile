@@ -2,10 +2,8 @@ package com.carrotins.backend.repository.plug
 
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Repository
+import org.springframework.cache.annotation.Cacheable
 
-/**
- * Created by alvin on 2023/07/19.
- */
 @Repository
 class PlugStatisticsRepository(
     private val hiveJdbcTemplate: JdbcTemplate
@@ -60,7 +58,7 @@ class PlugStatisticsRepository(
                 )
         }
     }
-
+    @Cacheable("zeroGpsTripDailyInfoCache")
     fun getZeroGpsTripDailyInfoData(): List<ZeroGpsTripDailyInfo> {
         val query: String = """
              SELECT 
