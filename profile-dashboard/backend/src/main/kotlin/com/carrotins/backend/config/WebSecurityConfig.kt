@@ -8,6 +8,7 @@ import com.carrotins.backend.utils.logger
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.security.authentication.BadCredentialsException
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer
@@ -30,6 +31,7 @@ import java.util.stream.Collectors
  */
 //@EnableWebSecurity(debug=true)
 @EnableWebSecurity
+@EnableMethodSecurity
 class WebSecurityConfig(
     private val restAuthenticationEntryPoint: RestAuthenticationEntryPoint,
     private val restAccessDeniedHandler: RestAccessDeniedHandler,

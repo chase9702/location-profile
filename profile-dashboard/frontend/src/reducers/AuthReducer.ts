@@ -8,7 +8,7 @@ import {
 
 export interface AuthState {
     userName: string;
-    userRole: string;
+    userRole: string[];
     ssoId: string;
     accessToken: string;
     refreshToken: string;
@@ -17,7 +17,7 @@ export interface AuthState {
 
 export const initialState: AuthState = {
     userName: 'UNKNOWN',
-    userRole: 'UNKNOWN',
+    userRole: [''],
     ssoId: 'UNKNOWN',
     accessToken: null,
     refreshToken: null,

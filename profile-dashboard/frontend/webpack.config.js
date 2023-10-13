@@ -4,6 +4,9 @@ const crypto = require('crypto');
 
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
+
 
 const theme = require('./theme');
 const {ProvidePlugin} = require("webpack");
@@ -24,6 +27,20 @@ module.exports = (env, options) => {
             filename: outputFilename,
         },
         optimization: {
+            minimize: true,
+            minimizer: [
+                // 플러그인 인스턴스 생성
+                new CssMinimizerPlugin(),
+                new TerserPlugin({
+                    // TerserPlugin 옵션 설정
+                    // 예: 코드 압축 관련 설정
+                    terserOptions: {
+                        compress: {
+                            drop_console: true, // console.log() 같은 코드 삭제
+                        },
+                    },
+                }),
+            ],
             splitChunks: {
                 cacheGroups: {
                     default: false,
@@ -48,12 +65,33 @@ module.exports = (env, options) => {
                         enforce: true,
                         priority: 40
                     },
+                    kepler: {
+                        test: /[\\/]node_modules[\\/]kepler.gl[\\/]/,
+                        name: 'kepler',
+                        chunks: 'all',
+                        enforce: true,
+                        priority: 35
+                    },
                     antv: {
                         test: /[\\/]node_modules[\\/]@antv[\\/]/,
                         name: 'antv',
                         chunks: 'all',
                         enforce: true,
                         priority: 30
+                    },
+                    deck: {
+                        test: /[\\/]node_modules[\\/]@deck.gl[\\/]/,
+                        name: 'deck',
+                        chunks: 'all',
+                        enforce: true,
+                        priority: 33
+                    },
+                    loaders: {
+                        test: /[\\/]node_modules[\\/]@loaders.gl[\\/]/,
+                        name: 'loaders',
+                        chunks: 'all',
+                        enforce: true,
+                        priority: 31
                     },
                     lib: {
                         test(module) {

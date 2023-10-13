@@ -43,8 +43,9 @@ api.interceptors.response.use(
             window.location.href = baseUrl
         } else if (error.response.status === 400) {
             NotifyError(error.response.data);
+        } else if (error.response.status === 403) {
+            NotifyError("권한 없음, 시스템 관리자에게 문의");
         }
-
         return Promise.reject(error);
     }
 );

@@ -10,6 +10,7 @@ import {authGet, authPut} from "@src/api";
 import {NotifyError} from "@src/components/common/Notification";
 import {setAccessToken, setAuthInfo, setRefreshToken, setSSOId} from "@src/actions/AuthAction";
 import {StoreState} from "@src/reducers";
+import {hasPermission} from "@src/routes";
 
 const {SubMenu} = Menu;
 
@@ -27,7 +28,7 @@ const Menus = (): React.ReactElement => {
 
         dispatch(setAuthInfo({
             userName: "UNKNOWN",
-            userRole: "UNKNOWN",
+            userRole: [''],
         }))
 
         dispatch(setSSOId("UNKNOWN"))
@@ -74,20 +75,21 @@ const Menus = (): React.ReactElement => {
                 </Menu.Item>
                 {RouteMenu.map((menu) => {
                     return (
-                        <SubMenu key={menu.key} title={menu.name}>
-                            {menu.submenu &&
-                                menu.submenu.map((sub) => {
-                                    return (
-                                        <Menu.Item key={sub.key}
-                                                   onClick={() => dispatch(setSelectMenu(sub.key))}>
-                                            <span>{sub.name}</span>
-                                            <Link to={sub.to}/>
-                                        </Menu.Item>
+                        hasPermission(userRole, menu.auth) && (
+                            <SubMenu key={menu.key} title={menu.name}>
+                                {menu.submenu &&
+                                    menu.submenu.map((sub) => {
+                                        return (
+                                            <Menu.Item key={sub.key}
+                                                       onClick={() => dispatch(setSelectMenu(sub.key))}>
+                                                <span>{sub.name}</span>
+                                                <Link to={sub.to}/>
+                                            </Menu.Item>
 
-                                    );
-                                })}
-                        </SubMenu>
-
+                                        );
+                                    })}
+                            </SubMenu>
+                        )
                     );
                 })}
             </Menu>
