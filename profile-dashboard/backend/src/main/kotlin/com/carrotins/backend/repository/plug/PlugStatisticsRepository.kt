@@ -1,8 +1,8 @@
 package com.carrotins.backend.repository.plug
 
+import mu.KotlinLogging
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Repository
-import org.springframework.cache.annotation.Cacheable
 
 @Repository
 class PlugStatisticsRepository(
@@ -30,6 +30,8 @@ class PlugStatisticsRepository(
         }
     }
     fun getZeroGpsTripMonthlyInfoData(): List<ZeroGpsTripMonthlyInfo> {
+        val log = KotlinLogging.logger {}
+        log.info("category cache is not used.")
         val query: String = """
              SELECT 
                  bs_dt,
@@ -58,7 +60,6 @@ class PlugStatisticsRepository(
                 )
         }
     }
-    @Cacheable("zeroGpsTripDailyInfoCache")
     fun getZeroGpsTripDailyInfoData(): List<ZeroGpsTripDailyInfo> {
         val query: String = """
              SELECT 

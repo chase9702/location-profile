@@ -93,7 +93,6 @@ const PlugProfileDashBoardStatistics = (props: Props): React.ReactElement => {
                     '일별/월별 에 대한 보간트립, Zero GPS를 제조사, 모델별로 확인할 수 있습니다.',
                     '일자별 펌웨어 버젼을 확인해 업데이트 추이를 확인하실 수 있습니다.',
                 ]}
-
             />
             <Card style={{padding: '10px'}}>
                 <h3>
