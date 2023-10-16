@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController
 class CacheController(
     private val cacheService: CacheService
 ) {
-    @GetMapping("/clearCache")
+    @GetMapping("/clear")
     fun clearCache() {
         return cacheService.clearALLCache()
     }
