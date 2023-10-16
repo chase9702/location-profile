@@ -1,10 +1,6 @@
 spring:
   profiles:
     active: local
-  cache:
-    cache-names: category
-    caffeine:
-      spec: maximumSize=100000,expireAfterWrite=24h
 
 springdoc:
   paths-to-match: "/api/**"
@@ -40,7 +36,6 @@ logging:
   level:
     root: INFO
     com.carrotins.backend: DEBUG
-    org.springframework.cache: DEBUG
 
 
 ---
@@ -55,10 +50,6 @@ kerberos:
   krb5: "src/main/resources/kerberos/krb5.conf"
 
 log.config.path: "/data/log/profile"
-
-cache:
-  caffeine:
-    spec: maximumSize=100000,expireAfterWrite=24h
 
 ext:
   datasource:
