@@ -3,10 +3,6 @@ package com.carrotins.backend.repository.plug
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Repository
 import com.carrotins.backend.utils.transformNullToEmptyString
-import org.springframework.cache.annotation.Cacheable
-import org.springframework.cache.annotation.Caching
-
-
 
 @Repository
 class PlugStatisticsRepository(
