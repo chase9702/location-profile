@@ -2,44 +2,33 @@ package com.carrotins.backend.repository.plug
 
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Repository
-import com.carrotins.backend.utils.transformNullToEmptyString
 import org.springframework.cache.annotation.Cacheable
-import org.springframework.cache.annotation.Caching
-
-
 
 @Repository
 class PlugStatisticsRepository(
     private val hiveJdbcTemplate: JdbcTemplate
 ) {
-    fun getFirmwareVersionInfoData(deviceModel: String): List<FirmwareVersionInfo> {
-        val query: String = if (deviceModel == "TOTAL") {
-            firmwareVersionQuery
-        } else {
-            "$firmwareVersionQuery\nWHERE dvc_mdl = '$deviceModel'"
-        }
+    fun getFirmwareVersionInfoData(): List<FirmwareVersionInfo> {
+        val query: String = """
+             SELECT 
+                 bs_dt,
+                 fota_ver_vl,
+                 fota_ver_cnt
+               FROM DW.LI_PLUG_FOTA_VER
 
-        return hiveJdbcTemplate.query(query) { rs, _ ->
+
+        """.trimIndent()
+
+        hiveJdbcTemplate.fetchSize = 100000
+
+        return hiveJdbcTemplate.query(query){ rs, _ ->
             FirmwareVersionInfo(
-                bsDt = transformNullToEmptyString(rs.getString("bs_dt")),
-                dvcMdl = transformNullToEmptyString(rs.getString("dvc_mdl")),
-                firmwareVersion = transformNullToEmptyString(rs.getString("fota_ver_vl")),
+                bsDt = rs.getString("bs_dt"),
+                firmwareVersion = rs.getString("fota_ver_vl"),
                 sumFirmwareVersion = rs.getInt("fota_ver_cnt"),
             )
         }
     }
-
-    companion object {
-        val firmwareVersionQuery = """
-             SELECT 
-                 bs_dt,
-                 dvc_mdl,
-                 fota_ver_vl,
-                 fota_ver_cnt
-               FROM DW.LI_PLUG_FOTA_VER  
-        """.trimIndent()
-    }
-
     fun getZeroGpsTripMonthlyInfoData(): List<ZeroGpsTripMonthlyInfo> {
         val query: String = """
              SELECT 
@@ -59,9 +48,9 @@ class PlugStatisticsRepository(
 
         return hiveJdbcTemplate.query(query){ rs, _ ->
             ZeroGpsTripMonthlyInfo(
-                bsDt = transformNullToEmptyString(rs.getString("bs_dt")),
-                dvcGb = transformNullToEmptyString(rs.getString("dvc_gb")),
-                dvcMdl = transformNullToEmptyString(rs.getString("dvc_mdl")),
+                bsDt = rs.getString("bs_dt"),
+                dvcGb = rs.getString("dvc_gb"),
+                dvcMdl = rs.getString("dvc_mdl"),
                 sumTotalTripCnt = rs.getInt("sum_total_trip_cnt"),
                 sumNormalTripCnt = rs.getInt("sum_01_trip_cnt"),
                 sumZeroTripCnt = rs.getInt("sum_03_trip_cnt"),
@@ -69,7 +58,7 @@ class PlugStatisticsRepository(
                 )
         }
     }
-
+    @Cacheable("zeroGpsTripDailyInfoCache")
     fun getZeroGpsTripDailyInfoData(): List<ZeroGpsTripDailyInfo> {
         val query: String = """
              SELECT 
@@ -97,9 +86,9 @@ class PlugStatisticsRepository(
 
         return hiveJdbcTemplate.query(query){ rs, _ ->
             ZeroGpsTripDailyInfo(
-                bsDt = transformNullToEmptyString(rs.getString("bs_dt")),
-                dvcGb = transformNullToEmptyString(rs.getString("dvc_gb")),
-                dvcMdl = transformNullToEmptyString(rs.getString("dvc_mdl")),
+                bsDt = rs.getString("bs_dt"),
+                dvcGb = rs.getString("dvc_gb"),
+                dvcMdl = rs.getString("dvc_mdl"),
                 sumTotalTripCnt = rs.getInt("sum_total_trip_cnt"),
                 sumNormalTripCnt = rs.getInt("sum_01_trip_cnt"),
                 sumZeroTripCnt = rs.getInt("sum_03_trip_cnt"),
@@ -139,9 +128,9 @@ class PlugStatisticsRepository(
 
         return hiveJdbcTemplate.query(query){ rs, _ ->
             InterpolationTripMonthlyInfo(
-                dvcGb = transformNullToEmptyString(rs.getString("dvc_gb")),
-                dvcMdl = transformNullToEmptyString(rs.getString("dvc_mdl")),
-                bsDt = transformNullToEmptyString(rs.getString("bs_dt")),
+                dvcGb = rs.getString("dvc_gb"),
+                dvcMdl = rs.getString("dvc_mdl"),
+                bsDt = rs.getString("bs_dt"),
                 dvcCnt = rs.getInt("divc_cnt"),
                 sumTotalDist = rs.getInt("sum_total_dist"),
                 sumNormalDist = rs.getInt("sum_01_dist"),
@@ -183,9 +172,9 @@ class PlugStatisticsRepository(
 
         return hiveJdbcTemplate.query(query){ rs, _ ->
             InterpolationTripDailyInfo(
-                dvcGb = transformNullToEmptyString(rs.getString("dvc_gb")),
-                dvcMdl = transformNullToEmptyString(rs.getString("dvc_mdl")),
-                bsDt = transformNullToEmptyString(rs.getString("bs_dt")),
+                dvcGb = rs.getString("dvc_gb"),
+                dvcMdl = rs.getString("dvc_mdl"),
+                bsDt = rs.getString("bs_dt"),
                 dvcCnt = rs.getInt("divc_cnt"),
                 sumTotalDist = rs.getInt("sum_total_dist"),
                 sumNormalDist = rs.getInt("sum_01_dist"),
