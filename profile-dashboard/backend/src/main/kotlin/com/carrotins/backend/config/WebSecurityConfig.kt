@@ -7,7 +7,6 @@ import com.carrotins.backend.security.RestAuthenticationEntryPoint
 import com.carrotins.backend.utils.logger
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
-import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
@@ -78,42 +77,22 @@ class WebSecurityConfig(
             .authenticationProvider(JwtAuthenticationProvider(jwtDecoder(), jwkUrl))
     }
 
-//    @Bean
-//    fun jwtDecoder(): JwtDecoder {
-//        return run {
-//            val jwtDecoder = NimbusJwtDecoder.withJwkSetUri(jwkUrl).build()
-//            val tokenTypeValidator: OAuth2TokenValidator<Jwt> =
-//                JwtTokenValidator()
-//            val defaultValidator = JwtValidators.createDefault()
-//            val delegatedValidator: OAuth2TokenValidator<Jwt> =
-//                DelegatingOAuth2TokenValidator(
-//                    tokenTypeValidator,
-//                    defaultValidator,
-//                )
-//            jwtDecoder.setJwtValidator(delegatedValidator)
-//            jwtDecoder
-//        }
-//    }
-
     @Bean
     fun jwtDecoder(): JwtDecoder {
-        val jwtDecoder = NimbusJwtDecoder.withJwkSetUri(jwkUrl).build()
-        val tokenTypeValidator: OAuth2TokenValidator<Jwt> = JwtTokenValidator()
-        val defaultValidator = JwtValidators.createDefault()
-        val delegatedValidator: OAuth2TokenValidator<Jwt> =
-            DelegatingOAuth2TokenValidator(tokenTypeValidator, defaultValidator)
-        // JWT 유효성 검사 실패 시 예외 처리를 추가합니다.
-        jwtDecoder.setJwtValidator { jwt ->
-            try {
-                delegatedValidator.validate(jwt)
-            } catch (e: Exception) {
-                // 유효성 검사 실패 시 401 Unauthorized 응답을 생성합니다.
-                throw BadCredentialsException("Invalid token")
-            }
+        return run {
+            val jwtDecoder = NimbusJwtDecoder.withJwkSetUri(jwkUrl).build()
+            val tokenTypeValidator: OAuth2TokenValidator<Jwt> =
+                JwtTokenValidator()
+            val defaultValidator = JwtValidators.createDefault()
+            val delegatedValidator: OAuth2TokenValidator<Jwt> =
+                DelegatingOAuth2TokenValidator(
+                    tokenTypeValidator,
+                    defaultValidator,
+                )
+            jwtDecoder.setJwtValidator(delegatedValidator)
+            jwtDecoder
         }
-        return jwtDecoder
     }
-
 
     @Throws(Exception::class)
     private fun applyRestApiSecurity(httpSecurity: HttpSecurity) {
@@ -137,37 +116,7 @@ class WebSecurityConfig(
                         .and()
                         .oauth2ResourceServer { oauth2ResourceServer: OAuth2ResourceServerConfigurer<HttpSecurity?> -> oauth2ResourceServer.jwt() }
                 }
-//
-//            httpSecurity
-//                .authorizeRequests()
-//                .antMatchers(*jwtUrlList)
-//                .access(
-//                    "isAuthenticated() and " +
-//                            getAttributeByIpList(whiteIpList)
-//                )
-//                .and()
-//                .authorizeRequests()
-//                .antMatchers(*anyPaths) // anyPaths는 JWT 토큰 확인을 하지 않을 경로입니다.
-//                .access(getAttributeByIpList(whiteIpList)) // JWT 토큰 확인을 하지 않음
-//                .and()
-//                .oauth2ResourceServer { oauth2ResourceServer: OAuth2ResourceServerConfigurer<HttpSecurity?> -> oauth2ResourceServer.jwt() }
-//                .authorizeRequests()
-//                .anyRequest().permitAll()
 
-
-//            httpSecurity
-//                .authorizeRequests()
-//                .antMatchers(*jwtUrlList)
-//                .access(
-//                    "isAuthenticated() and " +
-//                            getAttributeByIpList(whiteIpList)
-//                )
-//            httpSecurity.oauth2ResourceServer { oauth2ResourceServer: OAuth2ResourceServerConfigurer<HttpSecurity?> -> oauth2ResourceServer.jwt() }
-//
-//            httpSecurity
-//                .authorizeRequests()
-//                .antMatchers(*anyPaths) // anyPaths는 JWT 토큰 확인을 하지 않을 경로입니다.
-//                .permitAll()
         } else {
             log.info("Authenticated API not allowed")
         }

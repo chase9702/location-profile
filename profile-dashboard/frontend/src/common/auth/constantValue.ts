@@ -8,8 +8,12 @@ export const profileRedirectUrl =
         ? process.env.REACT_APP_AUTH_REDIRECT_URL_PRODUCTION
         : process.env.REACT_APP_AUTH_REDIRECT_URL_DEVELOPMENT;
 
-
 export const baseUrl =
     process.env.NODE_ENV === 'production'
         ? process.env.REACT_APP_AUTH_REDIRECT_URL_PRODUCTION
         : process.env.REACT_APP_AUTH_REDIRECT_URL_DEVELOPMENT;
+
+export const clearLocalStorage = () => {
+    window.localStorage.removeItem("profileAccessToken");
+    window.localStorage.removeItem("profileRefreshToken");
+}

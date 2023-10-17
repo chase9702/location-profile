@@ -2,15 +2,18 @@ import React, {useEffect} from 'react';
 import {Link, withRouter} from 'react-router-dom';
 import Menu from 'antd/lib/menu';
 import HomeOutlined from '@ant-design/icons/lib/icons/HomeOutlined';
+import LogoutOutlined from '@ant-design/icons/lib/icons/LogoutOutlined'
 import RouteMenu from '@src/routes/RouteMenu';
 import {useDispatch, useSelector} from "react-redux";
 import {setSelectMenu} from "@src/actions/MenuSelectAction";
 import './menus.less';
-import {authGet, authPut} from "@src/api";
-import {NotifyError} from "@src/components/common/Notification";
+import {authApi, authGet, authPut} from "@src/api";
 import {setAccessToken, setAuthInfo, setRefreshToken, setSSOId} from "@src/actions/AuthAction";
 import {StoreState} from "@src/reducers";
 import {hasPermission} from "@src/routes";
+import {Button} from "antd";
+import {baseUrl, clearLocalStorage} from "@src/common/auth/constantValue";
+import {NotifyError} from "@src/components/common/Notification";
 
 const {SubMenu} = Menu;
 
@@ -21,35 +24,27 @@ const Menus = (): React.ReactElement => {
     const userRole = useSelector((state: StoreState) => state.auth.userRole)
     const userName = useSelector((state: StoreState) => state.auth.userName)
 
-    const logout = () => {
+    const logout =  () => {
 
-        window.localStorage.removeItem("profileAccessToken");
-        window.localStorage.removeItem("profileRefreshToken");
-
-        dispatch(setAuthInfo({
-            userName: "UNKNOWN",
-            userRole: [''],
-        }))
-
-        dispatch(setSSOId("UNKNOWN"))
-
-        dispatch(setAccessToken(undefined))
-        dispatch(setRefreshToken(undefined))
-
+        clearLocalStorage()
         authPut<any>("/auth/sso/logout", null)
             .then((jsonData) => {
                 if (jsonData.redirectUrl === undefined) {
-                    console.log("log out redirect undefined")
-                    return;
+                    return
                 } else {
-
+                    dispatch(setAuthInfo({
+                        userName: "UNKNOWN",
+                        userRole: [''],
+                    }))
+                    dispatch(setSSOId("UNKNOWN"))
+                    dispatch(setAccessToken(null))
+                    dispatch(setRefreshToken(null))
                     authGet(jsonData.redirectUrl)
                         .then(() => {
-                        })
+                        })!
                         .finally(() => {
                             window.location.href = "/"
                         })
-
                 }
             }).catch((e) => {
             NotifyError(e);
@@ -92,7 +87,14 @@ const Menus = (): React.ReactElement => {
                         )
                     );
                 })}
+
             </Menu>
+            {userName !== 'UNKNOWN' ?
+                <Button type="link" icon={<LogoutOutlined/>} className="logout-button" onClick={logout}>
+                    Logout
+                </Button>
+                : <div></div>}
+
         </div>
     );
 

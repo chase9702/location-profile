@@ -42,7 +42,6 @@ const AuthProvider = ({children}) => {
                     id: response.ssoId,
                     realm: "location_intelligence",
                 }).then((jsonData) => {
-                    console.log(jsonData)
                     setJwtLoginInfo(jsonData);
                 }).catch((e) => {
                     NotifyError(e);
@@ -92,7 +91,7 @@ const AuthProvider = ({children}) => {
     const init = () => {
         console.log("************************init*****************")
         const at = window.localStorage.getItem("profileAccessToken");
-        if (at === null || accessToken === null) {
+        if (at === null) {
             ssoLogin();
         }
     };
@@ -102,7 +101,6 @@ const AuthProvider = ({children}) => {
         console.log("************************localInit*****************")
         jwtLogin({ssoId: "8888888", resultCode: "1"})
     };
-
 
     useEffect(() => {
         console.log("ssoId changed:", ssoId);

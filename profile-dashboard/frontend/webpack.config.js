@@ -16,6 +16,8 @@ module.exports = (env, options) => {
     const mode = !options.mode ? 'development' : options.mode;
     const outputFilename = mode === 'development' ? 'js/[name].js' : 'js/[name].[contenthash].js';
 
+    const isProduction = options.mode === 'production';
+
     const config = {
         mode: mode,
         entry: {
@@ -31,15 +33,16 @@ module.exports = (env, options) => {
             minimizer: [
                 // 플러그인 인스턴스 생성
                 new CssMinimizerPlugin(),
-                new TerserPlugin({
-                    // TerserPlugin 옵션 설정
-                    // 예: 코드 압축 관련 설정
-                    terserOptions: {
-                        compress: {
-                            drop_console: true, // console.log() 같은 코드 삭제
+                isProduction ?
+                    new TerserPlugin({
+                        // TerserPlugin 옵션 설정
+                        // 예: 코드 압축 관련 설정
+                        terserOptions: {
+                            compress: {
+                                drop_console: true, // console.log() 같은 코드 삭제
+                            },
                         },
-                    },
-                }),
+                    }) : null,
             ],
             splitChunks: {
                 cacheGroups: {
@@ -99,7 +102,7 @@ module.exports = (env, options) => {
                         },
                         name(module) {
                             const hash = crypto.createHash('sha1');
-                            hash.update(module.libIdent({ context: __dirname }));
+                            hash.update(module.libIdent({context: __dirname}));
                             return `common.${hash.digest('hex').substring(0, 8)}`;
                         },
                         chunks: 'all',
