@@ -65,7 +65,6 @@ configure(listOf(project(":profile-dashboard:backend"))) {
         implementation("org.jetbrains.kotlin:kotlin-reflect")
         implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
-        implementation("org.springframework.boot:spring-boot-starter")
         implementation("org.springframework.boot:spring-boot-starter-cache")
         implementation("com.github.ben-manes.caffeine:caffeine:2.9.0")
 

@@ -7,10 +7,6 @@ springdoc:
 
 log.config.path: "logs"
 
-cache:
-  caffeine:
-    spec: maximumSize=100000,expireAfterWrite=24h
-
 ext:
   datasource:
     hive:
@@ -55,10 +51,6 @@ kerberos:
   krb5: "src/main/resources/kerberos/krb5.conf"
 
 log.config.path: "/data/log/profile"
-
-cache:
-  caffeine:
-    spec: maximumSize=100000,expireAfterWrite=24h
 
 ext:
   datasource:
