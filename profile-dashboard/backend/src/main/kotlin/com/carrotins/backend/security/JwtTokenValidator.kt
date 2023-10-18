@@ -1,11 +1,11 @@
 package com.carrotins.backend.security
 
 import com.carrotins.backend.utils.logger
-import org.springframework.security.authentication.BadCredentialsException
 import org.springframework.security.oauth2.core.OAuth2Error
 import org.springframework.security.oauth2.core.OAuth2TokenValidator
 import org.springframework.security.oauth2.core.OAuth2TokenValidatorResult
 import org.springframework.security.oauth2.jwt.Jwt
+import org.springframework.security.oauth2.server.resource.InvalidBearerTokenException
 import java.time.Instant
 
 
@@ -26,9 +26,8 @@ class JwtTokenValidator : OAuth2TokenValidator<Jwt> {
             log.debug("IMB JWT pri_tt=[{}]", privateTokenType)
             return OAuth2TokenValidatorResult.success()
         }
-        throw BadCredentialsException("Invalid token")
-//        return OAuth2TokenValidatorResult.failure(error)
 
-
+        log.error("Token Exception:" + expirationTime +"is over than now("+Instant.now()+")")
+        throw InvalidBearerTokenException("Invalid token")
     }
 }

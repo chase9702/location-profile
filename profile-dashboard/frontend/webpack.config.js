@@ -29,21 +29,19 @@ module.exports = (env, options) => {
             filename: outputFilename,
         },
         optimization: {
-            minimize: true,
+            minimize: isProduction,
             minimizer: [
-                // 플러그인 인스턴스 생성
                 new CssMinimizerPlugin(),
-                isProduction ?
-                    new TerserPlugin({
-                        // TerserPlugin 옵션 설정
-                        // 예: 코드 압축 관련 설정
+                isProduction
+                    ? new TerserPlugin({
                         terserOptions: {
                             compress: {
-                                drop_console: true, // console.log() 같은 코드 삭제
+                                drop_console: true,
                             },
                         },
-                    }) : null,
-            ],
+                    })
+                    : null,
+            ].filter(Boolean),
             splitChunks: {
                 cacheGroups: {
                     default: false,

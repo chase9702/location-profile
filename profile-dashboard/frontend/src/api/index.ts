@@ -1,6 +1,7 @@
 import axios, {AxiosError, AxiosResponse} from 'axios';
 import {NotifyError} from "@src/components/common/Notification";
 import {authUrl, baseUrl, clearLocalStorage} from "@src/common/auth/constantValue";
+import {logoutApi} from "@src/common/auth/AuthProvider";
 
 
 //request용 인터셉터
@@ -38,8 +39,7 @@ api.interceptors.response.use(
         if (error.response.status === 401 || error.response.status === 302) {
             console.log("401, 302 error relocation!")
             clearLocalStorage()
-            //여기서 로컬캐시 삭제 해보기
-            window.location.href = baseUrl
+            logoutApi()
         } else if (error.response.status === 400) {
             NotifyError(error.response.data);
         } else if (error.response.status === 403) {
@@ -57,7 +57,7 @@ authApi.interceptors.response.use(
         if (error.response.status === 401 || error.response.status === 302) {
             console.log("***********401, 302 error relocation!**************")
             clearLocalStorage()
-            window.location.href = baseUrl
+            logoutApi()
         } else if (error.response.status === 400) {
             NotifyError(error.response.data);
         }

@@ -7,13 +7,12 @@ import RouteMenu from '@src/routes/RouteMenu';
 import {useDispatch, useSelector} from "react-redux";
 import {setSelectMenu} from "@src/actions/MenuSelectAction";
 import './menus.less';
-import {authApi, authGet, authPut} from "@src/api";
 import {setAccessToken, setAuthInfo, setRefreshToken, setSSOId} from "@src/actions/AuthAction";
 import {StoreState} from "@src/reducers";
 import {hasPermission} from "@src/routes";
 import {Button} from "antd";
-import {baseUrl, clearLocalStorage} from "@src/common/auth/constantValue";
-import {NotifyError} from "@src/components/common/Notification";
+import {clearLocalStorage} from "@src/common/auth/constantValue";
+import {logoutApi} from "@src/common/auth/AuthProvider";
 
 const {SubMenu} = Menu;
 
@@ -24,31 +23,18 @@ const Menus = (): React.ReactElement => {
     const userRole = useSelector((state: StoreState) => state.auth.userRole)
     const userName = useSelector((state: StoreState) => state.auth.userName)
 
-    const logout =  () => {
+    const logout = () => {
 
         clearLocalStorage()
-        authPut<any>("/auth/sso/logout", null)
-            .then((jsonData) => {
-                if (jsonData.redirectUrl === undefined) {
-                    return
-                } else {
-                    dispatch(setAuthInfo({
-                        userName: "UNKNOWN",
-                        userRole: [''],
-                    }))
-                    dispatch(setSSOId("UNKNOWN"))
-                    dispatch(setAccessToken(null))
-                    dispatch(setRefreshToken(null))
-                    authGet(jsonData.redirectUrl)
-                        .then(() => {
-                        })!
-                        .finally(() => {
-                            window.location.href = "/"
-                        })
-                }
-            }).catch((e) => {
-            NotifyError(e);
-        });
+        dispatch(setAuthInfo({
+            userName: "UNKNOWN",
+            userRole: [''],
+        }))
+        dispatch(setSSOId("UNKNOWN"))
+        dispatch(setAccessToken(null))
+        dispatch(setRefreshToken(null))
+
+        logoutApi()
     }
 
     useEffect(() => {
