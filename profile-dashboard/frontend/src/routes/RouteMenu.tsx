@@ -13,6 +13,7 @@ export interface MenuInfo {
     readonly desc?: string;
     readonly to?: string;
     readonly component?: any;
+    readonly auth?: string;
     readonly submenu?: MenuInfo[];
 }
 
@@ -21,6 +22,7 @@ const RouteMenu: MenuInfo[] = [
         name: 'Plug Profile',
         key: 'plug',
         desc: 'plug Profile 제공.',
+        auth: 'ROLE_DASHBOARD',
         submenu: [
             {
                 name: 'Plug Statistics',
@@ -42,19 +44,20 @@ const RouteMenu: MenuInfo[] = [
             },
         ],
     },
-    // {
-    //     name: 'Location Profile',
-    //     key: 'location',
-    //     desc: 'Location Profile 제공.',
-    //     submenu: [
-    //         {
-    //             name: 'Location Dashboard',
-    //             key: 'location-dashboard',
-    //             to: '/location/dashboard',
-    //             component: LocationProfileDashBoard,
-    //          }
-    //     ],
-    // }
+    {
+        name: 'Location Profile',
+        key: 'location',
+        desc: 'Location Profile 제공.',
+        auth: 'ROLE_ADMIN',
+        submenu: [
+            {
+                name: 'Location Dashboard',
+                key: 'location-dashboard',
+                to: '/location/dashboard',
+                component: LocationProfileDashBoard,
+             }
+        ],
+    }
 ];
 
 export default RouteMenu;

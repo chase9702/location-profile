@@ -4,6 +4,7 @@ import com.carrotins.backend.repository.plug.DeviceTop100Data
 import com.carrotins.backend.repository.plug.DeviceTripData
 import com.carrotins.backend.service.plug.PlugProfileDeviceService
 import io.swagger.v3.oas.annotations.tags.Tag
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 import java.util.*
 
@@ -13,6 +14,7 @@ import java.util.*
 @Tag(name = "Plug device controller")
 @RestController
 @RequestMapping("/api/plug/device")
+@PreAuthorize("hasAnyAuthority('ROLE_DASHBOARD')")
 class PlugProfileDeviceController(
     private val plugProfileDeviceService: PlugProfileDeviceService
 ) {

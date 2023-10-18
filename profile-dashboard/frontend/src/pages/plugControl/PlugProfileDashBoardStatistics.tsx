@@ -19,6 +19,7 @@ import {Col, Row, Select} from "antd";
 import {deviceModel} from "@src/components/plugControl/types";
 import Button from "antd/lib/button";
 import './plug.less';
+import {NotifyError} from "@src/components/common/Notification";
 
 
 interface State {
@@ -49,6 +50,9 @@ const PlugProfileDashBoardStatistics = (props: Props): React.ReactElement => {
                 console.log(jsonData)
                 setInterpolationDailyData(jsonData)
             })
+            .catch((error) => {
+                NotifyError(error)
+            })
             .finally(() => {
                 setInterpolationDailyLoading(false);
             });
@@ -58,6 +62,9 @@ const PlugProfileDashBoardStatistics = (props: Props): React.ReactElement => {
         get<[]>("/api/plug/statistic/interpolation-trip-monthly-info")
             .then((jsonData) => {
                 setInterpolationMonthlyData(jsonData)
+            })
+            .catch((error) => {
+                NotifyError(error)
             })
             .finally(() => {
                 setInterpolationMonthlyLoading(false);
@@ -70,6 +77,9 @@ const PlugProfileDashBoardStatistics = (props: Props): React.ReactElement => {
                 console.log(jsonData)
                 setZeroGpsDailyData(jsonData)
             })
+            .catch((error) => {
+                NotifyError(error)
+            })
             .finally(() => {
                 setZeroGpsDailyLoading(false);
             });
@@ -80,6 +90,9 @@ const PlugProfileDashBoardStatistics = (props: Props): React.ReactElement => {
             .then((jsonData) => {
                 console.log(jsonData)
                 setZeroGpsMonthlyData(jsonData)
+            })
+            .catch((error) => {
+                NotifyError(error)
             })
             .finally(() => {
                 setZeroGpsMonthlyLoading(false);
@@ -92,6 +105,9 @@ const PlugProfileDashBoardStatistics = (props: Props): React.ReactElement => {
             .then((jsonData) => {
                 setPlugFirmwareVersionData(jsonData)
                 console.log(jsonData)
+            })
+            .catch((error) => {
+                NotifyError(error)
             })
             .finally(() => {
                 setPlugFirmwareVersionLoading(false);

@@ -3,6 +3,7 @@ package com.carrotins.backend.api.plug
 import com.carrotins.backend.repository.plug.*
 import com.carrotins.backend.service.plug.PlugProfileStatisticsService
 import io.swagger.v3.oas.annotations.tags.Tag
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 
 
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.*
 @Tag(name = "Plug statistics controller")
 @RestController
 @RequestMapping("/api/plug/statistic")
+@PreAuthorize("hasAnyAuthority('ROLE_DASHBOARD')")
 class PlugProfileStatisticsController(
     private val plugProfileStatisticsService: PlugProfileStatisticsService
 ) {

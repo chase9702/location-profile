@@ -7,6 +7,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.oauth2.jwt.Jwt
 import org.springframework.security.oauth2.jwt.JwtDecoder
 import org.springframework.security.oauth2.server.resource.BearerTokenAuthenticationToken
+import org.springframework.security.oauth2.server.resource.InvalidBearerTokenException
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken
 import java.util.*
 import java.util.stream.Collectors
@@ -32,7 +33,11 @@ class JwtAuthenticationProvider(
     }
 
     private fun getJwt(bearer: BearerTokenAuthenticationToken): Jwt {
-        return jwtDecoder.decode(bearer.token)
+        try {
+            return jwtDecoder.decode(bearer.token)
+        } catch (e: Exception) {
+            throw InvalidBearerTokenException("Invali token Exception!", e)
+        }
     }
 
 

@@ -2,14 +2,17 @@ import React, {useEffect} from 'react';
 import {Link, withRouter} from 'react-router-dom';
 import Menu from 'antd/lib/menu';
 import HomeOutlined from '@ant-design/icons/lib/icons/HomeOutlined';
+import LogoutOutlined from '@ant-design/icons/lib/icons/LogoutOutlined'
 import RouteMenu from '@src/routes/RouteMenu';
 import {useDispatch, useSelector} from "react-redux";
 import {setSelectMenu} from "@src/actions/MenuSelectAction";
 import './menus.less';
-import {authGet, authPut} from "@src/api";
-import {NotifyError} from "@src/components/common/Notification";
 import {setAccessToken, setAuthInfo, setRefreshToken, setSSOId} from "@src/actions/AuthAction";
 import {StoreState} from "@src/reducers";
+import {hasPermission} from "@src/routes";
+import {Button} from "antd";
+import {clearLocalStorage} from "@src/common/auth/constantValue";
+import {logoutApi} from "@src/common/auth/AuthProvider";
 
 const {SubMenu} = Menu;
 
@@ -22,37 +25,16 @@ const Menus = (): React.ReactElement => {
 
     const logout = () => {
 
-        window.localStorage.removeItem("profileAccessToken");
-        window.localStorage.removeItem("profileRefreshToken");
-
+        clearLocalStorage()
         dispatch(setAuthInfo({
             userName: "UNKNOWN",
-            userRole: "UNKNOWN",
+            userRole: [''],
         }))
-
         dispatch(setSSOId("UNKNOWN"))
+        dispatch(setAccessToken(null))
+        dispatch(setRefreshToken(null))
 
-        dispatch(setAccessToken(undefined))
-        dispatch(setRefreshToken(undefined))
-
-        authPut<any>("/auth/sso/logout", null)
-            .then((jsonData) => {
-                if (jsonData.redirectUrl === undefined) {
-                    console.log("log out redirect undefined")
-                    return;
-                } else {
-
-                    authGet(jsonData.redirectUrl)
-                        .then(() => {
-                        })
-                        .finally(() => {
-                            window.location.href = "/"
-                        })
-
-                }
-            }).catch((e) => {
-            NotifyError(e);
-        });
+        logoutApi()
     }
 
     useEffect(() => {
@@ -74,23 +56,31 @@ const Menus = (): React.ReactElement => {
                 </Menu.Item>
                 {RouteMenu.map((menu) => {
                     return (
-                        <SubMenu key={menu.key} title={menu.name}>
-                            {menu.submenu &&
-                                menu.submenu.map((sub) => {
-                                    return (
-                                        <Menu.Item key={sub.key}
-                                                   onClick={() => dispatch(setSelectMenu(sub.key))}>
-                                            <span>{sub.name}</span>
-                                            <Link to={sub.to}/>
-                                        </Menu.Item>
+                        hasPermission(userRole, menu.auth) && (
+                            <SubMenu key={menu.key} title={menu.name}>
+                                {menu.submenu &&
+                                    menu.submenu.map((sub) => {
+                                        return (
+                                            <Menu.Item key={sub.key}
+                                                       onClick={() => dispatch(setSelectMenu(sub.key))}>
+                                                <span>{sub.name}</span>
+                                                <Link to={sub.to}/>
+                                            </Menu.Item>
 
-                                    );
-                                })}
-                        </SubMenu>
-
+                                        );
+                                    })}
+                            </SubMenu>
+                        )
                     );
                 })}
+
             </Menu>
+            {userName !== 'UNKNOWN' ?
+                <Button type="link" icon={<LogoutOutlined/>} className="logout-button" onClick={logout}>
+                    Logout
+                </Button>
+                : <div></div>}
+
         </div>
     );
 
