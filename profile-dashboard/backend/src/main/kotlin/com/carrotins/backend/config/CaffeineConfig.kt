@@ -14,7 +14,7 @@ class CaffeineConfig {
 
     @Bean
     fun cacheManger(): CacheManager{
-        val cacheManager: CaffeineCacheManager = CaffeineCacheManager()
+        val cacheManager = CaffeineCacheManager()
         cacheManager.setCaffeine(caffeineCacheBuilder())
         return cacheManager
     }

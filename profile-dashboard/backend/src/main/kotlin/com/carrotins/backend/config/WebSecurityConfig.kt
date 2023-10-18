@@ -7,7 +7,7 @@ import com.carrotins.backend.security.RestAuthenticationEntryPoint
 import com.carrotins.backend.utils.logger
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
-import org.springframework.context.annotation.Profile
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
 import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer
@@ -30,6 +30,7 @@ import java.util.stream.Collectors
  */
 //@EnableWebSecurity(debug=true)
 @EnableWebSecurity
+@EnableMethodSecurity
 class WebSecurityConfig(
     private val restAuthenticationEntryPoint: RestAuthenticationEntryPoint,
     private val restAccessDeniedHandler: RestAccessDeniedHandler,
@@ -52,8 +53,8 @@ class WebSecurityConfig(
     @Bean
     @Throws(Exception::class)
     fun defaultSecurityFilterChain(httpSecurity: HttpSecurity): SecurityFilterChain {
-//        applyBasic(httpSecurity)
-//        applyRestApiSecurity(httpSecurity)
+        applyBasic(httpSecurity)
+        applyRestApiSecurity(httpSecurity)
 //        applyFinallyAnyRequestDenyAll(httpSecurity)
         return httpSecurity.build()
     }
@@ -99,15 +100,23 @@ class WebSecurityConfig(
         println(jwtList)
         if (jwtList.isNotEmpty()) {
             val jwtUrlList = jwtList.toTypedArray()
+            val anyPaths = anyUrlList.toTypedArray()
+
             httpSecurity
-                .authorizeRequests()
-                .antMatchers(*jwtUrlList)
-                .access(
-                    "isAuthenticated() and " +
-                            getAttributeByIpList(whiteIpList)
-                )
-                .anyRequest().permitAll()
-            httpSecurity.oauth2ResourceServer { oauth2ResourceServer: OAuth2ResourceServerConfigurer<HttpSecurity?> -> oauth2ResourceServer.jwt() }
+                .authorizeRequests { authorizeRequests ->
+                    authorizeRequests
+                        .antMatchers(*jwtUrlList)
+                        .access(
+                            "isAuthenticated() and " +
+                                    getAttributeByIpList(whiteIpList)
+                        )
+                        .antMatchers(*anyPaths)
+                        .access(getAttributeByIpList(whiteIpList))
+                        .anyRequest().permitAll()
+                        .and()
+                        .oauth2ResourceServer { oauth2ResourceServer: OAuth2ResourceServerConfigurer<HttpSecurity?> -> oauth2ResourceServer.jwt() }
+                }
+
         } else {
             log.info("Authenticated API not allowed")
         }

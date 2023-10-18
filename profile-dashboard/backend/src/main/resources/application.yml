@@ -23,7 +23,8 @@ white-list:
 any-list:
   /actuator/**,
   /v3/api-docs/**,
-  /swagger-ui/**
+  /swagger-ui/**,
+  /api/home/**
 jwt-list:
   /api/plug/**,
   /api/location/**
@@ -68,12 +69,13 @@ white-list:
   10.90.0.0/16,
   10.80.0.0/16
 jwt-list:
-  /plug/**,
-  /location/**
+  /api/plug/**,
+  /api/location/**
 any-list:
   /actuator/**,
   /v3/api-docs/**,
-  /swagger-ui/**
+  /swagger-ui/**,
+  /api/home/**
 
 jwt:
   jwk:

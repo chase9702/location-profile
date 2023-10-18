@@ -13,8 +13,8 @@ class PlugProfileStatisticsService(
     private val plugStatisticsRepository: PlugStatisticsRepository
 ) {
     @Cacheable("cacheFirmwareVersion")
-    fun getFirmwareVersionInfo(): List<FirmwareVersionInfo>{
-        return plugStatisticsRepository.getFirmwareVersionInfoData()
+    fun getFirmwareVersionInfo(deviceModel: String): List<FirmwareVersionInfo> {
+        return plugStatisticsRepository.getFirmwareVersionInfoData(deviceModel)
     }
     @Cacheable("cacheZeroGpsTripMonthly")
     fun getZeroGpsTripMonthlyInfo(): List<ZeroGpsTripMonthlyInfo> {

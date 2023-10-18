@@ -2,7 +2,7 @@ import {useEffect, useState} from "react";
 import {NotifyError} from "@src/components/common/Notification";
 import {useDispatch, useSelector} from "react-redux";
 import {StoreState} from "@src/reducers";
-import {authPost, authPut, get} from "@src/api";
+import {authGet, authPost, authPut, get} from "@src/api";
 import {setAccessToken, setAuthInfo, setRefreshToken, setSSOId, setResultCode} from "@src/actions/AuthAction";
 import JwtDecode from "jwt-decode";
 import {profileRedirectUrl} from "@src/common/auth/constantValue";
@@ -42,7 +42,6 @@ const AuthProvider = ({children}) => {
                     id: response.ssoId,
                     realm: "location_intelligence",
                 }).then((jsonData) => {
-                    console.log(jsonData)
                     setJwtLoginInfo(jsonData);
                 }).catch((e) => {
                     NotifyError(e);
@@ -92,7 +91,7 @@ const AuthProvider = ({children}) => {
     const init = () => {
         console.log("************************init*****************")
         const at = window.localStorage.getItem("profileAccessToken");
-        if (at === null || accessToken === null) {
+        if (at === null) {
             ssoLogin();
         }
     };
@@ -102,7 +101,6 @@ const AuthProvider = ({children}) => {
         console.log("************************localInit*****************")
         jwtLogin({ssoId: "8888888", resultCode: "1"})
     };
-
 
     useEffect(() => {
         console.log("ssoId changed:", ssoId);
@@ -121,3 +119,22 @@ const AuthProvider = ({children}) => {
 }
 
 export default AuthProvider;
+
+
+export const logoutApi = () => {
+    authPut<any>("/auth/sso/logout", null)
+        .then((jsonData) => {
+            if (jsonData.redirectUrl === undefined) {
+                return
+            } else {
+                authGet(jsonData.redirectUrl)
+                    .then(() => {
+                    })!
+                    .finally(() => {
+                        window.location.href = "/"
+                    })
+            }
+        }).catch((e) => {
+        NotifyError(e);
+    });
+}

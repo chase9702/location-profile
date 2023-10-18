@@ -1,29 +1,13 @@
 import axios, {AxiosError, AxiosResponse} from 'axios';
 import {NotifyError} from "@src/components/common/Notification";
-import {authUrl, baseUrl} from "@src/common/auth/constantValue";
+import {authUrl, baseUrl, clearLocalStorage} from "@src/common/auth/constantValue";
+import {logoutApi} from "@src/common/auth/AuthProvider";
 
-
-//response 인터셉터
-axios.interceptors.response.use(
-    (response) => {
-        return response;
-    },
-    (error) => {
-        if (error.response.status === 401 || error.response.status === 302) {
-            console.log("401, 302 error relocation!")
-            window.location.href = baseUrl
-        } else if (error.response.status === 400) {
-            NotifyError(error.response.data);
-        }
-
-        return Promise.reject(error);
-    }
-);
 
 //request용 인터셉터
 const tokenInterceptor = (config) => {
     const accessToken = window.localStorage.getItem('profileAccessToken');
-    if (accessToken !== 'null') {
+    if (accessToken) {
         config.headers['Authorization'] = `Bearer ${accessToken}`;
         config.headers['csrf'] = 'token';
         // 기타 헤더 설정 가능
@@ -32,12 +16,12 @@ const tokenInterceptor = (config) => {
 };
 
 // axios 인스턴스 생성
-const api = axios.create({
+export const api = axios.create({
     withCredentials: true, // 필요한 경우에만 설정
 });
 
 // 로그인용 api 인스턴스 생성
-const authApi = axios.create({
+export const authApi = axios.create({
     baseURL: authUrl,
     withCredentials: true, // 필요한 경우에만 설정
 });
@@ -45,6 +29,42 @@ const authApi = axios.create({
 // request 인터셉터 등록
 api.interceptors.request.use(tokenInterceptor);
 authApi.interceptors.request.use(tokenInterceptor);
+
+//response 인터셉터
+api.interceptors.response.use(
+    (response) => {
+        return response;
+    },
+    (error) => {
+        if (error.response.status === 401 || error.response.status === 302) {
+            console.log("401, 302 error relocation!")
+            clearLocalStorage()
+            logoutApi()
+        } else if (error.response.status === 400) {
+            NotifyError(error.response.data);
+        } else if (error.response.status === 403) {
+            NotifyError("권한 없음, 시스템 관리자에게 문의");
+        }
+        return Promise.reject(error);
+    }
+);
+//response 인터셉터
+authApi.interceptors.response.use(
+    (response) => {
+        return response;
+    },
+    (error) => {
+        if (error.response.status === 401 || error.response.status === 302) {
+            console.log("***********401, 302 error relocation!**************")
+            clearLocalStorage()
+            logoutApi()
+        } else if (error.response.status === 400) {
+            NotifyError(error.response.data);
+        }
+
+        return Promise.reject(error);
+    }
+);
 
 export const get = async <T>(url: string): Promise<T> => {
     try {
@@ -119,12 +139,7 @@ export const authPost = async <T>(url: string, body: any): Promise<T> => {
 
 export const authPut = async <T>(url: string, body: any): Promise<T> => {
     try {
-        let response: AxiosResponse<T>;
-        if (body === null) {
-            response = await authApi.put(url);
-        } else {
-            response = await authApi.put(url, body);
-        }
+        let response: AxiosResponse<T> = await authApi.put(url, body);
         return response.data;
     } catch (e) {
         const error = e as AxiosError<T>;

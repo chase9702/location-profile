@@ -1,56 +1,46 @@
-import React, {useEffect, useState} from "react";
-import Spin from "antd/lib/spin";
-import {get} from "@src/api";
+import React from "react";
 import Column from "@ant-design/plots/lib/components/column";
-import LoadingOutlined from "@ant-design/icons/lib/icons/LoadingOutlined";
+import {numberFormat} from "@src/common/utils";
+
 
 interface Props {
 
 }
 
-const PlugFirmwareVersion = (props: Props): React.ReactElement => {
-
-    const [plugFirmwareVersionData, setPlugFirmwareVersionData] = useState([]);
-    const [plugFirmwareVersionLoading, setZeroGpsMonthlyLoading] = useState(true);
-
-    useEffect(() => {
-        firmwareVersionFeych();
-    }, []);
-
-    const firmwareVersionFeych = () => {
-        get<[]>("/api/plug/statistic/firmware-version-info")
-            .then((jsonData) => {
-                setPlugFirmwareVersionData(jsonData)
-            })
-            .finally(() => {
-                setZeroGpsMonthlyLoading(false);
-            });
-    };
+const PlugFirmwareVersion = (props: { plugFirmwareVersionData: any[] }): React.ReactElement => {
+    const {plugFirmwareVersionData} = props;
 
     const plugFirmwareVersionConfig = {
         data: plugFirmwareVersionData,
-        xField: 'bsDt',
-        yField: 'sumFirmwareVersion',
-        seriesField: 'firmwareVersion',
+        xField: 'bs_dt',
+        yField: 'sum_firmware_version',
+        xAxis: {
+            title: {
+                text: '일자',
+            },
+        },
+        yAxis: {
+            title: {
+                text: '펌웨어 버젼 수',
+            },
+            label: {
+                formatter: (text) => numberFormat(text),
+            },
+        },
+        seriesField: 'firmware_version',
         isGroup: true,
         columnStyle: {
             radius: [20, 20, 0, 0],
         },
-        label: {
-            position: 'middle',
-            content: (item) => `${item.sumFirmwareVersion}`,
-            style: {
-                fill: '#000',
-                fontSize: 12,
-            },
+        slider: {
+            start: 0.0,
+            end: 1.0,
         },
     };
 
     return (
         <div>
-            <Spin spinning={plugFirmwareVersionLoading} indicator={<LoadingOutlined/>} tip="로딩 중...">
-                <Column {...plugFirmwareVersionConfig} />
-            </Spin>
+            <Column {...plugFirmwareVersionConfig} />
         </div>
     )
 

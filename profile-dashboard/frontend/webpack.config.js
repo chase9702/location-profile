@@ -4,6 +4,9 @@ const crypto = require('crypto');
 
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
+const TerserPlugin = require('terser-webpack-plugin');
+
 
 const theme = require('./theme');
 const {ProvidePlugin} = require("webpack");
@@ -12,6 +15,8 @@ module.exports = (env, options) => {
     const outputPath = path.resolve(__dirname, 'build');
     const mode = !options.mode ? 'development' : options.mode;
     const outputFilename = mode === 'development' ? 'js/[name].js' : 'js/[name].[contenthash].js';
+
+    const isProduction = options.mode === 'production';
 
     const config = {
         mode: mode,
@@ -24,6 +29,19 @@ module.exports = (env, options) => {
             filename: outputFilename,
         },
         optimization: {
+            minimize: isProduction,
+            minimizer: [
+                new CssMinimizerPlugin(),
+                isProduction
+                    ? new TerserPlugin({
+                        terserOptions: {
+                            compress: {
+                                drop_console: true,
+                            },
+                        },
+                    })
+                    : null,
+            ].filter(Boolean),
             splitChunks: {
                 cacheGroups: {
                     default: false,
@@ -48,6 +66,13 @@ module.exports = (env, options) => {
                         enforce: true,
                         priority: 40
                     },
+                    kepler: {
+                        test: /[\\/]node_modules[\\/]kepler.gl[\\/]/,
+                        name: 'kepler',
+                        chunks: 'all',
+                        enforce: true,
+                        priority: 35
+                    },
                     antv: {
                         test: /[\\/]node_modules[\\/]@antv[\\/]/,
                         name: 'antv',
@@ -55,13 +80,27 @@ module.exports = (env, options) => {
                         enforce: true,
                         priority: 30
                     },
+                    deck: {
+                        test: /[\\/]node_modules[\\/]@deck.gl[\\/]/,
+                        name: 'deck',
+                        chunks: 'all',
+                        enforce: true,
+                        priority: 33
+                    },
+                    loaders: {
+                        test: /[\\/]node_modules[\\/]@loaders.gl[\\/]/,
+                        name: 'loaders',
+                        chunks: 'all',
+                        enforce: true,
+                        priority: 31
+                    },
                     lib: {
                         test(module) {
                             return (module.size() > 80000 && /node_modules[/\\]/.test(module.identifier()));
                         },
                         name(module) {
                             const hash = crypto.createHash('sha1');
-                            hash.update(module.libIdent({ context: __dirname }));
+                            hash.update(module.libIdent({context: __dirname}));
                             return `common.${hash.digest('hex').substring(0, 8)}`;
                         },
                         chunks: 'all',

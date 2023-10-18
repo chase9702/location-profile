@@ -5,6 +5,7 @@ import org.springframework.security.oauth2.core.OAuth2Error
 import org.springframework.security.oauth2.core.OAuth2TokenValidator
 import org.springframework.security.oauth2.core.OAuth2TokenValidatorResult
 import org.springframework.security.oauth2.jwt.Jwt
+import org.springframework.security.oauth2.server.resource.InvalidBearerTokenException
 import java.time.Instant
 
 
@@ -25,8 +26,8 @@ class JwtTokenValidator : OAuth2TokenValidator<Jwt> {
             log.debug("IMB JWT pri_tt=[{}]", privateTokenType)
             return OAuth2TokenValidatorResult.success()
         }
-        return OAuth2TokenValidatorResult.failure(error)
 
-
+        log.error("Token Exception:" + expirationTime +"is over than now("+Instant.now()+")")
+        throw InvalidBearerTokenException("Invalid token")
     }
 }

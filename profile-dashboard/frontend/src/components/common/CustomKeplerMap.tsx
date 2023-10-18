@@ -32,6 +32,4 @@ const CustomKeplerMap = (props: Props): React.ReactElement => {
         </div>
     )
 }
-
-// export type CustomerKeplerMap = typeof ttt;
 export default CustomKeplerMap;
