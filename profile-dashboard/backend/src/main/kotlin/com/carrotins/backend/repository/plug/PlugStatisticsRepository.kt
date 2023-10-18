@@ -3,10 +3,6 @@ package com.carrotins.backend.repository.plug
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Repository
 import com.carrotins.backend.utils.transformNullToEmptyString
-import org.springframework.cache.annotation.Cacheable
-import org.springframework.cache.annotation.Caching
-
-
 
 @Repository
 class PlugStatisticsRepository(
@@ -66,7 +62,7 @@ class PlugStatisticsRepository(
                 sumNormalTripCnt = rs.getInt("sum_01_trip_cnt"),
                 sumZeroTripCnt = rs.getInt("sum_03_trip_cnt"),
                 sumZeroTripRt = rs.getDouble("sum_03_trip_rt"),
-                )
+            )
         }
     }
 
@@ -114,7 +110,7 @@ class PlugStatisticsRepository(
                 sumZero1800TripCnt = rs.getInt("sum_98_1800_trip_cnt"),
                 sumZero1800OverTripCnt = rs.getInt("sum_98_1800_over_trip_cnt"),
                 sumZeroTripRt = rs.getDouble("sum_03_trip_rt"),
-                )
+            )
         }
     }
 

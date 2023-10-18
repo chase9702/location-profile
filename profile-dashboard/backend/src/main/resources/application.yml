@@ -7,7 +7,6 @@ springdoc:
 
 log.config.path: "logs"
 
-
 ext:
   datasource:
     hive:
