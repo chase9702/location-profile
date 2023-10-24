@@ -1,8 +1,7 @@
 import axios, {AxiosError, AxiosResponse} from 'axios';
 import {NotifyError} from "@src/components/common/Notification";
-import {authUrl, baseUrl, clearLocalStorage} from "@src/common/auth/constantValue";
+import {authUrl, clearLocalStorage} from "@src/common/auth/constantValue";
 import {logoutApi} from "@src/common/auth/AuthProvider";
-
 
 //request용 인터셉터
 const tokenInterceptor = (config) => {

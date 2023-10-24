@@ -59,6 +59,7 @@ configure(listOf(project(":profile-dashboard:backend"))) {
         implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
         implementation("org.springframework.boot:spring-boot-starter-security")
         implementation("org.springframework.boot:spring-boot-starter-jdbc")
+        implementation("org.springframework.boot:spring-boot-starter-validation")
 //        implementation("org.rspringframework.boot:spring-boot-starter-data-jpa")
 
         implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
