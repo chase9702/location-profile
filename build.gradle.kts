@@ -7,6 +7,8 @@ plugins {
     kotlin("plugin.jpa") version kotlinVersion
     kotlin("jvm") version kotlinVersion
     id("java")
+    id("org.sonarqube") version "4.2.1.3168"
+    jacoco
 }
 
 buildscript {
