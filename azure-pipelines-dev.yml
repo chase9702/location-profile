@@ -1,23 +1,25 @@
+
+# Build your Java project and run tests with Gradle using a Gradle wrapper script.
+# Add steps that analyze code, save build artifacts, deploy, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/java
+
 trigger:
-  - master # or the name of your main branch
-  - feat/*
+  - develop
+  - feat/**
 
 pool:
   vmImage: ubuntu-latest
 
 steps:
-  # Prepare Analysis Configuration task
-  - task: SonarQubePrepare@5
+  - task: Gradle@3
     inputs:
-      SonarQube: 'sonar-qube'
-      scannerMode: 'Other'
-      extraProperties: 'sonar.projectKey=data-lab_profile-server_AYtfoEGk6jcPUmMEnhcF'
-
-  # Publish Quality Gate Result task
-  - task: SonarQubePublish@5
-    inputs:
-      pollingTimeoutSec: '300'
-
+      workingDirectory: '$(system.defaultWorkingDirectory)'
+      gradleWrapperFile: 'gradlew'
+      tasks: 'sonarqube'
+      gradleOptions: '-Xmx3072m'
+      javaHomeOption: 'JDKVersion'
+      jdkVersionOption: '1.17'
+      jdkArchitectureOption: 'x64'
   - task: Gradle@3
     inputs:
       workingDirectory: '$(system.defaultWorkingDirectory)'
@@ -27,8 +29,8 @@ steps:
       javaHomeOption: 'JDKVersion'
       jdkVersionOption: '1.17'
       jdkArchitectureOption: 'x64'
-      sonarQubeRunAnalysis: true
-
+      publishJUnitResults: true
+      testResultsFiles: '**/TEST-*.xml'
   - task: CopyFiles@2
     inputs:
       contents: '**/*.jar'
