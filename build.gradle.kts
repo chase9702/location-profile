@@ -16,7 +16,7 @@ sonarqube {
         property("sonar.projectKey", "data-lab_profile-server_AYtl8M_I6jcPUmMEnhc7")
         property("sonar.projectName", "profile-server")
         property("sonar.host.url", "http://172.29.40.89:9000")
-        property("sonar.login", "sqp_3f79655f052d647830e46fc012abbbc1cc1bfaf4")
+        property("sonar.token", "sqp_3f79655f052d647830e46fc012abbbc1cc1bfaf4")
     }
 }
 
