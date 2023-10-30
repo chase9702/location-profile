@@ -17,7 +17,7 @@ class JwtTokenValidator : OAuth2TokenValidator<Jwt> {
 
     override fun validate(token: Jwt): OAuth2TokenValidatorResult {
 
-        val error = OAuth2Error("invalid_pri_tt", "The required pri_tt is missing", null)
+        OAuth2Error("invalid_pri_tt", "The required pri_tt is missing", null)
         val privateTokenType = token.claims[AuthConstants.CLAIM_PRIVATE_NAME_TOKEN_TYPE].toString()
         val expirationTime = token.expiresAt
 
