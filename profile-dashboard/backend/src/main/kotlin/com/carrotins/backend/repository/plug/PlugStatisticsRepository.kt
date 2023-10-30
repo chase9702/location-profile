@@ -33,7 +33,8 @@ class PlugStatisticsRepository(
                  dvc_mdl,
                  fota_ver_vl,
                  fota_ver_cnt
-               FROM DW.LI_PLUG_FOTA_VER  
+               FROM DW.LI_PLUG_FOTA_VER
+               ORDER BY bs_dt
         """.trimIndent()
     }
 
@@ -48,7 +49,7 @@ class PlugStatisticsRepository(
                  sum_03_trip_cnt,
                  sum_03_trip_rt
                FROM DW.LI_PLUG_ZERO_TRIP_MNTHLY_RSLT
-
+               ORDER BY bs_dt
 
         """.trimIndent()
 
@@ -87,7 +88,7 @@ class PlugStatisticsRepository(
                  SUM_98_1800_OVER_TRIP_CNT,
                  sum_03_trip_rt
                FROM DW.LI_PLUG_ZERO_TRIP_DILY_RSLT
-
+               ORDER BY bs_dt
 
         """.trimIndent()
 
@@ -129,6 +130,7 @@ class PlugStatisticsRepository(
                     ,SUM_02_TRIP_CNT
                     ,SUM_02_TRIP_RT
                FROM DW.LI_PLUG_INTP_MTHLY_RSLT
+               ORDER BY bs_dt
         """.trimIndent()
 
         hiveJdbcTemplate.fetchSize = 10000
@@ -173,9 +175,10 @@ class PlugStatisticsRepository(
                     ,SUM_02_TRIP_CNT_10
                     ,SUM_02_TRIP_CNT_10_OVER
                FROM DW.LI_PLUG_INTP_RSLT
+               ORDER BY bs_dt
         """.trimIndent()
 
-        hiveJdbcTemplate.fetchSize = 2000
+        hiveJdbcTemplate.fetchSize = 10000
 
         return hiveJdbcTemplate.query(query){ rs, _ ->
             InterpolationTripDailyInfo(
