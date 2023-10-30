@@ -1,9 +1,9 @@
 package com.carrotins.backend.repository.plug
 
-import mu.KotlinLogging
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Repository
 import com.carrotins.backend.utils.transformNullToEmptyString
+
 
 @Repository
 class PlugStatisticsRepository(
@@ -38,8 +38,6 @@ class PlugStatisticsRepository(
     }
 
     fun getZeroGpsTripMonthlyInfoData(): List<ZeroGpsTripMonthlyInfo> {
-        val log = KotlinLogging.logger {}
-        log.info("category cache is not used.")
         val query: String = """
              SELECT 
                  bs_dt,
@@ -125,11 +123,11 @@ class PlugStatisticsRepository(
                     ,SUM_TOTAL_DIST
                     ,SUM_01_DIST
                     ,SUM_02_DIST
-                    ,02_DIST_RT
+                    ,SUM_02_DIST_RT
                     ,SUM_TOTAL_TRIP_CNT
                     ,SUM_01_TRIP_CNT
                     ,SUM_02_TRIP_CNT
-                    ,02_TRIP_RT
+                    ,SUM_02_TRIP_RT
                FROM DW.LI_PLUG_INTP_MTHLY_RSLT
         """.trimIndent()
 
@@ -162,18 +160,18 @@ class PlugStatisticsRepository(
                     ,SUM_TOTAL_DIST
                     ,SUM_01_DIST
                     ,SUM_02_DIST
-                    ,02_DIST_RT
+                    ,SUM_02_DIST_RT
                     ,SUM_TOTAL_TRIP_CNT
                     ,SUM_01_TRIP_CNT
                     ,SUM_02_TRIP_CNT
-                    ,02_TRIP_RT
-                    ,02_TRIP_CNT_1
-                    ,02_TRIP_CNT_2
-                    ,02_TRIP_CNT_3
-                    ,02_TRIP_CNT_5
-                    ,02_TRIP_CNT_7
-                    ,02_TRIP_CNT_10
-                    ,02_TRIP_CNT_10_OVER
+                    ,SUM_02_TRIP_RT
+                    ,SUM_02_TRIP_CNT_1
+                    ,SUM_02_TRIP_CNT_2
+                    ,SUM_02_TRIP_CNT_3
+                    ,SUM_02_TRIP_CNT_5
+                    ,SUM_02_TRIP_CNT_7
+                    ,SUM_02_TRIP_CNT_10
+                    ,SUM_02_TRIP_CNT_10_OVER
                FROM DW.LI_PLUG_INTP_RSLT
         """.trimIndent()
 
