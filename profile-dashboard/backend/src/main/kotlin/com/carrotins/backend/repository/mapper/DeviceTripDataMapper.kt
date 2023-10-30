@@ -1,6 +1,5 @@
 package com.carrotins.backend.repository.mapper
 
-import com.carrotins.backend.repository.plug.DeviceTop100Data
 import com.carrotins.backend.repository.plug.DeviceTripData
 import com.carrotins.backend.utils.transformNullToEmptyString
 import org.springframework.jdbc.core.RowMapper
