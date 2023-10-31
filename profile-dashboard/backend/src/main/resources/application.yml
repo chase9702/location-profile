@@ -55,10 +55,18 @@ log.config.path: "/data/log/profile"
 ext:
   datasource:
     hive:
-      driver-class-name: org.apache.hive.jdbc.HiveDriver
-      jdbc-url: jdbc:hive2://10.4.30.15:443/default;transportMode=http;ssl=true;httpPath=/hive2;
-      username: admin
-      password: qweQWE123!@#
+      driver-class-name: io.trino.jdbc.TrinoDriver
+      jdbc-url: jdbc:trino://10.4.20.41:8080/hive
+      username: datalake
+      password:
+
+### 기존 운영
+#    hive:
+#      driver-class-name: org.apache.hive.jdbc.HiveDriver
+#      jdbc-url: jdbc:hive2://10.4.30.15:443/default;transportMode=http;ssl=true;httpPath=/hive2;
+#      username: admin
+#      password: qweQWE123!@#
+### 신규 BDP
 #      jdbc-url: jdbc:hive2://10.4.130.6:443/default;transportMode=http;ssl=true;httpPath=/hive2;
 #      username: hdadmin@CARROTINS-DL.COM
 #      password: rlaskadbs2@

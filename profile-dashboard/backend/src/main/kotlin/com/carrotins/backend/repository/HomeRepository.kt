@@ -19,6 +19,7 @@ class HomeRepository(
                  dvc_gb,
                  divc_no_cnt
                FROM dw.li_plug_divc_cnt_rslt
+               ORDER BY bs_dt
 
 
         """.trimIndent()

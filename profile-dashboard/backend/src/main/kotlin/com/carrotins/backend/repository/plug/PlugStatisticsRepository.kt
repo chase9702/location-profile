@@ -4,6 +4,7 @@ import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Repository
 import com.carrotins.backend.utils.transformNullToEmptyString
 
+
 @Repository
 class PlugStatisticsRepository(
     private val hiveJdbcTemplate: JdbcTemplate
@@ -32,7 +33,8 @@ class PlugStatisticsRepository(
                  dvc_mdl,
                  fota_ver_vl,
                  fota_ver_cnt
-               FROM DW.LI_PLUG_FOTA_VER  
+               FROM DW.LI_PLUG_FOTA_VER
+               ORDER BY bs_dt
         """.trimIndent()
     }
 
@@ -47,11 +49,11 @@ class PlugStatisticsRepository(
                  sum_03_trip_cnt,
                  sum_03_trip_rt
                FROM DW.LI_PLUG_ZERO_TRIP_MNTHLY_RSLT
-
+               ORDER BY bs_dt
 
         """.trimIndent()
 
-        hiveJdbcTemplate.fetchSize = 100000
+        hiveJdbcTemplate.fetchSize = 10000
 
         return hiveJdbcTemplate.query(query){ rs, _ ->
             ZeroGpsTripMonthlyInfo(
@@ -65,7 +67,6 @@ class PlugStatisticsRepository(
             )
         }
     }
-
     fun getZeroGpsTripDailyInfoData(): List<ZeroGpsTripDailyInfo> {
         val query: String = """
              SELECT 
@@ -87,7 +88,7 @@ class PlugStatisticsRepository(
                  SUM_98_1800_OVER_TRIP_CNT,
                  sum_03_trip_rt
                FROM DW.LI_PLUG_ZERO_TRIP_DILY_RSLT
-
+               ORDER BY bs_dt
 
         """.trimIndent()
 
@@ -123,15 +124,16 @@ class PlugStatisticsRepository(
                     ,SUM_TOTAL_DIST
                     ,SUM_01_DIST
                     ,SUM_02_DIST
-                    ,02_DIST_RT
+                    ,SUM_02_DIST_RT
                     ,SUM_TOTAL_TRIP_CNT
                     ,SUM_01_TRIP_CNT
                     ,SUM_02_TRIP_CNT
-                    ,02_TRIP_RT
+                    ,SUM_02_TRIP_RT
                FROM DW.LI_PLUG_INTP_MTHLY_RSLT
+               ORDER BY bs_dt
         """.trimIndent()
 
-        hiveJdbcTemplate.fetchSize = 1000
+        hiveJdbcTemplate.fetchSize = 10000
 
         return hiveJdbcTemplate.query(query){ rs, _ ->
             InterpolationTripMonthlyInfo(
@@ -142,11 +144,11 @@ class PlugStatisticsRepository(
                 sumTotalDist = rs.getInt("sum_total_dist"),
                 sumNormalDist = rs.getInt("sum_01_dist"),
                 sumInterpolationDist = rs.getInt("sum_02_dist"),
-                distInterpolationRt = rs.getDouble("02_dist_rt"),
+                distInterpolationRt = rs.getDouble("sum_02_dist_rt"),
                 sumTotalTripCnt = rs.getInt("sum_total_trip_cnt"),
                 sumNormalTripCnt = rs.getInt("sum_01_trip_cnt"),
                 sumInterpolationTripCnt = rs.getInt("sum_02_trip_cnt"),
-                sumInterpolationTripRt = rs.getDouble("02_trip_rt"),
+                sumInterpolationTripRt = rs.getDouble("sum_02_trip_rt"),
             )
         }
     }
@@ -160,22 +162,23 @@ class PlugStatisticsRepository(
                     ,SUM_TOTAL_DIST
                     ,SUM_01_DIST
                     ,SUM_02_DIST
-                    ,02_DIST_RT
+                    ,SUM_02_DIST_RT
                     ,SUM_TOTAL_TRIP_CNT
                     ,SUM_01_TRIP_CNT
                     ,SUM_02_TRIP_CNT
-                    ,02_TRIP_RT
-                    ,02_TRIP_CNT_1
-                    ,02_TRIP_CNT_2
-                    ,02_TRIP_CNT_3
-                    ,02_TRIP_CNT_5
-                    ,02_TRIP_CNT_7
-                    ,02_TRIP_CNT_10
-                    ,02_TRIP_CNT_10_OVER
+                    ,SUM_02_TRIP_RT
+                    ,SUM_02_TRIP_CNT_1
+                    ,SUM_02_TRIP_CNT_2
+                    ,SUM_02_TRIP_CNT_3
+                    ,SUM_02_TRIP_CNT_5
+                    ,SUM_02_TRIP_CNT_7
+                    ,SUM_02_TRIP_CNT_10
+                    ,SUM_02_TRIP_CNT_10_OVER
                FROM DW.LI_PLUG_INTP_RSLT
+               ORDER BY bs_dt
         """.trimIndent()
 
-        hiveJdbcTemplate.fetchSize = 2000
+        hiveJdbcTemplate.fetchSize = 10000
 
         return hiveJdbcTemplate.query(query){ rs, _ ->
             InterpolationTripDailyInfo(
@@ -186,18 +189,18 @@ class PlugStatisticsRepository(
                 sumTotalDist = rs.getInt("sum_total_dist"),
                 sumNormalDist = rs.getInt("sum_01_dist"),
                 sumInterpolationDist = rs.getInt("sum_02_dist"),
-                distInterpolationRt = rs.getDouble("02_dist_rt"),
+                distInterpolationRt = rs.getDouble("sum_02_dist_rt"),
                 sumTotalTripCnt = rs.getInt("sum_total_trip_cnt"),
                 sumNormalTripCnt = rs.getInt("sum_01_trip_cnt"),
                 sumInterpolationTripCnt = rs.getInt("sum_02_trip_cnt"),
-                tripInterpolationRt = rs.getDouble("02_trip_rt"),
-                tripCnt1 = rs.getInt("02_trip_cnt_1"),
-                tripCnt2 = rs.getInt("02_trip_cnt_2"),
-                tripCnt3 = rs.getInt("02_trip_cnt_3"),
-                tripCnt5 = rs.getInt("02_trip_cnt_5"),
-                tripCnt7 = rs.getInt("02_trip_cnt_7"),
-                tripCnt10 = rs.getInt("02_trip_cnt_10"),
-                tripCnt10Over = rs.getInt("02_trip_cnt_10_over"),
+                tripInterpolationRt = rs.getDouble("sum_02_trip_rt"),
+                tripCnt1 = rs.getInt("sum_02_trip_cnt_1"),
+                tripCnt2 = rs.getInt("sum_02_trip_cnt_2"),
+                tripCnt3 = rs.getInt("sum_02_trip_cnt_3"),
+                tripCnt5 = rs.getInt("sum_02_trip_cnt_5"),
+                tripCnt7 = rs.getInt("sum_02_trip_cnt_7"),
+                tripCnt10 = rs.getInt("sum_02_trip_cnt_10"),
+                tripCnt10Over = rs.getInt("sum_02_trip_cnt_10_over"),
             )
         }
     }
