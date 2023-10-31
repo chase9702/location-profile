@@ -1,6 +1,5 @@
 package com.carrotins.backend.repository.plug
 
-import mu.KotlinLogging
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Repository
 import com.carrotins.backend.utils.transformNullToEmptyString
@@ -38,8 +37,6 @@ class PlugStatisticsRepository(
     }
 
     fun getZeroGpsTripMonthlyInfoData(): List<ZeroGpsTripMonthlyInfo> {
-        val log = KotlinLogging.logger {}
-        log.info("category cache is not used.")
         val query: String = """
              SELECT 
                  bs_dt,
@@ -125,11 +122,11 @@ class PlugStatisticsRepository(
                     ,SUM_TOTAL_DIST
                     ,SUM_01_DIST
                     ,SUM_02_DIST
-                    ,02_DIST_RT
+                    ,SUM_02_DIST_RT
                     ,SUM_TOTAL_TRIP_CNT
                     ,SUM_01_TRIP_CNT
                     ,SUM_02_TRIP_CNT
-                    ,02_TRIP_RT
+                    ,SUM_02_TRIP_RT
                FROM DW.LI_PLUG_INTP_MTHLY_RSLT
         """.trimIndent()
 
@@ -144,11 +141,11 @@ class PlugStatisticsRepository(
                 sumTotalDist = rs.getInt("sum_total_dist"),
                 sumNormalDist = rs.getInt("sum_01_dist"),
                 sumInterpolationDist = rs.getInt("sum_02_dist"),
-                distInterpolationRt = rs.getDouble("02_dist_rt"),
+                distInterpolationRt = rs.getDouble("sum_02_dist_rt"),
                 sumTotalTripCnt = rs.getInt("sum_total_trip_cnt"),
                 sumNormalTripCnt = rs.getInt("sum_01_trip_cnt"),
                 sumInterpolationTripCnt = rs.getInt("sum_02_trip_cnt"),
-                sumInterpolationTripRt = rs.getDouble("02_trip_rt"),
+                sumInterpolationTripRt = rs.getDouble("sum_02_trip_rt"),
             )
         }
     }
@@ -162,18 +159,18 @@ class PlugStatisticsRepository(
                     ,SUM_TOTAL_DIST
                     ,SUM_01_DIST
                     ,SUM_02_DIST
-                    ,02_DIST_RT
+                    ,SUM_02_DIST_RT
                     ,SUM_TOTAL_TRIP_CNT
                     ,SUM_01_TRIP_CNT
                     ,SUM_02_TRIP_CNT
-                    ,02_TRIP_RT
-                    ,02_TRIP_CNT_1
-                    ,02_TRIP_CNT_2
-                    ,02_TRIP_CNT_3
-                    ,02_TRIP_CNT_5
-                    ,02_TRIP_CNT_7
-                    ,02_TRIP_CNT_10
-                    ,02_TRIP_CNT_10_OVER
+                    ,SUM_02_TRIP_RT
+                    ,SUM_02_TRIP_CNT_1
+                    ,SUM_02_TRIP_CNT_2
+                    ,SUM_02_TRIP_CNT_3
+                    ,SUM_02_TRIP_CNT_5
+                    ,SUM_02_TRIP_CNT_7
+                    ,SUM_02_TRIP_CNT_10
+                    ,SUM_02_TRIP_CNT_10_OVER
                FROM DW.LI_PLUG_INTP_RSLT
         """.trimIndent()
 
@@ -188,18 +185,18 @@ class PlugStatisticsRepository(
                 sumTotalDist = rs.getInt("sum_total_dist"),
                 sumNormalDist = rs.getInt("sum_01_dist"),
                 sumInterpolationDist = rs.getInt("sum_02_dist"),
-                distInterpolationRt = rs.getDouble("02_dist_rt"),
+                distInterpolationRt = rs.getDouble("sum_02_dist_rt"),
                 sumTotalTripCnt = rs.getInt("sum_total_trip_cnt"),
                 sumNormalTripCnt = rs.getInt("sum_01_trip_cnt"),
                 sumInterpolationTripCnt = rs.getInt("sum_02_trip_cnt"),
-                tripInterpolationRt = rs.getDouble("02_trip_rt"),
-                tripCnt1 = rs.getInt("02_trip_cnt_1"),
-                tripCnt2 = rs.getInt("02_trip_cnt_2"),
-                tripCnt3 = rs.getInt("02_trip_cnt_3"),
-                tripCnt5 = rs.getInt("02_trip_cnt_5"),
-                tripCnt7 = rs.getInt("02_trip_cnt_7"),
-                tripCnt10 = rs.getInt("02_trip_cnt_10"),
-                tripCnt10Over = rs.getInt("02_trip_cnt_10_over"),
+                tripInterpolationRt = rs.getDouble("sum_02_trip_rt"),
+                tripCnt1 = rs.getInt("sum_02_trip_cnt_1"),
+                tripCnt2 = rs.getInt("sum_02_trip_cnt_2"),
+                tripCnt3 = rs.getInt("sum_02_trip_cnt_3"),
+                tripCnt5 = rs.getInt("sum_02_trip_cnt_5"),
+                tripCnt7 = rs.getInt("sum_02_trip_cnt_7"),
+                tripCnt10 = rs.getInt("sum_02_trip_cnt_10"),
+                tripCnt10Over = rs.getInt("sum_02_trip_cnt_10_over"),
             )
         }
     }
