@@ -3,7 +3,8 @@ import {
     SET_SSOID,
     SET_ACCESS_TOKEN,
     SET_REFRESH_TOKEN,
-    SET_RESULTCODE
+    SET_RESULTCODE,
+    SET_TOKEN_EXP_DATE
 } from "@src/actions/AuthAction"
 
 export interface AuthState {
@@ -13,6 +14,7 @@ export interface AuthState {
     accessToken: string;
     refreshToken: string;
     resultCode: string;
+    expDate: number;
 }
 
 export const initialState: AuthState = {
@@ -22,6 +24,7 @@ export const initialState: AuthState = {
     accessToken: null,
     refreshToken: null,
     resultCode: null,
+    expDate: 0
 }
 
 const authReducer = (state = initialState, action) => {
@@ -55,6 +58,12 @@ const authReducer = (state = initialState, action) => {
             return {
                 ...state,
                 refreshToken: action.refreshToken
+            }
+        }
+        case SET_TOKEN_EXP_DATE: {
+            return {
+                ...state,
+                expDate: action.expDate
             }
         }
         default:

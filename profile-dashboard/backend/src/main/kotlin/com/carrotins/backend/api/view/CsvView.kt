@@ -21,8 +21,6 @@ class CsvView<T : ProfileFileData> : AbstractView(), ProfileDataView<T> {
         const val END_OF_LINE = "\r\n"
     }
 
-//    val log = logger<CsvView>()
-
     init {
         contentType = "text/csv; charset=UTF-8"
     }

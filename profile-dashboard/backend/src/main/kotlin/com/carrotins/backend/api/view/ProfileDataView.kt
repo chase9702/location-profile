@@ -19,7 +19,7 @@ interface ProfileDataView<T : ProfileFileData> {
     fun getExtension(): String
 
     fun getFileData(model: Map<String, Any>): T {
-        return (model[KEY_DATA] as? T)!!
+        return (model[KEY_DATA] as T?)!!
     }
 
     @Throws(UnsupportedEncodingException::class)

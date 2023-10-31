@@ -1,0 +1,44 @@
+
+# Build your Java project and run tests with Gradle using a Gradle wrapper script.
+# Add steps that analyze code, save build artifacts, deploy, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/java
+
+trigger:
+  - develop
+  - feat/**
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+  # - task: Gradle@3
+  #   inputs:
+  #     workingDirectory: '$(system.defaultWorkingDirectory)'
+  #     gradleWrapperFile: 'gradlew'
+  #     tasks: 'sonar'
+  #     gradleOptions: '-Xmx3072m'
+  #     javaHomeOption: 'JDKVersion'
+  #     jdkVersionOption: '1.17'
+  #     jdkArchitectureOption: 'x64'
+  - task: Gradle@3
+    inputs:
+      workingDirectory: '$(system.defaultWorkingDirectory)'
+      gradleWrapperFile: 'gradlew'
+      tasks: 'prodBuild'
+      gradleOptions: '-Xmx3072m'
+      javaHomeOption: 'JDKVersion'
+      jdkVersionOption: '1.17'
+      jdkArchitectureOption: 'x64'
+      publishJUnitResults: true
+      testResultsFiles: '**/TEST-*.xml'
+  - task: CopyFiles@2
+    inputs:
+      contents: '**/*.jar'
+      targetFolder: $(Build.ArtifactStagingDirectory)
+      flattenFolders: true
+
+  - task: PublishBuildArtifacts@1
+    inputs:
+      PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+      ArtifactName: 'drop'
+      publishLocation: 'Container'

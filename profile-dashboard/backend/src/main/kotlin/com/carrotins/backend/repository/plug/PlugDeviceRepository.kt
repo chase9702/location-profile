@@ -17,7 +17,6 @@ class PlugDeviceRepository(
     fun getDeviceTopData(deviceGb: String, date: String): List<DeviceTop100Data> {
 
 //        FROM dw.li_plug_stats_dly
-        //FROM dw.li_plug_stats_dly_${deviceGb.lowercase()}_top_100
         val fromQuery = """
             
             FROM dw.li_plug_stats_dly_${deviceGb.lowercase()}_top_100 

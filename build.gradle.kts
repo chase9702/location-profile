@@ -7,6 +7,17 @@ plugins {
     kotlin("plugin.jpa") version kotlinVersion
     kotlin("jvm") version kotlinVersion
     id("java")
+    id("org.sonarqube") version "4.2.1.3168"
+    jacoco
+}
+
+sonarqube {
+    properties {
+        property("sonar.projectKey", "data-lab_profile-server_AYtl8M_I6jcPUmMEnhc7")
+        property("sonar.projectName", "profile-server")
+        property("sonar.host.url", "http://172.29.40.89:9000")
+        property("sonar.token", "sqp_3f79655f052d647830e46fc012abbbc1cc1bfaf4")
+    }
 }
 
 buildscript {
@@ -59,6 +70,7 @@ configure(listOf(project(":profile-dashboard:backend"))) {
         implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
         implementation("org.springframework.boot:spring-boot-starter-security")
         implementation("org.springframework.boot:spring-boot-starter-jdbc")
+        implementation("org.springframework.boot:spring-boot-starter-validation")
 //        implementation("org.rspringframework.boot:spring-boot-starter-data-jpa")
 
         implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")

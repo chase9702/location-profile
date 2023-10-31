@@ -4,6 +4,7 @@ export const SET_SSOID = "SET_SSOID";
 export const SET_ACCESS_TOKEN = "SET_ACCESS_TOKEN";
 export const SET_REFRESH_TOKEN = "SET_REFRESH_TOKEN";
 export const SET_RESULTCODE = "SET_RESULTCODE";
+export const SET_TOKEN_EXP_DATE = "SET_TOKEN_EXP_DATE"
 
 // 액션 생성 함수
 export const setAuthInfo = (authInfo: AuthInfo) => {
@@ -38,6 +39,13 @@ export const setRefreshToken = (refreshToken: String) => {
     return {
         type: SET_REFRESH_TOKEN,
         refreshToken
+    }
+};
+
+export const setTokenExpDate = (expDate: number) => {
+    return {
+        type: SET_TOKEN_EXP_DATE,
+        expDate
     }
 };
 

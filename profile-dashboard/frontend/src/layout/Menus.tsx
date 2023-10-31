@@ -7,7 +7,7 @@ import RouteMenu from '@src/routes/RouteMenu';
 import {useDispatch, useSelector} from "react-redux";
 import {setSelectMenu} from "@src/actions/MenuSelectAction";
 import './menus.less';
-import {setAccessToken, setAuthInfo, setRefreshToken, setSSOId} from "@src/actions/AuthAction";
+import {setAccessToken, setAuthInfo, setRefreshToken, setSSOId, setTokenExpDate} from "@src/actions/AuthAction";
 import {StoreState} from "@src/reducers";
 import {hasPermission} from "@src/routes";
 import {Button} from "antd";
@@ -33,7 +33,7 @@ const Menus = (): React.ReactElement => {
         dispatch(setSSOId("UNKNOWN"))
         dispatch(setAccessToken(null))
         dispatch(setRefreshToken(null))
-
+        dispatch(setTokenExpDate(0))
         logoutApi()
     }
 
