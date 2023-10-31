@@ -4,8 +4,7 @@ import {Layout} from 'antd';
 import Menus from "@src/layout/Menus";
 import Pages from "@src/layout/Pages";
 import AuthProvider from "@src/common/auth/AuthProvider";
-
-
+import WithTimer from "@src/common/auth/WithTimer";
 
 
 const {Header, Content} = Layout;
@@ -14,19 +13,21 @@ const {Header, Content} = Layout;
 const App = () => {
     return (
         <AuthProvider>
-            <Router>
-                <Layout style={{height: '100vh'}}>
-                    <Header>
-                        <Menus/>
-                    </Header>
-                    <Layout>
-                        <Content style={{padding: '10px 50px', overflow: 'auto'}}>
-                            <Pages/>
-                        </Content>
-                    </Layout>
+            <WithTimer>
+                <Router>
+                    <Layout style={{height: '100vh'}}>
+                        <Header>
+                            <Menus/>
+                        </Header>
+                        <Layout>
+                            <Content style={{padding: '10px 50px', overflow: 'auto'}}>
+                                <Pages/>
+                            </Content>
+                        </Layout>
 
-                </Layout>
-            </Router>
+                    </Layout>
+                </Router>
+            </WithTimer>
         </AuthProvider>
 
     );

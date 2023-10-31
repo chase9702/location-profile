@@ -7,7 +7,6 @@ import {store} from "@src/index";
 import {addDataToMap, updateMap} from "kepler.gl/actions";
 import {processCsvData} from "kepler.gl/processors";
 import {get} from "@src/api";
-import {NotifyError} from "@src/components/common/Notification";
 import PageTitle from "@src/components/common/PageTitle";
 import LoadingOutlined from "@ant-design/icons/LoadingOutlined";
 import Spin from "antd/lib/spin";
@@ -34,7 +33,6 @@ const Home = (): React.ReactElement => {
     const accessToken = useSelector((state: StoreState) => state.auth.accessToken)
     const [homeDeviceCountData, setHomeDeviceCountData] = useState([]);
     const [homeDeviceLoading, setHomeDeviceLoading] = useState(true);
-
 
     useEffect(() => {
         if (accessToken !== null) {

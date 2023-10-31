@@ -3,9 +3,16 @@ import {NotifyError} from "@src/components/common/Notification";
 import {useDispatch, useSelector} from "react-redux";
 import {StoreState} from "@src/reducers";
 import {authGet, authPost, authPut, get} from "@src/api";
-import {setAccessToken, setAuthInfo, setRefreshToken, setSSOId, setResultCode} from "@src/actions/AuthAction";
+import {
+    setAccessToken,
+    setAuthInfo,
+    setRefreshToken,
+    setSSOId,
+    setResultCode,
+    setTokenExpDate
+} from "@src/actions/AuthAction";
 import JwtDecode from "jwt-decode";
-import {profileRedirectUrl} from "@src/common/auth/constantValue";
+import {clearLocalStorage, profileRedirectUrl} from "@src/common/auth/constantValue";
 import axios from "axios";
 
 const AuthProvider = ({children}) => {
@@ -15,6 +22,7 @@ const AuthProvider = ({children}) => {
     const accessToken = useSelector((state: StoreState) => state.auth.accessToken)
     const refreshToken = useSelector((state: StoreState) => state.auth.refreshToken)
     const resultCode = useSelector((state: StoreState) => state.auth.resultCode)
+    const expDate = useSelector((state: StoreState) => state.auth.expDate)
 
     const ssoLogin = () => {
         authPost<any>("/auth/sso/login", {
@@ -81,7 +89,7 @@ const AuthProvider = ({children}) => {
 
         const jwtObj: any = JwtDecode(response.access_token);
 
-        console.log(jwtObj)
+        dispatch(setTokenExpDate(jwtObj.exp))
         dispatch(setAuthInfo({
             userName: jwtObj.pri_username ?? "UNKNOWN",
             userRole: jwtObj.pri_auth.split(",")
@@ -105,7 +113,8 @@ const AuthProvider = ({children}) => {
     useEffect(() => {
         console.log("ssoId changed:", ssoId);
         console.log("accessToken changed:", accessToken);
-    }, [ssoId, accessToken, resultCode, refreshToken]);
+        console.log("expDate changed:", expDate)
+    }, [ssoId, accessToken, resultCode, refreshToken, expDate]);
 
     useEffect(() => {
         if (process.env.NODE_ENV.startsWith("production")) {

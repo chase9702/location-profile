@@ -14,6 +14,5 @@ class CacheService {
         ,"cacheDeviceTop"
         ,"cacheTripDataFromTopDevice"
         ,"cacheHomeDevice"], allEntries = true)
-    fun clearALLCache() {
-    }
+    fun clearALLCache() = Unit
 }
