@@ -20,9 +20,9 @@ const {SubMenu} = Menu;
 const Menus = (): React.ReactElement => {
 
     const dispatch = useDispatch();
-    const userRole = useSelector((state: StoreState) => state.auth.userRole)
-    const userName = useSelector((state: StoreState) => state.auth.userName)
-
+    const userName = window.localStorage.getItem("userName");
+    const userRole = window.localStorage.getItem("userRole");
+    const userNameByStore = useSelector((state: StoreState) => state.auth.userName)
     const logout = () => {
 
         clearLocalStorage()
@@ -38,9 +38,12 @@ const Menus = (): React.ReactElement => {
     }
 
     useEffect(() => {
-        console.log("userRole changed:", userRole);
-        console.log("userName changed:", userName);
-    }, [userRole, userName]);
+        console.log("--------------------menu")
+        console.log(userName)
+        console.log(userNameByStore)
+        console.log(userRole)
+    }, [userNameByStore]);
+
     return (
         <div>
             <Menu

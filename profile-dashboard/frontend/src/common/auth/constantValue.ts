@@ -16,4 +16,6 @@ export const baseUrl =
 export const clearLocalStorage = () => {
     window.localStorage.removeItem("profileAccessToken");
     window.localStorage.removeItem("profileRefreshToken");
+    window.localStorage.removeItem("userName");
+    window.localStorage.removeItem("userRole");
 }
