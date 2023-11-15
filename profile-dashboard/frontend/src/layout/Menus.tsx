@@ -37,13 +37,6 @@ const Menus = (): React.ReactElement => {
         logoutApi()
     }
 
-    useEffect(() => {
-        console.log("--------------------menu")
-        console.log(userName)
-        console.log(userNameByStore)
-        console.log(userRole)
-    }, [userNameByStore]);
-
     return (
         <div>
             <Menu
