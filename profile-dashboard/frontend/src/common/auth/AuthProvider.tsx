@@ -90,10 +90,15 @@ const AuthProvider = ({children}) => {
         const jwtObj: any = JwtDecode(response.access_token);
 
         dispatch(setTokenExpDate(jwtObj.exp))
+
+        window.localStorage.setItem("userName", jwtObj.pri_username ?? "UNKNOWN");
+        window.localStorage.setItem("userRole", jwtObj.pri_auth.split(","));
+
         dispatch(setAuthInfo({
             userName: jwtObj.pri_username ?? "UNKNOWN",
             userRole: jwtObj.pri_auth.split(",")
         }))
+
     }
 
     const init = () => {
