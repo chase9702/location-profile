@@ -3,6 +3,7 @@ import LocationProfileDashBoard from "@src/pages/locationProfile/LocationProfile
 import PlugProfileDashBoardStatistics from "@src/pages/plugControl/PlugProfileDashBoardStatistics";
 import PlugProfileDashBoardDevice from "@src/pages/plugControl/PlugProfileDashBoardDevice";
 import PlugProfileMap from "@src/pages/plugControl/PlugProfileMap";
+import DestinationProfileDashBoard from "@src/pages/locationProfile/DestinationProfileDashBoard";
 
 
 
@@ -18,6 +19,20 @@ export interface MenuInfo {
 }
 
 const RouteMenu: MenuInfo[] = [
+    {
+        name: 'Location Profile',
+        key: 'location',
+        desc: 'Location Profile 제공.',
+        auth: 'ROLE_DASHBOARD',
+        submenu: [
+            {
+                name: '목적지 통계',
+                key: 'destination',
+                to: '/destination/dashboard',
+                component: DestinationProfileDashBoard,
+             }
+        ],
+    },
     {
         name: 'Plug Profile',
         key: 'plug',
@@ -44,20 +59,6 @@ const RouteMenu: MenuInfo[] = [
             },
         ],
     },
-    {
-        name: 'Location Profile',
-        key: 'location',
-        desc: 'Location Profile 제공.',
-        auth: 'ROLE_ADMIN',
-        submenu: [
-            {
-                name: 'Location Dashboard',
-                key: 'location-dashboard',
-                to: '/location/dashboard',
-                component: LocationProfileDashBoard,
-             }
-        ],
-    }
 ];
 
 export default RouteMenu;

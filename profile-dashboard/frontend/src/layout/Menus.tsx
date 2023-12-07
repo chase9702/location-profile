@@ -8,7 +8,6 @@ import {useDispatch, useSelector} from "react-redux";
 import {setSelectMenu} from "@src/actions/MenuSelectAction";
 import './menus.less';
 import {setAccessToken, setAuthInfo, setRefreshToken, setSSOId, setTokenExpDate} from "@src/actions/AuthAction";
-import {StoreState} from "@src/reducers";
 import {hasPermission} from "@src/routes";
 import {Button} from "antd";
 import {clearLocalStorage} from "@src/common/auth/constantValue";
@@ -22,7 +21,6 @@ const Menus = (): React.ReactElement => {
     const dispatch = useDispatch();
     const userName = window.localStorage.getItem("userName");
     const userRole = window.localStorage.getItem("userRole");
-    const userNameByStore = useSelector((state: StoreState) => state.auth.userName)
     const logout = () => {
 
         clearLocalStorage()
