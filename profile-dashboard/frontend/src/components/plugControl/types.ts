@@ -22,6 +22,11 @@ export const deviceModel = [
     {value: 'LUX2', label: 'LUX2'},
 ]
 
+export const personalFilter = [
+    {value: 'member_id', label: 'MEMBER ID'},
+    {value: 'plyno', label: 'PLYNO'},
+    {value: 'dvc_id', label: 'DIVC ID'},
+]
 export const deviceTop100Data = [
     "dvc_id",
     "plyno",
