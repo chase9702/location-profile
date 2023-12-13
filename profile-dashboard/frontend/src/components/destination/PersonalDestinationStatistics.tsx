@@ -2,21 +2,20 @@ import React, {ChangeEvent, useEffect, useState} from "react";
 import Button from "antd/lib/button";
 import Card from "antd/lib/card";
 import {useDispatch} from "react-redux";
-import {deviceModel, personalFilter} from "@src/components/plugControl/types";
+import {personalFilter} from "@src/components/plugControl/types";
 import Row from "antd/lib/row";
 import Col from "antd/lib/col";
 import Select from "antd/lib/select";
-import {setSelectDate, setSelectDeviceGb} from "@src/actions/DeviceAction";
 import DatePicker from "antd/lib/date-picker";
-import dayjs, {Dayjs} from 'dayjs';
 import CustomKeplerMap from "@src/components/common/CustomKeplerMap";
 import Table from "antd/lib/table";
 import {addDataToMap, updateMap, toggleSidePanel} from "kepler.gl/actions";
 import {store} from "@src/index";
-import {processCsvData} from "kepler.gl/processors";
-import {Input} from "antd";
+import {Input, Space} from "antd";
 import {get} from "@src/api";
-import * as string_decoder from "string_decoder";
+import moment from 'moment';
+import {RangePickerProps} from "antd/es/date-picker";
+
 
 interface Props {
 
@@ -31,12 +30,21 @@ const PersonalDestinationStatistics = (props: Props): React.ReactElement => {
     const [deviceGbValue, setDeviceGbValue] = useState("TOTAL");
     const [clickGetData, setClickGetData] = useState(false);
     const [deviceInfo, setDeviceInfo] = useState([]);
-    const [selectedDateValue, setSelectedDateValue] = useState(dayjs().subtract(1, 'day'));
     const [personalDestinationData, setPersonalDestinationData] = useState([])
     const [fetchData, setFetchData] = useState(false);
     const [personalValueData, setPersonalValueData] = useState("");
     const [personalSelectData, setPersonalSelectData] = useState("");
     const [parameterUrl, setParameterUrl] = useState("")
+    const [selectedDateValue, setSelectedDateValue] = useState(null);
+    const [selectedRangeValue, setSelectedRangeValue] = useState(null);
+
+    const [rangePickerDisabled, setRangePickerDisabled] = useState(false);
+    const [datePickerDisabled, setDatePickerDisabled] = useState(false);
+
+    const [formattedStartTime, setFormattedStartTime] = useState(null);
+    const [formattedEndTime, setFormattedEndTime] = useState(null);
+
+    const {RangePicker} = DatePicker;
 
     useEffect(() => {
 
@@ -89,6 +97,8 @@ const PersonalDestinationStatistics = (props: Props): React.ReactElement => {
             member_id: null,
             plyno: null,
             dvc_id: null,
+            startDate: formattedStartTime,
+            endDate: formattedEndTime
         };
 
         if (personalSelectData === 'member_id') {
@@ -107,16 +117,41 @@ const PersonalDestinationStatistics = (props: Props): React.ReactElement => {
 
         setParameterUrl(queryString);
         console.log(queryString);
+        console.log(formattedStartTime)
+        console.log(formattedEndTime)
         setFetchData(true);
     };
 
-    const disabledDate = (current: Dayjs) => {
-        return current.diff(dayjs(), 'days') == 0 || current.isAfter();
+    const onDatePickerChange = (value) => {
+        if (value == null) {
+            setDatePickerDisabled(false);
+            setRangePickerDisabled(false);
+        } else {
+            setSelectedDateValue(value);
+            setRangePickerDisabled(true);
+        }
     };
 
-    const onChangeSelectedDateValue = (date, dateString) => {
-        dispatch(setSelectDate(dateString))
-        setSelectedDateValue(date)
+    const onRangePickerChange = (
+        value: RangePickerProps['value'],
+        dateString: [string, string] | string,) => {
+        if (!value) {
+            setDatePickerDisabled(false);
+            setRangePickerDisabled(false);
+        } else {
+            const startDate = dateString[0]
+            const endDate = dateString[1]
+
+            setFormattedStartTime(startDate);
+            setFormattedEndTime(endDate);
+
+            setSelectedRangeValue(value);
+            setDatePickerDisabled(true);
+        }
+    };
+
+    const onOk = (value: RangePickerProps['value']) => {
+        console.log('onOk: ', value);
     };
 
     const columns = [
@@ -176,19 +211,32 @@ const PersonalDestinationStatistics = (props: Props): React.ReactElement => {
                                }}
                         />
                     </Col>
-                    {/*<Col span={2}>*/}
-                    {/*</Col>*/}
                     <Col span={2}>
                         <h3>날짜 : </h3>
                     </Col>
-                    <Col span={8}>
+                    <Col span={4}>
                         <DatePicker
                             className={"h3-margin"}
                             defaultValue={selectedDateValue}
-                            disabledDate={disabledDate}
-                            format={dateFormat}
-                            onChange={onChangeSelectedDateValue}
+                            onChange={onDatePickerChange}
+                            disabled={datePickerDisabled}
+                            picker="month"
                         />
+                    </Col>
+                    <Col span={4}>
+                        <Space direction="vertical" size={12}>
+                            <RangePicker
+                                className={"h3-margin"}
+                                defaultValue={selectedRangeValue}
+                                style={{
+                                    width: '130%',
+                                }}
+                                onChange={onRangePickerChange}
+                                disabled={rangePickerDisabled}
+                                format="YYYYMMDD"
+                                onOk={onOk}
+                            />
+                        </Space>
                     </Col>
                     <Col span={4}>
                         <Button
