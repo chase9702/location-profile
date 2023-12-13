@@ -15,16 +15,15 @@ class LocationDestinationRepository (
                  plyno,
                  dvc_id,
                  part_dt,
-                 end_h3,
-                 count(*) as cnt
+                 end_h3
                FROM dw.li_od_trip
              WHERE 1=1
                AND $queryParams
-               group by member_id
-                        ,plyno
-                        ,dvc_id
-                        ,part_dt
-                        ,end_h3
+               --group by member_id
+               --         ,plyno
+               --         ,dvc_id
+               --         ,part_dt
+               --         ,end_h3
         """.trimIndent()
 
         return hiveJdbcTemplate.query(query) { rs, _ ->
@@ -34,7 +33,6 @@ class LocationDestinationRepository (
                 dvcId = transformNullToEmptyString(rs.getString("dvc_id")),
                 partDt = transformNullToEmptyString(rs.getString("part_dt")),
                 endH3 = transformNullToEmptyString(rs.getString("end_h3")),
-                count = rs.getInt("cnt")
             )
         }
     }

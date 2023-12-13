@@ -15,6 +15,9 @@ import {Input, Space} from "antd";
 import {get} from "@src/api";
 import moment from 'moment';
 import {RangePickerProps} from "antd/es/date-picker";
+import {NotifyError} from "@src/components/common/Notification";
+import LoadingOutlined from "@ant-design/icons/LoadingOutlined";
+import Spin from "antd/lib/spin";
 
 
 interface Props {
@@ -44,6 +47,7 @@ const PersonalDestinationStatistics = (props: Props): React.ReactElement => {
     const [formattedStartTime, setFormattedStartTime] = useState(null);
     const [formattedEndTime, setFormattedEndTime] = useState(null);
 
+    const [personalTableLoading, setpersonalTableLoading] = useState(true);
     const {RangePicker} = DatePicker;
 
     useEffect(() => {
@@ -60,6 +64,20 @@ const PersonalDestinationStatistics = (props: Props): React.ReactElement => {
         // store.dispatch(toggleSidePanel("personalMap"));
     }, []);
 
+    const personalDestinationFetch = () => {
+        get<[]>(`/api/location/destination/?${parameterUrl}`)
+            .then((jsonData) => {
+                console.log(jsonData)
+                setPersonalDestinationData(jsonData)
+            })
+            .catch((error) => {
+                NotifyError(error)
+            })
+        .finally(() => {
+            setpersonalTableLoading(false);
+        });
+    };
+
     useEffect(() => {
         if (fetchData) {
             personalDestinationFetch();
@@ -67,22 +85,10 @@ const PersonalDestinationStatistics = (props: Props): React.ReactElement => {
         }
     }, [fetchData, personalValueData]);
 
-    const personalDestinationFetch = () => {
-        get<[]>(`/api/location/destination/?${parameterUrl}`)
-            .then((jsonData) => {
-                console.log(jsonData)
-                setPersonalDestinationData(jsonData)
-            })
-            .finally(() => {
-                setPersonalDestinationData([]);
-            });
-    };
-
     const handleSelectChange = (value: string, option: { value: string; label: string; } | {
         value: string;
         label: string;
     }[]) => {
-        console.log(value)
         setPersonalSelectData(value);
     };
 
@@ -116,9 +122,6 @@ const PersonalDestinationStatistics = (props: Props): React.ReactElement => {
             .join('&');
 
         setParameterUrl(queryString);
-        console.log(queryString);
-        console.log(formattedStartTime)
-        console.log(formattedEndTime)
         setFetchData(true);
     };
 
@@ -154,24 +157,30 @@ const PersonalDestinationStatistics = (props: Props): React.ReactElement => {
         console.log('onOk: ', value);
     };
 
-    const columns = [
+    const personalDestinationColumns = [
         {
-            title: '증권번호',
-            dataIndex: 'ply_no',
+            title: '주소지',
+            dataIndex: 'endH3',
             width: 200,
             align: 'center' as const,
         },
         {
-            title: '디바이스ID',
-            dataIndex: 'dvc_id',
+            title: '카운트',
+            dataIndex: 'endH3',
             width: 220,
             align: 'center' as const,
         },
         {
-            title: '펌웨어버전',
-            dataIndex: 'ver',
+            title: '랭크',
+            dataIndex: 'endH3',
             align: 'center' as const,
-        }
+        },
+        {
+            title: 'H3좌표',
+            dataIndex: 'endH3',
+            width: 220,
+            align: 'center' as const,
+        },
     ];
 
     return (
@@ -257,21 +266,23 @@ const PersonalDestinationStatistics = (props: Props): React.ReactElement => {
                 id={"personalMap"}
             />
             <Card>
-                <Table columns={columns}
-                       dataSource={[]}
-                       scroll={{y: 600}}
-                       onRow={(record, rowIndex) => {
-                           return {
-                               onClick: (event) => {
-                                   console.log(record)
-                               }, // click row
-                           };
-                       }}
-                />
+                <Spin spinning={personalTableLoading} indicator={<LoadingOutlined/>} tip="로딩 중...">
+                    <Table columns={personalDestinationColumns}
+                           dataSource={personalDestinationData}
+                           scroll={{y: 600}}
+                           onRow={(record, rowIndex) => {
+                               return {
+                                   onClick: (event) => {
+                                       console.log(record)
+                                   }, // click row
+                               };
+                           }}
+                    />
+                </Spin>
 
             </Card>
         </div>
-    )
+)
 };
 
 export default PersonalDestinationStatistics;
