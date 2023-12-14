@@ -36,4 +36,8 @@ class LocationDestinationRepository (
             )
         }
     }
+
+//    segment 레파지토리
+//    fun getDestinationSegmentData(): {
+//    }
 }

@@ -1,6 +1,7 @@
 package com.carrotins.backend.api.location
 
 import com.carrotins.backend.repository.location.DestinationPersonalData
+import com.carrotins.backend.repository.location.DestinationPersonalRankData
 import com.carrotins.backend.service.location.LocationProfileDestinationService
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.web.bind.annotation.GetMapping
@@ -11,14 +12,14 @@ import org.springframework.web.bind.annotation.RestController
 class LocationProfileDestinationController (
     private val locationProfileDestinationService: LocationProfileDestinationService
 ) {
-    @GetMapping("/api/location/destination/")
+    @GetMapping("/api/location/destination/personal")
     fun getDestinationPersonalData(
         @RequestParam("member_id") memberId: String,
         @RequestParam("plyno") plyNo: String,
         @RequestParam("dvc_id") dvcId: String,
         @RequestParam("startDate") startDate: String,
         @RequestParam("endDate") endDate: String,
-    ): List<DestinationPersonalData>{
+    ): List<DestinationPersonalRankData>{
         return locationProfileDestinationService.getDestinationPersonalData(memberId, plyNo, dvcId, startDate, endDate)
     }
 }

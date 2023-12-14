@@ -26,13 +26,6 @@ interface Props {
 
 const PersonalDestinationStatistics = (props: Props): React.ReactElement => {
 
-    const dateFormat = 'YYYYMMDD';
-    const dispatch = useDispatch();
-    const [deviceLoading, setDeviceLoading] = useState(false);
-    const [tripLoading, setTripLoading] = useState(false);
-    const [deviceGbValue, setDeviceGbValue] = useState("TOTAL");
-    const [clickGetData, setClickGetData] = useState(false);
-    const [deviceInfo, setDeviceInfo] = useState([]);
     const [personalDestinationData, setPersonalDestinationData] = useState([])
     const [fetchData, setFetchData] = useState(false);
     const [personalValueData, setPersonalValueData] = useState("");
@@ -40,14 +33,12 @@ const PersonalDestinationStatistics = (props: Props): React.ReactElement => {
     const [parameterUrl, setParameterUrl] = useState("")
     const [selectedDateValue, setSelectedDateValue] = useState(null);
     const [selectedRangeValue, setSelectedRangeValue] = useState(null);
-
     const [rangePickerDisabled, setRangePickerDisabled] = useState(false);
     const [datePickerDisabled, setDatePickerDisabled] = useState(false);
-
+    const [formattedMonth, setFormattedMonth] = useState(null);
     const [formattedStartTime, setFormattedStartTime] = useState(null);
     const [formattedEndTime, setFormattedEndTime] = useState(null);
-
-    const [personalTableLoading, setpersonalTableLoading] = useState(true);
+    const [personalTableLoading, setpersonalTableLoading] = useState(false);
     const {RangePicker} = DatePicker;
 
     useEffect(() => {
@@ -61,11 +52,39 @@ const PersonalDestinationStatistics = (props: Props): React.ReactElement => {
         이 부분은 팝업 안되고 내가 만든 조회 화면이 띄워지게 한다거나
         아니면 그냥 디폴트 조회로 오늘날짜 기준 무언가를 보여준다거나 해야 할듯?
          */
-        // store.dispatch(toggleSidePanel("personalMap"));
     }, []);
 
+    // useEffect(() => {
+    //
+    //     const h3Data = [
+    //         { h3Index: '8a30e1d93037fff', value: 10 },
+    //         { h3Index: '8a30e1d92acffff', value: 10000 },
+    //     ];
+    //
+    //     store.dispatch(
+    //         updateMap({
+    //             datasets: [
+    //                 {
+    //                     data: {
+    //                         fields: [
+    //                             { name: 'h3Index', format: '' },
+    //                             { name: 'value', format: '' },
+    //                         ],
+    //                         rows: h3Data,
+    //                     },
+    //                     info: { label: 'H3 Data', id: 'h3_data' },
+    //                     keplerGl: { type: 'point', config: { dataId: 'h3_data' } },
+    //                 },
+    //             ],
+    //             config: {},
+    //             options: { readOnly: true },
+    //         })
+    //     );
+    // }, [store.dispatch]);
+
+
     const personalDestinationFetch = () => {
-        get<[]>(`/api/location/destination/?${parameterUrl}`)
+        get<[]>(`/api/location/destination/personal/?${parameterUrl}`)
             .then((jsonData) => {
                 console.log(jsonData)
                 setPersonalDestinationData(jsonData)
@@ -95,7 +114,6 @@ const PersonalDestinationStatistics = (props: Props): React.ReactElement => {
     const handleValueChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const value = event.target.value;
         setPersonalValueData(value);
-        console.log(personalValueData);
     };
 
     const handleClickData = () => {
@@ -122,6 +140,7 @@ const PersonalDestinationStatistics = (props: Props): React.ReactElement => {
             .join('&');
 
         setParameterUrl(queryString);
+        setpersonalTableLoading(true);
         setFetchData(true);
     };
 
@@ -130,6 +149,7 @@ const PersonalDestinationStatistics = (props: Props): React.ReactElement => {
             setDatePickerDisabled(false);
             setRangePickerDisabled(false);
         } else {
+            console.log(value);
             setSelectedDateValue(value);
             setRangePickerDisabled(true);
         }
@@ -160,24 +180,24 @@ const PersonalDestinationStatistics = (props: Props): React.ReactElement => {
     const personalDestinationColumns = [
         {
             title: '주소지',
-            dataIndex: 'endH3',
+            dataIndex: 'end_h3',
             width: 200,
             align: 'center' as const,
         },
         {
             title: '카운트',
-            dataIndex: 'endH3',
+            dataIndex: 'count',
             width: 220,
             align: 'center' as const,
         },
         {
             title: '랭크',
-            dataIndex: 'endH3',
+            dataIndex: 'rank',
             align: 'center' as const,
         },
         {
             title: 'H3좌표',
-            dataIndex: 'endH3',
+            dataIndex: 'end_h3',
             width: 220,
             align: 'center' as const,
         },
