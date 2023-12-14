@@ -11,7 +11,7 @@ import CustomKeplerMap from "@src/components/common/CustomKeplerMap";
 import Table from "antd/lib/table";
 import {addDataToMap, updateMap, toggleSidePanel} from "kepler.gl/actions";
 import {store} from "@src/index";
-import {Input, Space} from "antd";
+import {Input, Radio, Space} from "antd";
 import {get} from "@src/api";
 import moment from 'moment';
 import {RangePickerProps} from "antd/es/date-picker";
@@ -40,6 +40,9 @@ const PersonalDestinationStatistics = (props: Props): React.ReactElement => {
     const [formattedEndTime, setFormattedEndTime] = useState(null);
     const [personalTableLoading, setpersonalTableLoading] = useState(false);
     const {RangePicker} = DatePicker;
+    const [buttonDisabled, setButtonDisabled] = useState(true);
+    const [radioValue, setValue] = useState(1);
+
 
     useEffect(() => {
 
@@ -150,6 +153,7 @@ const PersonalDestinationStatistics = (props: Props): React.ReactElement => {
             setRangePickerDisabled(false);
         } else {
             console.log(value);
+            setButtonDisabled(false);
             setSelectedDateValue(value);
             setRangePickerDisabled(true);
         }
@@ -167,6 +171,7 @@ const PersonalDestinationStatistics = (props: Props): React.ReactElement => {
 
             setFormattedStartTime(startDate);
             setFormattedEndTime(endDate);
+            setButtonDisabled(false);
 
             setSelectedRangeValue(value);
             setDatePickerDisabled(true);
@@ -175,6 +180,11 @@ const PersonalDestinationStatistics = (props: Props): React.ReactElement => {
 
     const onOk = (value: RangePickerProps['value']) => {
         console.log('onOk: ', value);
+    };
+
+    const onRadioChange = (e) => {
+        setButtonDisabled(true);
+        setValue(e.target.value);
     };
 
     const personalDestinationColumns = [
@@ -244,28 +254,36 @@ const PersonalDestinationStatistics = (props: Props): React.ReactElement => {
                         <h3>날짜 : </h3>
                     </Col>
                     <Col span={4}>
-                        <DatePicker
-                            className={"h3-margin"}
-                            defaultValue={selectedDateValue}
-                            onChange={onDatePickerChange}
-                            disabled={datePickerDisabled}
-                            picker="month"
-                        />
+                        <Radio.Group onChange={onRadioChange} value={radioValue}>
+                            <Space direction="vertical">
+                                <Radio value={1}>월별 날짜 선택</Radio>
+                                <Radio value={2}>기간 날짜 선택</Radio>
+                            </Space>
+                        </Radio.Group>
                     </Col>
                     <Col span={4}>
-                        <Space direction="vertical" size={12}>
-                            <RangePicker
+                        {radioValue === 1 && (
+                            <DatePicker
                                 className={"h3-margin"}
-                                defaultValue={selectedRangeValue}
-                                style={{
-                                    width: '130%',
-                                }}
-                                onChange={onRangePickerChange}
-                                disabled={rangePickerDisabled}
-                                format="YYYYMMDD"
-                                onOk={onOk}
+                                defaultValue={selectedDateValue}
+                                onChange={onDatePickerChange}
+                                picker="month"
                             />
-                        </Space>
+                        )}
+                        {radioValue === 2 && (
+                            <Space direction="vertical" size={12}>
+                                <RangePicker
+                                    className={"h3-margin"}
+                                    defaultValue={selectedRangeValue}
+                                    style={{
+                                        width: '130%',
+                                    }}
+                                    onChange={onRangePickerChange}
+                                    format="YYYYMMDD"
+                                    onOk={onOk}
+                                />
+                            </Space>
+                        )}
                     </Col>
                     <Col span={4}>
                         <Button
@@ -275,6 +293,7 @@ const PersonalDestinationStatistics = (props: Props): React.ReactElement => {
                                 float: "right",
                             }}
                             onClick={handleClickData}
+                            disabled={buttonDisabled}
                         >
                             조회
                         </Button>
