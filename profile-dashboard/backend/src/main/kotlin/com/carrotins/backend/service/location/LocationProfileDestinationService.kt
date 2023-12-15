@@ -1,5 +1,6 @@
 package com.carrotins.backend.service.location
 
+import com.carrotins.backend.repository.location.DestinationPersonalData
 import com.carrotins.backend.repository.location.DestinationPersonalRankData
 import com.carrotins.backend.repository.location.LocationDestinationRepository
 import org.springframework.stereotype.Service
@@ -12,6 +13,7 @@ class LocationProfileDestinationService (
         memberId: String?,
         plyNo: String?,
         dvcId: String?,
+        month: String,
         startDate: String,
         endDate: String
     ): List<DestinationPersonalRankData>{
@@ -20,16 +22,23 @@ class LocationProfileDestinationService (
             memberId?.takeUnless { it == "null" }?.let { "member_id='$it'" },
             plyNo?.takeUnless { it == "null" }?.let { "plyno='$it'" },
             dvcId?.takeUnless { it == "null" }?.let { "dvc_id='$it'" },
+            month.takeUnless { it == "null" }?.let { "part_mm='$it'" },
             startDate.takeUnless { it == "null" }?.let { "part_dt>='$it'" },
             endDate.takeUnless { it == "null" }?.let { "part_dt<='$it'" }
         ).joinToString(" and ")
 
-        println(queryParams)
+        val paramsCheck: Boolean = queryParams.contains("part_mm")
+        var personalData: List<DestinationPersonalData>
 
-        val containYn = queryParams.contains("mem")
-        println(containYn)
+        if(paramsCheck) {
+            println("세그먼트 조회")
+            personalData = locationDestinationRepository.getDestinationSegmentData(queryParams)
+        } else {
+            println("개인 조회")
+            personalData = locationDestinationRepository.getDestinationPersonalData(queryParams)
+        }
 
-        val personalData = locationDestinationRepository.getDestinationPersonalData(queryParams)
+//        val personalData = locationDestinationRepository.getDestinationPersonalData(queryParams)
 
         val personalGroupedData = personalData.groupBy { DestinationPersonalRankData(it.memberId, it.plyno, it.dvcId, it.endH3, 0, 0) }
         val personalCountPerGroup = personalGroupedData.mapValues { it.value.size }

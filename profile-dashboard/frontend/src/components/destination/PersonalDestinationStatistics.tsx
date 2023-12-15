@@ -1,7 +1,6 @@
-import React, {ChangeEvent, useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import Button from "antd/lib/button";
 import Card from "antd/lib/card";
-import {useDispatch} from "react-redux";
 import {personalFilter} from "@src/components/plugControl/types";
 import Row from "antd/lib/row";
 import Col from "antd/lib/col";
@@ -13,7 +12,6 @@ import {addDataToMap, updateMap, toggleSidePanel} from "kepler.gl/actions";
 import {store} from "@src/index";
 import {Input, Radio, Space} from "antd";
 import {get} from "@src/api";
-import moment from 'moment';
 import {RangePickerProps} from "antd/es/date-picker";
 import {NotifyError} from "@src/components/common/Notification";
 import LoadingOutlined from "@ant-design/icons/LoadingOutlined";
@@ -33,8 +31,6 @@ const PersonalDestinationStatistics = (props: Props): React.ReactElement => {
     const [parameterUrl, setParameterUrl] = useState("")
     const [selectedDateValue, setSelectedDateValue] = useState(null);
     const [selectedRangeValue, setSelectedRangeValue] = useState(null);
-    const [rangePickerDisabled, setRangePickerDisabled] = useState(false);
-    const [datePickerDisabled, setDatePickerDisabled] = useState(false);
     const [formattedMonth, setFormattedMonth] = useState(null);
     const [formattedStartTime, setFormattedStartTime] = useState(null);
     const [formattedEndTime, setFormattedEndTime] = useState(null);
@@ -85,6 +81,12 @@ const PersonalDestinationStatistics = (props: Props): React.ReactElement => {
     //     );
     // }, [store.dispatch]);
 
+    useEffect(() => {
+        if (fetchData) {
+            personalDestinationFetch();
+            setFetchData(false);
+        }
+    }, [fetchData, personalValueData]);
 
     const personalDestinationFetch = () => {
         get<[]>(`/api/location/destination/personal/?${parameterUrl}`)
@@ -99,13 +101,6 @@ const PersonalDestinationStatistics = (props: Props): React.ReactElement => {
             setpersonalTableLoading(false);
         });
     };
-
-    useEffect(() => {
-        if (fetchData) {
-            personalDestinationFetch();
-            setFetchData(false);
-        }
-    }, [fetchData, personalValueData]);
 
     const handleSelectChange = (value: string, option: { value: string; label: string; } | {
         value: string;
@@ -124,6 +119,7 @@ const PersonalDestinationStatistics = (props: Props): React.ReactElement => {
             member_id: null,
             plyno: null,
             dvc_id: null,
+            month: formattedMonth,
             startDate: formattedStartTime,
             endDate: formattedEndTime
         };
@@ -147,35 +143,21 @@ const PersonalDestinationStatistics = (props: Props): React.ReactElement => {
         setFetchData(true);
     };
 
-    const onDatePickerChange = (value) => {
-        if (value == null) {
-            setDatePickerDisabled(false);
-            setRangePickerDisabled(false);
-        } else {
-            console.log(value);
-            setButtonDisabled(false);
-            setSelectedDateValue(value);
-            setRangePickerDisabled(true);
-        }
+    const onDatePickerChange = (value: RangePickerProps['value'], dateString: string,) => {
+        setFormattedMonth(dateString.replace(/-/g, ''))
+        setButtonDisabled(false);
+        setFormattedStartTime(null);
+        setFormattedEndTime(null);
     };
 
-    const onRangePickerChange = (
-        value: RangePickerProps['value'],
-        dateString: [string, string] | string,) => {
-        if (!value) {
-            setDatePickerDisabled(false);
-            setRangePickerDisabled(false);
-        } else {
-            const startDate = dateString[0]
-            const endDate = dateString[1]
+    const onRangePickerChange = (value: RangePickerProps['value'], dateString: [string, string] | string,) => {
+        const startDate = dateString[0];
+        const endDate = dateString[1];
 
-            setFormattedStartTime(startDate);
-            setFormattedEndTime(endDate);
-            setButtonDisabled(false);
-
-            setSelectedRangeValue(value);
-            setDatePickerDisabled(true);
-        }
+        setFormattedStartTime(startDate);
+        setFormattedEndTime(endDate);
+        setButtonDisabled(false);
+        setFormattedMonth(null);
     };
 
     const onOk = (value: RangePickerProps['value']) => {
@@ -242,11 +224,11 @@ const PersonalDestinationStatistics = (props: Props): React.ReactElement => {
                         </Select>
                     </Col>
                     <Col span={4}>
-                        <Input placeholder="필수 입력"
+                        <Input placeholder="* 필수 입력"
                                className={"h3-margin"}
                                onChange={handleValueChange}
                                style={{
-                                   width: '80%', float: 'left',
+                                   width: '80%', float: 'left', color: 'red'
                                }}
                         />
                     </Col>

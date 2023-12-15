@@ -38,6 +38,31 @@ class LocationDestinationRepository (
     }
 
 //    segment 레파지토리
-//    fun getDestinationSegmentData(): {
-//    }
+    fun getDestinationSegmentData(queryParams :String): List<DestinationPersonalData> {
+    val query: String = """
+             SELECT 
+                 plyno,
+                 dvc_id,
+                 part_dt,
+                 end_h3
+               FROM dw.li_od_trip_01
+             WHERE 1=1
+               AND $queryParams
+               --group by member_id
+               --         ,plyno
+               --         ,dvc_id
+               --         ,part_dt
+               --         ,end_h3
+        """.trimIndent()
+
+    return hiveJdbcTemplate.query(query) { rs, _ ->
+        DestinationPersonalData(
+            memberId = transformNullToEmptyString(rs.getString("member_id")),
+            plyno = transformNullToEmptyString(rs.getString("plyno")),
+            dvcId = transformNullToEmptyString(rs.getString("dvc_id")),
+            partDt = transformNullToEmptyString(rs.getString("part_dt")),
+            endH3 = transformNullToEmptyString(rs.getString("end_h3")),
+        )
+    }
+    }
 }

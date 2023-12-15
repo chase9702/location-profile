@@ -17,9 +17,10 @@ class LocationProfileDestinationController (
         @RequestParam("member_id") memberId: String,
         @RequestParam("plyno") plyNo: String,
         @RequestParam("dvc_id") dvcId: String,
+        @RequestParam("month") month: String,
         @RequestParam("startDate") startDate: String,
         @RequestParam("endDate") endDate: String,
     ): List<DestinationPersonalRankData>{
-        return locationProfileDestinationService.getDestinationPersonalData(memberId, plyNo, dvcId, startDate, endDate)
+        return locationProfileDestinationService.getDestinationPersonalData(memberId, plyNo, dvcId, month, startDate, endDate)
     }
 }
