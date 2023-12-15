@@ -39,7 +39,6 @@ const PersonalDestinationStatistics = (props: Props): React.ReactElement => {
     const [buttonDisabled, setButtonDisabled] = useState(true);
     const [radioValue, setValue] = useState(1);
 
-
     useEffect(() => {
 
         store.dispatch(updateMap({
@@ -92,7 +91,7 @@ const PersonalDestinationStatistics = (props: Props): React.ReactElement => {
         get<[]>(`/api/location/destination/personal/?${parameterUrl}`)
             .then((jsonData) => {
                 console.log(jsonData)
-                setPersonalDestinationData(jsonData)
+                setPersonalDestinationData(jsonData);
             })
             .catch((error) => {
                 NotifyError(error)
@@ -138,6 +137,7 @@ const PersonalDestinationStatistics = (props: Props): React.ReactElement => {
             .map(([key, value]) => `${key}=${value}`)
             .join('&');
 
+        console.log(queryString);
         setParameterUrl(queryString);
         setpersonalTableLoading(true);
         setFetchData(true);
@@ -177,14 +177,14 @@ const PersonalDestinationStatistics = (props: Props): React.ReactElement => {
             align: 'center' as const,
         },
         {
-            title: '카운트',
-            dataIndex: 'count',
-            width: 220,
+            title: '랭크',
+            dataIndex: 'rank',
             align: 'center' as const,
         },
         {
-            title: '랭크',
-            dataIndex: 'rank',
+            title: '카운트',
+            dataIndex: 'count',
+            width: 220,
             align: 'center' as const,
         },
         {
@@ -228,7 +228,7 @@ const PersonalDestinationStatistics = (props: Props): React.ReactElement => {
                                className={"h3-margin"}
                                onChange={handleValueChange}
                                style={{
-                                   width: '80%', float: 'left', color: 'red'
+                                   width: '80%', float: 'left'
                                }}
                         />
                     </Col>
@@ -282,26 +282,33 @@ const PersonalDestinationStatistics = (props: Props): React.ReactElement => {
                     </Col>
                 </Row>
             </Card>
-            <CustomKeplerMap
-                heightRatio={70}
-                id={"personalMap"}
-            />
-            <Card>
-                <Spin spinning={personalTableLoading} indicator={<LoadingOutlined/>} tip="로딩 중...">
-                    <Table columns={personalDestinationColumns}
-                           dataSource={personalDestinationData}
-                           scroll={{y: 600}}
-                           onRow={(record, rowIndex) => {
-                               return {
-                                   onClick: (event) => {
-                                       console.log(record)
-                                   }, // click row
-                               };
-                           }}
+            <Row>
+                <Col span = {15}>
+                    <CustomKeplerMap
+                        heightRatio={70}
+                        id={"personalMap"}
                     />
-                </Spin>
+                </Col>
+                <Col span = {9}>
+                    <Card>
+                        <Spin spinning={personalTableLoading} indicator={<LoadingOutlined/>} tip="로딩 중...">
+                            <Table columns={personalDestinationColumns}
+                                   dataSource={personalDestinationData}
+                                   scroll={{y: 5000}}
+                                   onRow={(record, rowIndex) => {
+                                       return {
+                                           onClick: (event) => {
+                                               console.log(record)
+                                           }, // click row
+                                       };
+                                   }}
+                                   pagination={{ pageSize: 20 }}
+                            />
+                        </Spin>
 
-            </Card>
+                    </Card>
+                </Col>
+            </Row>
         </div>
 )
 };
