@@ -12,6 +12,7 @@ import LoadingOutlined from "@ant-design/icons/LoadingOutlined";
 import Card from "antd/lib/card";
 import PersonalDestinationStatistics from "@src/components/destination/PersonalDestinationStatistics";
 import GroupDestinationStatistics from "@src/components/destination/GroupDestinationStatistics";
+import AddressReturn from "@src/components/destination/AddressReturn";
 
 interface State {
 }
@@ -71,6 +72,9 @@ const DestinationProfileDashBoard = (props: Props): React.ReactElement => {
                     </TabPane>
                     <TabPane tab="그룹 통계" key="2">
                         <GroupDestinationStatistics/>
+                    </TabPane>
+                    <TabPane tab="데모?" key="3">
+                        <AddressReturn/>
                     </TabPane>
                 </Tabs>
             </Card>
