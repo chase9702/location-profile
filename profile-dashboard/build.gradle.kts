@@ -62,6 +62,7 @@ project(":profile-dashboard:backend") {
             exclude("org.slf4j","slf4j-log4j12")
         }
         implementation("javax.servlet:javax.servlet-api:4.0.1")
+
         //hive 버전 맞춰야 함
         implementation("org.apache.hive:hive-jdbc:1.2.1"){
             exclude("org.slf4j","slf4j-log4j12")

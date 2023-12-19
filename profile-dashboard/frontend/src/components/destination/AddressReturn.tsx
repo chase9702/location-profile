@@ -20,12 +20,12 @@ interface Props {
 const AddressReturn = (props: Props): React.ReactElement => {
 
     const [fetchData, setFetchData] = useState(false);
-    const [addrSelectData, setAddrSelectData] = useState("");
-    const [parameterUrl, setParameterUrl] = useState("")
+    const [addrSelectData, setAddrSelectData] = useState(null);
+    const [parameterUrl, setParameterUrl] = useState(null)
     const [buttonDisabled, setButtonDisabled] = useState(true);
     const [radioValue, setValue] = useState(1);
-    const [lnValue, setLnValue] = useState("");
-    const [ltValue, setLtValue] = useState("");
+    const [lnValue, setLnValue] = useState(null);
+    const [ltValue, setLtValue] = useState(null);
 
     useEffect(() => {
 
@@ -43,7 +43,7 @@ const AddressReturn = (props: Props): React.ReactElement => {
     }, [fetchData]);
 
     const addrDataFetch = () => {
-        get<[]>(`/api/location/destination/personal/?${parameterUrl}`)
+        get<[]>(`/api/location/address/?${parameterUrl}`)
             .then((jsonData) => {
                 console.log(jsonData)
             })
@@ -59,13 +59,28 @@ const AddressReturn = (props: Props): React.ReactElement => {
         value: string;
         label: string;
     }[]) => {
+        console.log(value);
         setAddrSelectData(value);
         setButtonDisabled(false);
     };
 
     const handleClickData = () => {
+        const queryParams: Record<string, string | null> = {
+            city: addrSelectData,
+            ln: lnValue,
+            lt: ltValue,
+        };
+
+        const queryString = Object.entries(queryParams)
+            .map(([key, value]) => `${key}=${value}`)
+            .join('&');
+
+        console.log(queryString);
+        setParameterUrl(queryString);
+        setFetchData(true);
 
     };
+
     const onRadioChange = (e) => {
         setButtonDisabled(true);
         setValue(e.target.value);
@@ -73,13 +88,11 @@ const AddressReturn = (props: Props): React.ReactElement => {
 
     const handleLnValue = (e: React.ChangeEvent<HTMLInputElement>) => {
         const {value: inputValue} = e.target;
-        console.log(inputValue)
         setLnValue(inputValue)
     };
 
     const handleLtValue = (e: React.ChangeEvent<HTMLInputElement>) => {
         const {value: inputValue} = e.target;
-        console.log(inputValue)
         setLtValue(inputValue)
     };
 

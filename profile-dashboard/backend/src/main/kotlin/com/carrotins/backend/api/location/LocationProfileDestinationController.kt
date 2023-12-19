@@ -1,18 +1,19 @@
 package com.carrotins.backend.api.location
 
-import com.carrotins.backend.repository.location.DestinationPersonalData
 import com.carrotins.backend.repository.location.DestinationPersonalRankData
 import com.carrotins.backend.service.location.LocationProfileDestinationService
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 @Tag(name = "Location controller")
 @RestController
+@RequestMapping("/api/location/destination")
 class LocationProfileDestinationController (
     private val locationProfileDestinationService: LocationProfileDestinationService
 ) {
-    @GetMapping("/api/location/destination/personal")
+    @GetMapping("/personal")
     fun getDestinationPersonalData(
         @RequestParam("member_id") memberId: String,
         @RequestParam("plyno") plyNo: String,
