@@ -61,12 +61,14 @@ const AddressReturn = (props: Props): React.ReactElement => {
     }[]) => {
         console.log(value);
         setAddrSelectData(value);
+        setLnValue(null);
+        setLtValue(null);
         setButtonDisabled(false);
     };
 
     const handleClickData = () => {
         const queryParams: Record<string, string | null> = {
-            city: addrSelectData,
+            address: addrSelectData,
             ln: lnValue,
             lt: ltValue,
         };
@@ -78,7 +80,6 @@ const AddressReturn = (props: Props): React.ReactElement => {
         console.log(queryString);
         setParameterUrl(queryString);
         setFetchData(true);
-
     };
 
     const onRadioChange = (e) => {
@@ -89,11 +90,13 @@ const AddressReturn = (props: Props): React.ReactElement => {
     const handleLnValue = (e: React.ChangeEvent<HTMLInputElement>) => {
         const {value: inputValue} = e.target;
         setLnValue(inputValue)
+        setAddrSelectData(null)
     };
 
     const handleLtValue = (e: React.ChangeEvent<HTMLInputElement>) => {
         const {value: inputValue} = e.target;
         setLtValue(inputValue)
+        setAddrSelectData(null)
     };
 
     useEffect(() => {

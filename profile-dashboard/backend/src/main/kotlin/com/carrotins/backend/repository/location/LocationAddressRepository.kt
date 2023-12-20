@@ -9,7 +9,7 @@ class LocationAddressRepository (
     private val hiveJdbcTemplate: JdbcTemplate
 
 ){
-    fun getAddressData() : List<LocationAddressData> {
+    fun getAddressData(requestParam: String) : List<LocationAddressData> {
         val query: String = """
              SELECT 
                  address,
@@ -17,6 +17,7 @@ class LocationAddressRepository (
                  geometry
                FROM dw.li_od_trip_test
              WHERE 1=1
+               AND $requestParam
         """.trimIndent()
 
         return hiveJdbcTemplate.query(query) { rs, _ ->
