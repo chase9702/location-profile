@@ -9,22 +9,22 @@ class LocationAddressRepository (
     private val hiveJdbcTemplate: JdbcTemplate
 
 ){
-    fun getAddressData(requestParam: String) : List<LocationAddressData> {
+    fun getAddressData(requestParam: String) : List<LocationAddressBoundaryData> {
         val query: String = """
              SELECT 
                  address,
-                 h3,
-                 geometry
-               FROM dw.li_od_trip_test
+                 h3_geometry as h3,
+                 sd
+               FROM dw.li_geo_boundary
              WHERE 1=1
                AND $requestParam
         """.trimIndent()
 
         return hiveJdbcTemplate.query(query) { rs, _ ->
-            LocationAddressData(
+            LocationAddressBoundaryData(
                 address = transformNullToEmptyString(rs.getString("address")),
                 h3 = transformNullToEmptyString(rs.getString("h3")),
-                geometry = transformNullToEmptyString(rs.getString("geometry")),
+                sd = transformNullToEmptyString(rs.getString("sd")),
             )
         }
     }

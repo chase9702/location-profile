@@ -1,7 +1,8 @@
 package com.carrotins.backend.repository.location
 
-data class LocationAddressData(
+data class LocationAddressBoundaryData(
     val address: String,
     val h3: String,
-    val geometry: String,
+    val sd: String,
 )
+

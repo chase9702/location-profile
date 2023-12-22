@@ -16,6 +16,7 @@ import {RangePickerProps} from "antd/es/date-picker";
 import {NotifyError} from "@src/components/common/Notification";
 import LoadingOutlined from "@ant-design/icons/LoadingOutlined";
 import Spin from "antd/lib/spin";
+import moment from "moment";
 
 
 interface Props {
@@ -160,6 +161,17 @@ const PersonalDestinationStatistics = (props: Props): React.ReactElement => {
         setFormattedMonth(null);
     };
 
+    const disabledRangePickerDate = (current: any) => {
+        const currentDate = moment();
+        const thirtyDaysAgo = currentDate.clone().subtract(60, 'days');
+
+        if (current < thirtyDaysAgo || current > currentDate) {
+            return true;
+        }
+
+        return false;
+    };
+
     const onOk = (value: RangePickerProps['value']) => {
         console.log('onOk: ', value);
     };
@@ -260,8 +272,9 @@ const PersonalDestinationStatistics = (props: Props): React.ReactElement => {
                                     style={{
                                         width: '130%',
                                     }}
-                                    onChange={onRangePickerChange}
                                     format="YYYYMMDD"
+                                    onChange={onRangePickerChange}
+                                    disabledDate={disabledRangePickerDate}
                                     onOk={onOk}
                                 />
                             </Space>
