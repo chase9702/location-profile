@@ -10,11 +10,11 @@ import org.springframework.web.bind.annotation.RestController
 
 @Tag(name = "Location controller")
 @RestController
-@RequestMapping("/api/location")
+@RequestMapping("/api/location/address")
 class LocationProfileAddressController (
     private val locationProfileAddressService: LocationProfileAddressService
 ) {
-    @GetMapping("/address")
+    @GetMapping("/boundary")
     fun getAddressData (
         @RequestParam("sd") sd: String,
         @RequestParam("ln") ln: String,

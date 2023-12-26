@@ -1,5 +1,6 @@
 
 export const addrList = [
+    {value: "gangwon",label: "gangwon"},
     {value: "Seoul",label: "Seoul"},
     {value: "서울특별시",label: "서울특별시"},
     {value: "부산광역시",label: "부산광역시"},
