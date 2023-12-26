@@ -41,9 +41,9 @@ const GroupDestinationStatistics = (props: Props): React.ReactElement => {
         label: string;
     }[]) => {
         console.log(`selected ${value}`);
-        setClickGetData(false);
+        // setClickGetData(false);
         dispatch(setSelectDeviceGb(value))
-        setDeviceGbValue(value);
+        // setDeviceGbValue(value);
     };
 
     const disabledDate = (current: Dayjs) => {

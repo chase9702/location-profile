@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import Button from "antd/lib/button";
 import Card from "antd/lib/card";
 import {personalFilter} from "@src/components/plugControl/types";
@@ -8,7 +8,7 @@ import Select from "antd/lib/select";
 import DatePicker from "antd/lib/date-picker";
 import CustomKeplerMap from "@src/components/common/CustomKeplerMap";
 import Table from "antd/lib/table";
-import {addDataToMap, updateMap, toggleSidePanel} from "kepler.gl/actions";
+import {addDataToMap, updateMap, toggleSidePanel, removeDataset} from "kepler.gl/actions";
 import {store} from "@src/index";
 import {Input, Radio, Space} from "antd";
 import {get} from "@src/api";
@@ -17,10 +17,15 @@ import {NotifyError} from "@src/components/common/Notification";
 import LoadingOutlined from "@ant-design/icons/LoadingOutlined";
 import Spin from "antd/lib/spin";
 import moment from "moment";
+import {processCsvData} from "kepler.gl/processors";
 
 
 interface Props {
 
+}
+
+interface Data {
+    h3cell: string;
 }
 
 const PersonalDestinationStatistics = (props: Props): React.ReactElement => {
@@ -81,6 +86,21 @@ const PersonalDestinationStatistics = (props: Props): React.ReactElement => {
     //     );
     // }, [store.dispatch]);
 
+    const addH3DataKepler = (formattedData: string) => {
+
+        store.dispatch(removeDataset("h3_personal_data"));
+
+        store.dispatch(addDataToMap({
+            datasets: {
+                info: {
+                    label: 'h3 Personal Data',
+                    id: 'h3_personal_data',
+                },
+                data: processCsvData(formattedData),
+            },
+        }));
+    }
+
     useEffect(() => {
         if (fetchData) {
             personalDestinationFetch();
@@ -91,8 +111,9 @@ const PersonalDestinationStatistics = (props: Props): React.ReactElement => {
     const personalDestinationFetch = () => {
         get<[]>(`/api/location/destination/personal/?${parameterUrl}`)
             .then((jsonData) => {
-                console.log(jsonData)
                 setPersonalDestinationData(jsonData);
+                const h3FormattedData = "li_geo_boundary.geometry\n" + h3FormatData(jsonData)
+                addH3DataKepler(h3FormattedData);
             })
             .catch((error) => {
                 NotifyError(error)
@@ -100,6 +121,12 @@ const PersonalDestinationStatistics = (props: Props): React.ReactElement => {
         .finally(() => {
             setpersonalTableLoading(false);
         });
+    };
+
+    const h3FormatData = (data: Data[]): string => {
+        return data.map((item) => {
+            return `"${item.h3cell}"`;
+        }).join('\n');
     };
 
     const handleSelectChange = (value: string, option: { value: string; label: string; } | {
@@ -181,6 +208,11 @@ const PersonalDestinationStatistics = (props: Props): React.ReactElement => {
         setValue(e.target.value);
     };
 
+    const handleAddressClick = useCallback((endH3: string) => {
+        console.log('주소지 클릭:', endH3);
+
+    }, []);
+
     const personalDestinationColumns = [
         {
             title: '주소지',
@@ -204,6 +236,7 @@ const PersonalDestinationStatistics = (props: Props): React.ReactElement => {
             dataIndex: 'end_h3',
             width: 220,
             align: 'center' as const,
+            render: (text: string) => <a onClick={() => handleAddressClick(text)}>{text}</a>,
         },
     ];
 

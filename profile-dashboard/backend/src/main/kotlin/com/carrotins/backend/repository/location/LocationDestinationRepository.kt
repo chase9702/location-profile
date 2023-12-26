@@ -1,5 +1,6 @@
 package com.carrotins.backend.repository.location
 
+import com.carrotins.backend.utils.transformCellToBoundary
 import com.carrotins.backend.utils.transformNullToEmptyString
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Repository
@@ -37,7 +38,7 @@ class LocationDestinationRepository (
         }
     }
 
-//    segment 레파지토리
+//    segment 레파지토리여서 월별 마트 만들어지면 쿼리 수정해야함.
     fun getDestinationSegmentData(queryParams :String): List<DestinationPersonalData> {
     val query: String = """
              SELECT 
@@ -62,7 +63,7 @@ class LocationDestinationRepository (
             dvcId = transformNullToEmptyString(rs.getString("dvc_id")),
             partDt = transformNullToEmptyString(rs.getString("part_dt")),
             endH3 = transformNullToEmptyString(rs.getString("end_h3")),
-        )
+            )
     }
     }
 }

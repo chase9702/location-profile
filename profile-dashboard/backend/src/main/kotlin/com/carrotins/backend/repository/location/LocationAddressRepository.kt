@@ -28,4 +28,23 @@ class LocationAddressRepository (
             )
         }
     }
+
+    fun getAddressH3Data(requestParam: String) : List<LocationAddressH3Data> {
+        val query: String = """
+             SELECT 
+                 address,
+                 h3_geometry as h3,
+                 sd
+               FROM dw.li_h3_to_address
+             WHERE 1=1
+               AND $requestParam
+        """.trimIndent()
+
+        return hiveJdbcTemplate.query(query) { rs, _ ->
+            LocationAddressH3Data(
+                h3 = transformNullToEmptyString(rs.getString("h3")),
+                address = transformNullToEmptyString(rs.getString("address")),
+                )
+        }
+    }
 }

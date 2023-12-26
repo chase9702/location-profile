@@ -1,9 +1,12 @@
 package com.carrotins.backend.service.location
 
+import com.carrotins.backend.repository.location.DestinationPersonalAddH3Data
 import com.carrotins.backend.repository.location.DestinationPersonalData
-import com.carrotins.backend.repository.location.DestinationPersonalRankData
 import com.carrotins.backend.repository.location.LocationDestinationRepository
+import com.carrotins.backend.utils.transformCellToBoundary
+import com.uber.h3core.H3Core
 import org.springframework.stereotype.Service
+
 
 @Service
 class LocationProfileDestinationService (
@@ -16,7 +19,7 @@ class LocationProfileDestinationService (
         month: String,
         startDate: String,
         endDate: String
-    ): List<DestinationPersonalRankData>{
+    ): List<DestinationPersonalAddH3Data>{
 
         val queryParams = listOfNotNull(
             memberId?.takeUnless { it == "null" }?.let { "member_id='$it'" },
@@ -38,20 +41,18 @@ class LocationProfileDestinationService (
             personalData = locationDestinationRepository.getDestinationPersonalData(queryParams)
         }
 
-//        val personalData = locationDestinationRepository.getDestinationPersonalData(queryParams)
-
-        val personalGroupedData = personalData.groupBy { DestinationPersonalRankData(it.memberId, it.plyno, it.dvcId, it.endH3, 0, 0) }
+        val personalGroupedData = personalData.groupBy { DestinationPersonalAddH3Data(it.memberId, it.plyno, it.dvcId, it.endH3,0, 0, transformCellToBoundary(it.endH3)) }
         val personalCountPerGroup = personalGroupedData.mapValues { it.value.size }
         val destinationPersonalRankData = personalCountPerGroup
             .toList()
             .sortedByDescending { it.second }
-            .fold(mutableListOf<DestinationPersonalRankData>()) { acc, (group, count) ->
+            .fold(mutableListOf<DestinationPersonalAddH3Data>()) { acc, (group, count) ->
                 val lastRank = acc.lastOrNull()?.rank ?: 0
                 val rank = if (count == acc.lastOrNull()?.count) lastRank else lastRank + 1
-                acc.add(DestinationPersonalRankData(group.memberId, group.plyno, group.dvcId, group.endH3, count, rank))
+                acc.add(DestinationPersonalAddH3Data(group.memberId, group.plyno, group.dvcId, group.endH3, count, rank, transformCellToBoundary(group.endH3)))
                 acc
             }
-
+        println(destinationPersonalRankData)
         return destinationPersonalRankData
     }
 }

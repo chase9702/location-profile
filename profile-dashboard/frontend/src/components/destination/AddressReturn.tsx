@@ -42,7 +42,7 @@ const AddressReturn = (props: Props): React.ReactElement => {
 
     }, []);
 
-    const addDataKepler = (formattedData: string) => {
+    const addBoundaryDataKepler = (formattedData: string) => {
 
         store.dispatch(removeDataset("boundary_data"));
 
@@ -55,12 +55,27 @@ const AddressReturn = (props: Props): React.ReactElement => {
                 data: processCsvData(formattedData),
             },
         }));
+    }
 
+    const addH3DataKepler = (formattedData: string) => {
+
+        store.dispatch(removeDataset("h3_data"));
+
+        store.dispatch(addDataToMap({
+            datasets: {
+                info: {
+                    label: 'h3 Data',
+                    id: 'h3_data',
+                },
+                data: processCsvData(formattedData),
+            },
+        }));
     }
 
     useEffect(() => {
         if (fetchData) {
             boundaryDataFetch();
+            h3DataFetch();
             setFetchData(false);
         }
     }, [fetchData]);
@@ -68,8 +83,8 @@ const AddressReturn = (props: Props): React.ReactElement => {
     const boundaryDataFetch = () => {
         get<Data[]>(`/api/location/address/boundary/?${parameterUrl}`)
             .then((jsonData) => {
-                const formattedData = "li_geo_boundary.address,li_geo_boundary.geometry,li_geo_boundary.sd\n" + formatData(jsonData)
-                addDataKepler(formattedData);
+                const boundaryFormattedData = "li_geo_boundary.address,li_geo_boundary.geometry,li_geo_boundary.sd\n" + boundaryFormatData(jsonData)
+                addBoundaryDataKepler(boundaryFormattedData);
             })
             .catch((error) => {
                 NotifyError(error)
@@ -79,7 +94,28 @@ const AddressReturn = (props: Props): React.ReactElement => {
             });
     };
 
-    const formatData = (data: Data[]): string => {
+    const h3DataFetch = () => {
+        get<Data[]>(`/api/location/address/h3/?${parameterUrl}`)
+            .then((jsonData) => {
+                const h3FormattedData = "li_geo_boundary.geometry,li_geo_boundary.address\n" + h3FormatData(jsonData)
+                console.log(h3FormattedData);
+                addH3DataKepler(h3FormattedData);
+            })
+            .catch((error) => {
+                NotifyError(error)
+            })
+            .finally(() => {
+
+            });
+    };
+
+    const h3FormatData = (data: Data[]): string => {
+        return data.map((item) => {
+            return `"${item.h3}",${item.address}`;
+        }).join('\n');
+    };
+
+    const boundaryFormatData = (data: Data[]): string => {
         return data.map((item) => {
             return `${item.address},"${item.h3}",${item.sd}`;
         }).join('\n');
