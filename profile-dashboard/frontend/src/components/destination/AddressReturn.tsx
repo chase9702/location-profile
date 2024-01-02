@@ -5,7 +5,7 @@ import Row from "antd/lib/row";
 import Col from "antd/lib/col";
 import Select from "antd/lib/select";
 import CustomKeplerMap from "@src/components/common/CustomKeplerMap";
-import {addDataToMap, removeDataset, updateMap} from "kepler.gl/actions";
+import {addDataToMap, removeDataset, updateMap, wrapTo} from "kepler.gl/actions";
 import {store} from "@src/index";
 import {Input, Radio, Space} from "antd";
 import {get} from "@src/api";
@@ -15,7 +15,6 @@ import {processCsvData} from "kepler.gl/processors";
 import LoadingOutlined from "@ant-design/icons/lib/icons/LoadingOutlined";
 import Spin from "antd/lib/spin";
 import {encodeQueryData} from "@src/common/utils";
-
 
 interface Props {
 
@@ -36,6 +35,8 @@ const AddressReturn = (props: Props): React.ReactElement => {
     const [loading, setLoading] = useState(false);
     const [boundaryKeplerData, setBoundaryKeplerData] = useState("");
     const [h3KeplerData, setH3KeplerData] = useState("");
+
+    const wrapToMap = wrapTo('addrMap')
 
     useEffect(() => {
 
@@ -65,9 +66,6 @@ const AddressReturn = (props: Props): React.ReactElement => {
             .catch((error) => {
                 NotifyError(error)
             })
-            .finally(() => {
-
-            });
     };
 
     const h3DataFetch = (queryString: string) => {
@@ -78,7 +76,6 @@ const AddressReturn = (props: Props): React.ReactElement => {
                     h3FormattedData = "주소지,geometry\n" + h3FormatData(jsonData)
                 }
                 setH3KeplerData(h3FormattedData)
-
             })
             .catch((error) => {
                 NotifyError(error)
@@ -89,43 +86,50 @@ const AddressReturn = (props: Props): React.ReactElement => {
     };
 
     useEffect(() => {
-        console.log("h3")
-        console.log(h3KeplerData)
-        console.log("boundary")
-        console.log(boundaryKeplerData)
         if (h3KeplerData !== "" || boundaryKeplerData !== "") {
             addH3DataKepler(h3KeplerData)
             addBoundaryDataKepler(boundaryKeplerData)
         }
-    }, [h3KeplerData, boundaryKeplerData]);
+        if (lnValue === null || ltValue === null || lnValue === "" || ltValue === "") {
+            setButtonDisabled(true)
+        } else if (lnValue !== "" && ltValue !== "") {
+            setButtonDisabled(false)
+        }
+    }, [h3KeplerData, boundaryKeplerData, lnValue, ltValue]);
 
     const addBoundaryDataKepler = (formattedData: string) => {
         store.dispatch(removeDataset("boundary_data"));
         if (lnValue === null && ltValue === null && formattedData !== "") {
-            store.dispatch(addDataToMap({
-                datasets: {
-                    info: {
-                        label: 'Boundary Data',
-                        id: 'boundary_data',
-                    },
-                    data: processCsvData(formattedData),
-                },
-            }));
+            store.dispatch(
+                wrapToMap(
+                    addDataToMap({
+                        datasets: {
+                            info: {
+                                label: 'Boundary Data',
+                                id: 'boundary_data',
+                            },
+                            data: processCsvData(formattedData),
+                        },
+                    }))
+            );
         }
     }
 
     const addH3DataKepler = (formattedData: string) => {
         store.dispatch(removeDataset("h3_data"));
         if (formattedData !== "") {
-            store.dispatch(addDataToMap({
-                datasets: {
-                    info: {
-                        label: 'h3 Data',
-                        id: 'h3_data',
-                    },
-                    data: processCsvData(formattedData),
-                },
-            }));
+            store.dispatch(
+                wrapToMap(
+                    addDataToMap({
+                        datasets: {
+                            info: {
+                                label: 'h3 Data',
+                                id: 'h3_data',
+                            },
+                            data: processCsvData(formattedData),
+                        },
+                    }))
+            );
         }
     }
 
@@ -145,7 +149,6 @@ const AddressReturn = (props: Props): React.ReactElement => {
         value: string;
         label: string;
     }[]) => {
-        console.log(value);
         setAddrSelectData(value);
         setLnValue(null);
         setLtValue(null);
@@ -184,14 +187,6 @@ const AddressReturn = (props: Props): React.ReactElement => {
         setLtValue(inputValue)
         setAddrSelectData(null)
     };
-
-    useEffect(() => {
-        if (lnValue === null || ltValue === null || lnValue === "" || ltValue === "") {
-            setButtonDisabled(true)
-        } else if (lnValue !== "" && ltValue !== "") {
-            setButtonDisabled(false)
-        }
-    }, [lnValue, ltValue]);
 
     return (
         <div>

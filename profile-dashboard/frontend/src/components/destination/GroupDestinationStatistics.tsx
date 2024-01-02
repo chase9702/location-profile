@@ -21,6 +21,7 @@ import dayjs, {Dayjs} from 'dayjs';
 import {encodeQueryData} from "@src/common/utils";
 import CustomKeplerMap from "@src/components/common/CustomKeplerMap";
 import Table from "antd/lib/table";
+import {wrapTo} from "kepler.gl/actions";
 
 interface Props {
 
@@ -31,6 +32,8 @@ const GroupDestinationStatistics = (props: Props): React.ReactElement => {
     const dateFormat = 'YYYYMMDD';
     const dispatch = useDispatch();
     const [selectedDateValue, setSelectedDateValue] = useState(dayjs().subtract(1, 'day'));
+
+    const wrapToMap = wrapTo('groupMap')
 
     useEffect(() => {
         dispatch(setSelectDate(selectedDateValue.format(dateFormat)))

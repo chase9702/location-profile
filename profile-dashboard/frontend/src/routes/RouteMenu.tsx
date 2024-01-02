@@ -1,5 +1,4 @@
 import React from "react";
-import LocationProfileDashBoard from "@src/pages/locationProfile/LocationProfileDashBoard";
 import PlugProfileDashBoardStatistics from "@src/pages/plugControl/PlugProfileDashBoardStatistics";
 import PlugProfileDashBoardDevice from "@src/pages/plugControl/PlugProfileDashBoardDevice";
 import PlugProfileMap from "@src/pages/plugControl/PlugProfileMap";
