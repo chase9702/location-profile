@@ -18,6 +18,7 @@ import LoadingOutlined from "@ant-design/icons/LoadingOutlined";
 import Spin from "antd/lib/spin";
 import moment from "moment";
 import {processCsvData} from "kepler.gl/processors";
+import {encodeQueryData} from "@src/common/utils";
 
 
 interface Props {
@@ -26,15 +27,16 @@ interface Props {
 
 interface Data {
     h3cell: string;
+    rank: number;
+    count: number;
+    address: string;
 }
 
 const PersonalDestinationStatistics = (props: Props): React.ReactElement => {
 
     const [personalDestinationData, setPersonalDestinationData] = useState([])
-    const [fetchData, setFetchData] = useState(false);
     const [personalValueData, setPersonalValueData] = useState("");
     const [personalSelectData, setPersonalSelectData] = useState("");
-    const [parameterUrl, setParameterUrl] = useState("")
     const [selectedDateValue, setSelectedDateValue] = useState(null);
     const [selectedRangeValue, setSelectedRangeValue] = useState(null);
     const [formattedMonth, setFormattedMonth] = useState(null);
@@ -51,40 +53,7 @@ const PersonalDestinationStatistics = (props: Props): React.ReactElement => {
             latitude: 37.5658, longitude: 126.9889, // 캐롯 좌표
         }))
 
-        /*
-        그냥 초기 데이터 보여주는건데.. 이게 또 없으면 그 add file이 팝업 되서..
-        이 부분은 팝업 안되고 내가 만든 조회 화면이 띄워지게 한다거나
-        아니면 그냥 디폴트 조회로 오늘날짜 기준 무언가를 보여준다거나 해야 할듯?
-         */
     }, []);
-
-    // useEffect(() => {
-    //
-    //     const h3Data = [
-    //         { h3Index: '8a30e1d93037fff', value: 10 },
-    //         { h3Index: '8a30e1d92acffff', value: 10000 },
-    //     ];
-    //
-    //     store.dispatch(
-    //         updateMap({
-    //             datasets: [
-    //                 {
-    //                     data: {
-    //                         fields: [
-    //                             { name: 'h3Index', format: '' },
-    //                             { name: 'value', format: '' },
-    //                         ],
-    //                         rows: h3Data,
-    //                     },
-    //                     info: { label: 'H3 Data', id: 'h3_data' },
-    //                     keplerGl: { type: 'point', config: { dataId: 'h3_data' } },
-    //                 },
-    //             ],
-    //             config: {},
-    //             options: { readOnly: true },
-    //         })
-    //     );
-    // }, [store.dispatch]);
 
     const addH3DataKepler = (formattedData: string) => {
 
@@ -101,34 +70,27 @@ const PersonalDestinationStatistics = (props: Props): React.ReactElement => {
         }));
     }
 
-    useEffect(() => {
-        if (fetchData) {
-            personalDestinationFetch();
-            setFetchData(false);
-        }
-    }, [fetchData, personalValueData]);
-
-    const personalDestinationFetch = () => {
-        get<[]>(`/api/location/destination/personal/?${parameterUrl}`)
+    const personalDestinationFetch = (queryString: string) => {
+        setpersonalTableLoading(true);
+        get<[]>(`/api/location/destination/personal/?${queryString}`)
             .then((jsonData) => {
                 setPersonalDestinationData(jsonData);
-                const h3FormattedData = "li_geo_boundary.geometry\n" + h3FormatData(jsonData)
+                const h3FormattedData = "geometry,Address,Rank,Count\n" + h3FormatData(jsonData)
                 addH3DataKepler(h3FormattedData);
             })
             .catch((error) => {
                 NotifyError(error)
             })
-        .finally(() => {
-            setpersonalTableLoading(false);
-        });
+            .finally(() => {
+                setpersonalTableLoading(false);
+            });
     };
 
     const h3FormatData = (data: Data[]): string => {
         return data.map((item) => {
-            return `"${item.h3cell}"`;
+            return `"${item.h3cell}",${item.address},${item.rank},${item.count}`;
         }).join('\n');
     };
-
     const handleSelectChange = (value: string, option: { value: string; label: string; } | {
         value: string;
         label: string;
@@ -141,34 +103,28 @@ const PersonalDestinationStatistics = (props: Props): React.ReactElement => {
         setPersonalValueData(value);
     };
 
-    const handleClickData = () => {
+    const makeQueryString = () => {
         const queryParams: Record<string, string | null> = {
             member_id: null,
             plyno: null,
             dvc_id: null,
             month: formattedMonth,
-            startDate: formattedStartTime,
-            endDate: formattedEndTime
+            start_date: formattedStartTime,
+            end_date: formattedEndTime
         };
 
         if (personalSelectData === 'member_id') {
             queryParams.member_id = personalValueData;
-            console.log(queryParams);
         } else if (personalSelectData === 'plyno') {
             queryParams.plyno = personalValueData;
         } else if (personalSelectData === 'dvc_id') {
             queryParams.dvc_id = personalValueData;
         }
+        return encodeQueryData(queryParams)
+    }
 
-        // API 쿼리 파리미터 생성
-        const queryString = Object.entries(queryParams)
-            .map(([key, value]) => `${key}=${value}`)
-            .join('&');
-
-        console.log(queryString);
-        setParameterUrl(queryString);
-        setpersonalTableLoading(true);
-        setFetchData(true);
+    const handleClickFetchData = () => {
+        personalDestinationFetch(makeQueryString());
     };
 
     const onDatePickerChange = (value: RangePickerProps['value'], dateString: string,) => {
@@ -192,11 +148,7 @@ const PersonalDestinationStatistics = (props: Props): React.ReactElement => {
         const currentDate = moment();
         const thirtyDaysAgo = currentDate.clone().subtract(60, 'days');
 
-        if (current < thirtyDaysAgo || current > currentDate) {
-            return true;
-        }
-
-        return false;
+        return current < thirtyDaysAgo || current > currentDate;
     };
 
     const onOk = (value: RangePickerProps['value']) => {
@@ -208,35 +160,43 @@ const PersonalDestinationStatistics = (props: Props): React.ReactElement => {
         setValue(e.target.value);
     };
 
-    const handleAddressClick = useCallback((endH3: string) => {
-        console.log('주소지 클릭:', endH3);
+    const extractFirstCoordinate = (polygonString:string) =>{
+        const regex = /POLYGON\(\(\s*([^\s,]+)\s*([^\s,]+)\s*,/;
+        const match = polygonString.match(regex);
 
-    }, []);
+        if (match && match.length === 3) {
+            const longitude = parseFloat(match[1]);
+            const latitude = parseFloat(match[2]);
+            return { longitude, latitude, zoom: 14 };
+        } else {
+            return null; // 매치되는 값이 없을 경우
+        }
+    }
 
     const personalDestinationColumns = [
         {
-            title: '주소지',
+            title: 'Address',
+            dataIndex: 'address',
+            width: 250,
+            align: 'center' as const,
+        },
+        {
+            title: 'Rank',
+            dataIndex: 'rank',
+            width: 100,
+            align: 'center' as const,
+        },
+        {
+            title: 'Count',
+            dataIndex: 'count',
+            width: 100,
+            align: 'center' as const,
+        },
+        {
+            title: 'H3',
             dataIndex: 'end_h3',
             width: 200,
             align: 'center' as const,
-        },
-        {
-            title: '랭크',
-            dataIndex: 'rank',
-            align: 'center' as const,
-        },
-        {
-            title: '카운트',
-            dataIndex: 'count',
-            width: 220,
-            align: 'center' as const,
-        },
-        {
-            title: 'H3좌표',
-            dataIndex: 'end_h3',
-            width: 220,
-            align: 'center' as const,
-            render: (text: string) => <a onClick={() => handleAddressClick(text)}>{text}</a>,
         },
     ];
 
@@ -320,7 +280,7 @@ const PersonalDestinationStatistics = (props: Props): React.ReactElement => {
                             style={{
                                 float: "right",
                             }}
-                            onClick={handleClickData}
+                            onClick={handleClickFetchData}
                             disabled={buttonDisabled}
                         >
                             조회
@@ -329,13 +289,13 @@ const PersonalDestinationStatistics = (props: Props): React.ReactElement => {
                 </Row>
             </Card>
             <Row>
-                <Col span = {15}>
+                <Col span={15}>
                     <CustomKeplerMap
                         heightRatio={70}
                         id={"personalMap"}
                     />
                 </Col>
-                <Col span = {9}>
+                <Col span={9}>
                     <Card>
                         <Spin spinning={personalTableLoading} indicator={<LoadingOutlined/>} tip="로딩 중...">
                             <Table columns={personalDestinationColumns}
@@ -344,11 +304,14 @@ const PersonalDestinationStatistics = (props: Props): React.ReactElement => {
                                    onRow={(record, rowIndex) => {
                                        return {
                                            onClick: (event) => {
-                                               console.log(record)
+                                               console.log(record.h3cell)
+                                               console.log(extractFirstCoordinate(record.h3cell))
+                                               store.dispatch(updateMap(extractFirstCoordinate(record.h3cell)))
+                                               //POLYGON((126.93589717564313 37.494333725241106, 126.93582319423624 37.494953747055895, 126.93522323352242 37.49523218787344, 126.93469726604606 37.49489060783676, 126.93477125639322 37.49427059326881, 126.93537120527665 37.493992151490716))
                                            }, // click row
                                        };
                                    }}
-                                   pagination={{ pageSize: 20 }}
+                                   pagination={{pageSize: 20}}
                             />
                         </Spin>
 
@@ -356,7 +319,7 @@ const PersonalDestinationStatistics = (props: Props): React.ReactElement => {
                 </Col>
             </Row>
         </div>
-)
+    )
 };
 
 export default PersonalDestinationStatistics;

@@ -12,19 +12,26 @@ import org.springframework.web.bind.annotation.RestController
 @Tag(name = "Location controller")
 @RestController
 @RequestMapping("/api/location/destination")
-class LocationProfileDestinationController (
+class LocationProfileDestinationController(
     private val locationProfileDestinationService: LocationProfileDestinationService
 ) {
     @GetMapping("/personal")
     fun getDestinationPersonalData(
-        @RequestParam("member_id") memberId: String,
-        @RequestParam("plyno") plyNo: String,
-        @RequestParam("dvc_id") dvcId: String,
-        @RequestParam("month") month: String,
-        @RequestParam("startDate") startDate: String,
-        @RequestParam("endDate") endDate: String,
-    ): List<DestinationPersonalAddH3Data>{
-        return locationProfileDestinationService.getDestinationPersonalData(memberId, plyNo, dvcId, month, startDate, endDate)
+        @RequestParam("member_id") memberId: Int?,
+        @RequestParam("plyno") plyNo: String?,
+        @RequestParam("dvc_id") dvcId: String?,
+        @RequestParam("month") month: String?,
+        @RequestParam("start_date") startDate: String?,
+        @RequestParam("end_date") endDate: String?,
+    ): List<DestinationPersonalAddH3Data> {
+        return locationProfileDestinationService.getDestinationPersonalData(
+            memberId,
+            plyNo,
+            dvcId,
+            month,
+            startDate,
+            endDate
+        )
     }
 
 }

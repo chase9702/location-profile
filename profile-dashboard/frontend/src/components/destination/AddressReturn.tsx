@@ -5,14 +5,16 @@ import Row from "antd/lib/row";
 import Col from "antd/lib/col";
 import Select from "antd/lib/select";
 import CustomKeplerMap from "@src/components/common/CustomKeplerMap";
-import {addDataToMap, updateMap, removeDataset} from "kepler.gl/actions";
+import {addDataToMap, removeDataset, updateMap} from "kepler.gl/actions";
 import {store} from "@src/index";
 import {Input, Radio, Space} from "antd";
 import {get} from "@src/api";
 import {NotifyError} from "@src/components/common/Notification";
 import {addrList} from "@src/components/destination/const-value";
 import {processCsvData} from "kepler.gl/processors";
-import {useDispatch} from "react-redux";
+import LoadingOutlined from "@ant-design/icons/lib/icons/LoadingOutlined";
+import Spin from "antd/lib/spin";
+import {encodeQueryData} from "@src/common/utils";
 
 
 interface Props {
@@ -26,13 +28,14 @@ interface Data {
 }
 
 const AddressReturn = (props: Props): React.ReactElement => {
-    const [fetchData, setFetchData] = useState(false);
     const [addrSelectData, setAddrSelectData] = useState(null);
-    const [parameterUrl, setParameterUrl] = useState(null)
     const [buttonDisabled, setButtonDisabled] = useState(true);
     const [radioValue, setValue] = useState(1);
     const [lnValue, setLnValue] = useState(null);
     const [ltValue, setLtValue] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const [boundaryKeplerData, setBoundaryKeplerData] = useState("");
+    const [h3KeplerData, setH3KeplerData] = useState("");
 
     useEffect(() => {
 
@@ -42,72 +45,89 @@ const AddressReturn = (props: Props): React.ReactElement => {
 
     }, []);
 
+    const initialData = () => {
+        setLoading(false)
+        setLtValue(null)
+        setLnValue(null)
+        setButtonDisabled(true)
+        setAddrSelectData(null)
+    }
+
+    const boundaryDataFetch = (queryString: string) => {
+        get<Data[]>(`/api/location/address/boundary/?${queryString}`)
+            .then((jsonData) => {
+                let boundaryFormattedData = ""
+                if (jsonData.length !== 0) {
+                    boundaryFormattedData = "주소지,geometry,시/도\n" + boundaryFormatData(jsonData)
+                }
+                setBoundaryKeplerData(boundaryFormattedData)
+            })
+            .catch((error) => {
+                NotifyError(error)
+            })
+            .finally(() => {
+
+            });
+    };
+
+    const h3DataFetch = (queryString: string) => {
+        get<Data[]>(`/api/location/address/h3/?${queryString}`)
+            .then((jsonData) => {
+                let h3FormattedData = ""
+                if (jsonData.length !== 0) {
+                    h3FormattedData = "주소지,geometry\n" + h3FormatData(jsonData)
+                }
+                setH3KeplerData(h3FormattedData)
+
+            })
+            .catch((error) => {
+                NotifyError(error)
+            })
+            .finally(() => {
+                initialData()
+            });
+    };
+
+    useEffect(() => {
+        console.log("h3")
+        console.log(h3KeplerData)
+        console.log("boundary")
+        console.log(boundaryKeplerData)
+        if (h3KeplerData !== "" || boundaryKeplerData !== "") {
+            addH3DataKepler(h3KeplerData)
+            addBoundaryDataKepler(boundaryKeplerData)
+        }
+    }, [h3KeplerData, boundaryKeplerData]);
+
     const addBoundaryDataKepler = (formattedData: string) => {
-
         store.dispatch(removeDataset("boundary_data"));
-
-        store.dispatch(addDataToMap({
-            datasets: {
-                info: {
-                    label: 'Boundary Data',
-                    id: 'boundary_data',
+        if (lnValue === null && ltValue === null && formattedData !== "") {
+            store.dispatch(addDataToMap({
+                datasets: {
+                    info: {
+                        label: 'Boundary Data',
+                        id: 'boundary_data',
+                    },
+                    data: processCsvData(formattedData),
                 },
-                data: processCsvData(formattedData),
-            },
-        }));
+            }));
+        }
     }
 
     const addH3DataKepler = (formattedData: string) => {
-
         store.dispatch(removeDataset("h3_data"));
-
-        store.dispatch(addDataToMap({
-            datasets: {
-                info: {
-                    label: 'h3 Data',
-                    id: 'h3_data',
+        if (formattedData !== "") {
+            store.dispatch(addDataToMap({
+                datasets: {
+                    info: {
+                        label: 'h3 Data',
+                        id: 'h3_data',
+                    },
+                    data: processCsvData(formattedData),
                 },
-                data: processCsvData(formattedData),
-            },
-        }));
-    }
-
-    useEffect(() => {
-        if (fetchData) {
-            boundaryDataFetch();
-            h3DataFetch();
-            setFetchData(false);
+            }));
         }
-    }, [fetchData]);
-
-    const boundaryDataFetch = () => {
-        get<Data[]>(`/api/location/address/boundary/?${parameterUrl}`)
-            .then((jsonData) => {
-                const boundaryFormattedData = "li_geo_boundary.address,li_geo_boundary.geometry,li_geo_boundary.sd\n" + boundaryFormatData(jsonData)
-                addBoundaryDataKepler(boundaryFormattedData);
-            })
-            .catch((error) => {
-                NotifyError(error)
-            })
-            .finally(() => {
-
-            });
-    };
-
-    const h3DataFetch = () => {
-        get<Data[]>(`/api/location/address/h3/?${parameterUrl}`)
-            .then((jsonData) => {
-                const h3FormattedData = "li_geo_boundary.geometry,li_geo_boundary.address\n" + h3FormatData(jsonData)
-                console.log(h3FormattedData);
-                addH3DataKepler(h3FormattedData);
-            })
-            .catch((error) => {
-                NotifyError(error)
-            })
-            .finally(() => {
-
-            });
-    };
+    }
 
     const h3FormatData = (data: Data[]): string => {
         return data.map((item) => {
@@ -132,20 +152,20 @@ const AddressReturn = (props: Props): React.ReactElement => {
         setButtonDisabled(false);
     };
 
-    const handleClickData = () => {
+    const makeQueryString = () => {
         const queryParams: Record<string, string | null> = {
             sd: addrSelectData,
             ln: lnValue,
             lt: ltValue,
         };
+        return encodeQueryData(queryParams)
+    }
 
-        const queryString = Object.entries(queryParams)
-            .map(([key, value]) => `${key}=${value}`)
-            .join('&');
-
-        console.log(queryString);
-        setParameterUrl(queryString);
-        setFetchData(true);
+    const handleClickFetchData = () => {
+        const queryString = makeQueryString()
+        setLoading(true)
+        h3DataFetch(queryString)
+        boundaryDataFetch(queryString)
     };
 
     const onRadioChange = (e) => {
@@ -166,102 +186,107 @@ const AddressReturn = (props: Props): React.ReactElement => {
     };
 
     useEffect(() => {
-        if (lnValue !== "" && ltValue !== "") {
-            setButtonDisabled(false)
-        } else if (lnValue === "" || ltValue === "") {
+        if (lnValue === null || ltValue === null || lnValue === "" || ltValue === "") {
             setButtonDisabled(true)
+        } else if (lnValue !== "" && ltValue !== "") {
+            setButtonDisabled(false)
         }
     }, [lnValue, ltValue]);
 
     return (
         <div>
-            <Card>
-                <Row>
-                    <Col span={2}>
-                        <h3>조회 조건 : </h3>
-                    </Col>
-                    <Col span={4}>
-                        <Radio.Group onChange={onRadioChange} value={radioValue}>
-                            <Space direction="vertical">
-                                <Radio value={1}>시/도</Radio>
-                                <Radio value={2}>좌표</Radio>
-                            </Space>
-                        </Radio.Group>
-                    </Col>
-                    <Col span={8}>
-                        {radioValue === 1 && (
-                            <Select
-                                className={"h3-margin"}
-                                showSearch
-                                placeholder="시/도 선택"
-                                optionFilterProp="children"
-                                style={{
-                                    width: '100%', float: 'left',
-                                }}
-                                onChange={handleSelectChange}
-                                options={addrList}
-                            >
-                                {addrList.map((data, index) => {
-                                    return (
-                                        <Select.Option value={data.value} key={index}>
-                                            {data.value}
-                                        </Select.Option>
-                                    );
-                                })}
-                            </Select>
-                        )}
-                        {radioValue === 2 && (
-                            <Space direction="vertical" size={12} className={"h3-margin"}>
-                                <Row>
-                                    <Col span={2}>
-                                        LN:
-                                    </Col>
-                                    <Col span={10}>
-                                        <Input
-                                            {...props}
-                                            onChange={handleLnValue}
-                                            placeholder="LN 좌표 입력"
-                                            maxLength={16}
-                                        />
-                                    </Col>
-                                    <Col span={2}>
-                                         LT:
-                                    </Col>
-                                    <Col span={10}>
-                                        <Input
-                                            {...props}
-                                            onChange={handleLtValue}
-                                            placeholder="LT 좌표 입력"
-                                            maxLength={16}
-                                        />
-                                    </Col>
-                                </Row>
-                            </Space>
-                        )}
-                    </Col>
-                    <Col span={10}>
-                        <Button
-                            className={"h3-margin"}
-                            type={'primary'}
-                            style={{
-                                float: "right",
-                            }}
-                            onClick={handleClickData}
-                            disabled={buttonDisabled}
-                        >
-                            조회
-                        </Button>
-                    </Col>
-                </Row>
-            </Card>
-            <Row>
-                <Col span={24}>
-                    <CustomKeplerMap
-                        heightRatio={70}
-                        id={"addrMap"}
-                    />
-                </Col>
-            </Row>
+            <Spin spinning={loading} indicator={<LoadingOutlined/>} tip="조회 중...">
+                <div>
+                    <Card>
+                        <Row>
+                            <Col span={2}>
+                                <h3>조회 조건 : </h3>
+                            </Col>
+                            <Col span={4}>
+                                <Radio.Group onChange={onRadioChange} value={radioValue}>
+                                    <Space direction="vertical">
+                                        <Radio value={1}>시/도</Radio>
+                                        <Radio value={2}>좌표</Radio>
+                                    </Space>
+                                </Radio.Group>
+                            </Col>
+                            <Col span={8}>
+                                {radioValue === 1 && (
+                                    <Select
+                                        className={"h3-margin"}
+                                        showSearch
+                                        placeholder="시/도 선택"
+                                        optionFilterProp="children"
+                                        style={{
+                                            width: '100%', float: 'left',
+                                        }}
+                                        onChange={handleSelectChange}
+                                        options={addrList}
+                                    >
+                                        {addrList.map((data, index) => {
+                                            return (
+                                                <Select.Option value={data.value} key={index}>
+                                                    {data.value}
+                                                </Select.Option>
+                                            );
+                                        })}
+                                    </Select>
+                                )}
+                                {radioValue === 2 && (
+                                    <Space direction="vertical" size={12} className={"h3-margin"}>
+                                        <Row>
+                                            <Col span={2}>
+                                                LN:
+                                            </Col>
+                                            <Col span={10}>
+                                                <Input
+                                                    {...props}
+                                                    onChange={handleLnValue}
+                                                    placeholder="LN 좌표 입력"
+                                                    maxLength={16}
+                                                />
+                                            </Col>
+                                            <Col span={2}>
+                                                LT:
+                                            </Col>
+                                            <Col span={10}>
+                                                <Input
+                                                    {...props}
+                                                    onChange={handleLtValue}
+                                                    placeholder="LT 좌표 입력"
+                                                    maxLength={16}
+                                                />
+                                            </Col>
+                                        </Row>
+                                    </Space>
+                                )}
+                            </Col>
+                            <Col span={10}>
+                                <Button
+                                    className={"h3-margin"}
+                                    type={'primary'}
+                                    style={{
+                                        float: "right",
+                                    }}
+                                    onClick={handleClickFetchData}
+                                    disabled={buttonDisabled}
+                                >
+                                    조회
+                                </Button>
+                            </Col>
+                        </Row>
+                    </Card>
+                    <Row>
+                        <Col span={24}>
+
+                            <CustomKeplerMap
+                                heightRatio={70}
+                                id={"addrMap"}
+                            />
+                        </Col>
+                    </Row>
+                </div>
+            </Spin>
         </div>
     )
 };

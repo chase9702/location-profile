@@ -17,19 +17,19 @@ class LocationProfileAddressController (
 ) {
     @GetMapping("/boundary")
     fun getAddressData (
-        @RequestParam("sd") sd: String,
-        @RequestParam("ln") ln: String,
-        @RequestParam("lt") lt: String,
+        @RequestParam("sd") sd: String?,
+        @RequestParam("ln") ln: String?,
+        @RequestParam("lt") lt: String?,
     ): List<LocationAddressBoundaryData> {
-        return locationProfileAddressService.getLocationAddress(sd, ln, lt)
+        return locationProfileAddressService.getBoundaryLocationAddress(sd, ln, lt)
     }
 
     @GetMapping("/h3")
     fun getAddressH3Data (
-        @RequestParam("sd") sd: String,
-        @RequestParam("ln") ln: String,
-        @RequestParam("lt") lt: String,
+        @RequestParam("sd") sd: String?,
+        @RequestParam("ln") ln: String?,
+        @RequestParam("lt") lt: String?,
     ): List<LocationAddressH3Data> {
-        return locationProfileAddressService.getLocationH3Address(sd, ln, lt)
+        return locationProfileAddressService.getH3LocationAddress(sd, ln, lt)
     }
 }
