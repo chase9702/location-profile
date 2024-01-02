@@ -1,4 +1,4 @@
-export const hasPermission = (authRole: string, menuAuth: string): boolean => {
+export const hasPermission = (authRole: string[], menuAuth: string): boolean => {
     let userRole = authRole ?? "GUEST"
 
     if (userRole.includes('ROLE_ADMIN')) {

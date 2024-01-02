@@ -91,6 +91,12 @@ const AuthProvider = ({children}) => {
 
         dispatch(setTokenExpDate(jwtObj.exp))
 
+
+        dispatch(setAuthInfo({
+            userName:jwtObj.pri_username ?? "UNKNOWN",
+            userRole: jwtObj.pri_auth.split(",")
+        }))
+
         window.localStorage.setItem("userName", jwtObj.pri_username ?? "UNKNOWN");
         window.localStorage.setItem("userRole", jwtObj.pri_auth.split(","));
 
