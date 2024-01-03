@@ -14,18 +14,9 @@ data class DestinationPersonalData(
     val address: String,
 )
 
-@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy::class)
-data class DestinationPersonalRankData(
-    val memberId: String,
-    val plyno: String,
-    val dvcId: String,
-    val endH3: String,
-    val count: Int,
-    val rank: Int,
-)
 
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy::class)
-data class DestinationPersonalAddH3Data(
+data class DestinationPersonalPeriodAddH3Data(
     val memberId: String,
     val plyno: String,
     val dvcId: String,
@@ -35,7 +26,20 @@ data class DestinationPersonalAddH3Data(
     val h3cell: String?,
     val address: String?,
 )
-
-//data class DestinationSegmentData(
-//    val endH3: String,
-//)
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy::class)
+data class DestinationPersonalMonthlyData(
+    val memberId: String,
+    val endH3: String,
+    val address: String,
+    val count: Int,
+    val rank: Int,
+)
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy::class)
+data class DestinationPersonalMonthlyAddH3Data(
+    val memberId: String,
+    val endH3: String,
+    val address: String,
+    val h3cell: String?,
+    val count: Int,
+    val rank: Int,
+)

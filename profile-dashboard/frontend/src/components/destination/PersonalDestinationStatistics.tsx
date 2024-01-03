@@ -8,7 +8,7 @@ import Select from "antd/lib/select";
 import DatePicker from "antd/lib/date-picker";
 import CustomKeplerMap from "@src/components/common/CustomKeplerMap";
 import Table from "antd/lib/table";
-import {addDataToMap, updateMap, toggleSidePanel, removeDataset} from "kepler.gl/actions";
+import {addDataToMap, updateMap, toggleSidePanel, removeDataset, wrapTo} from "kepler.gl/actions";
 import {store} from "@src/index";
 import {Input, Radio, Space} from "antd";
 import {get} from "@src/api";
@@ -47,6 +47,8 @@ const PersonalDestinationStatistics = (props: Props): React.ReactElement => {
     const [buttonDisabled, setButtonDisabled] = useState(true);
     const [radioValue, setValue] = useState(1);
 
+    const wrapToMap = wrapTo('personalMap')
+
     useEffect(() => {
 
         store.dispatch(updateMap({
@@ -59,7 +61,8 @@ const PersonalDestinationStatistics = (props: Props): React.ReactElement => {
 
         store.dispatch(removeDataset("h3_personal_data"));
 
-        store.dispatch(addDataToMap({
+        store.dispatch(
+            wrapToMap(addDataToMap({
             datasets: {
                 info: {
                     label: 'h3 Personal Data',
@@ -67,13 +70,14 @@ const PersonalDestinationStatistics = (props: Props): React.ReactElement => {
                 },
                 data: processCsvData(formattedData),
             },
-        }));
+        })));
     }
 
     const personalDestinationFetch = (queryString: string) => {
         setpersonalTableLoading(true);
         get<[]>(`/api/location/destination/personal/?${queryString}`)
             .then((jsonData) => {
+                console.log(jsonData);
                 setPersonalDestinationData(jsonData);
                 const h3FormattedData = "geometry,Address,Rank,Count\n" + h3FormatData(jsonData)
                 addH3DataKepler(h3FormattedData);
@@ -146,8 +150,7 @@ const PersonalDestinationStatistics = (props: Props): React.ReactElement => {
 
     const disabledRangePickerDate = (current: any) => {
         const currentDate = moment();
-        const thirtyDaysAgo = currentDate.clone().subtract(60, 'days');
-
+        const thirtyDaysAgo = currentDate.clone().subtract(120, 'days');
         return current < thirtyDaysAgo || current > currentDate;
     };
 

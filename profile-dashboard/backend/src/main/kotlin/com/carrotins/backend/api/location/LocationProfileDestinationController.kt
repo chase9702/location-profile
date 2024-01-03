@@ -1,7 +1,5 @@
 package com.carrotins.backend.api.location
 
-import com.carrotins.backend.repository.location.DestinationPersonalAddH3Data
-import com.carrotins.backend.repository.location.DestinationPersonalRankData
 import com.carrotins.backend.service.location.LocationProfileDestinationService
 import io.swagger.v3.oas.annotations.tags.Tag
 import org.springframework.web.bind.annotation.GetMapping
@@ -23,7 +21,7 @@ class LocationProfileDestinationController(
         @RequestParam("month") month: String?,
         @RequestParam("start_date") startDate: String?,
         @RequestParam("end_date") endDate: String?,
-    ): List<DestinationPersonalAddH3Data> {
+    ): Any {
         return locationProfileDestinationService.getDestinationPersonalData(
             memberId,
             plyNo,
