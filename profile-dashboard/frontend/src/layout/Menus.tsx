@@ -21,8 +21,8 @@ const Menus = (): React.ReactElement => {
 
     const dispatch = useDispatch();
     const userName = window.localStorage.getItem("userName");
-    const userRole = useSelector((state: StoreState) => state.auth.userRole)
-
+    const userRole = window.localStorage.getItem("userRole");
+    const storedUserRole = useSelector((state: StoreState) => state.auth.userRole)
     const logout = () => {
 
         clearLocalStorage()
@@ -36,9 +36,11 @@ const Menus = (): React.ReactElement => {
         dispatch(setTokenExpDate(0))
         logoutApi()
     }
-    useEffect(() => {
-        renderMenu()
-    }, [userRole])
+
+    useEffect(()=>{
+
+    },[storedUserRole])
+
 
     const renderMenu = () => {
         return (

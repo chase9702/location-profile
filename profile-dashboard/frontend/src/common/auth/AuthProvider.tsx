@@ -90,12 +90,7 @@ const AuthProvider = ({children}) => {
         const jwtObj: any = JwtDecode(response.access_token);
 
         dispatch(setTokenExpDate(jwtObj.exp))
-
-
-        dispatch(setAuthInfo({
-            userName:jwtObj.pri_username ?? "UNKNOWN",
-            userRole: jwtObj.pri_auth.split(",")
-        }))
+        window.localStorage.setItem("expDate", jwtObj.exp);
 
         window.localStorage.setItem("userName", jwtObj.pri_username ?? "UNKNOWN");
         window.localStorage.setItem("userRole", jwtObj.pri_auth.split(","));
@@ -110,8 +105,15 @@ const AuthProvider = ({children}) => {
     const init = () => {
         console.log("************************init*****************")
         const at = window.localStorage.getItem("profileAccessToken");
+        const expDate = window.localStorage.getItem("expDate");
         if (at === null) {
             ssoLogin();
+        } else if(expDate !== null){
+            const currentTimestamp = Math.floor(Date.now() / 1000);
+            if (currentTimestamp > parseInt(expDate, 10)) {
+                clearLocalStorage()
+                logoutApi()
+            }
         }
     };
 
