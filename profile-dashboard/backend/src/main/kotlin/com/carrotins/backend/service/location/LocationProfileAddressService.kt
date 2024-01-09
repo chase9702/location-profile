@@ -12,7 +12,7 @@ class LocationProfileAddressService(
     private val locationAddressRepository: LocationAddressRepository
 ) {
     fun makeQueryParam(sd: String?, ln: String?, lt: String?): String {
-        return if (sd == null) {1717
+        return if (sd == null) {
             val h3AddressData = H3Core.newInstance()
             val h3 = h3AddressData.latLngToCellAddress(lt!!.toDouble(), ln!!.toDouble(), 10)
             "h3_10='$h3'"

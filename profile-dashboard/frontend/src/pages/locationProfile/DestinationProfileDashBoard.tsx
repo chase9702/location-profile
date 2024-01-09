@@ -73,7 +73,7 @@ const DestinationProfileDashBoard = (props: Props): React.ReactElement => {
                     <TabPane tab="그룹 통계" key="2">
                         <GroupDestinationStatistics/>
                     </TabPane>
-                    <TabPane tab="데모?" key="3">
+                    <TabPane tab="데모" key="3">
                         <AddressReturn/>
                     </TabPane>
                 </Tabs>
