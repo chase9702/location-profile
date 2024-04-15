@@ -8,11 +8,11 @@ import {useDispatch, useSelector} from "react-redux";
 import {setSelectMenu} from "@src/actions/MenuSelectAction";
 import './menus.less';
 import {setAccessToken, setAuthInfo, setRefreshToken, setSSOId, setTokenExpDate} from "@src/actions/AuthAction";
-import {StoreState} from "@src/reducers";
 import {hasPermission} from "@src/routes";
 import {Button} from "antd";
 import {clearLocalStorage} from "@src/common/auth/constantValue";
 import {logoutApi} from "@src/common/auth/AuthProvider";
+import {StoreState} from "@src/reducers";
 
 const {SubMenu} = Menu;
 
@@ -22,7 +22,7 @@ const Menus = (): React.ReactElement => {
     const dispatch = useDispatch();
     const userName = window.localStorage.getItem("userName");
     const userRole = window.localStorage.getItem("userRole");
-    const userNameByStore = useSelector((state: StoreState) => state.auth.userName)
+    const storedUserRole = useSelector((state: StoreState) => state.auth.userRole)
     const logout = () => {
 
         clearLocalStorage()
@@ -35,6 +35,35 @@ const Menus = (): React.ReactElement => {
         dispatch(setRefreshToken(null))
         dispatch(setTokenExpDate(0))
         logoutApi()
+    }
+
+    useEffect(()=>{
+
+    },[storedUserRole])
+
+
+    const renderMenu = () => {
+        return (
+            RouteMenu.map((menu) => {
+                return (
+                    hasPermission(userRole, menu.auth) && (
+                        <SubMenu key={menu.key} title={menu.name}>
+                            {menu.submenu &&
+                                menu.submenu.map((sub) => {
+                                    return (
+                                        <Menu.Item key={sub.key}
+                                                   onClick={() => dispatch(setSelectMenu(sub.key))}>
+                                            <span>{sub.name}</span>
+                                            <Link to={sub.to}/>
+                                        </Menu.Item>
+
+                                    );
+                                })}
+                        </SubMenu>
+                    )
+                );
+            })
+        )
     }
 
     return (
@@ -50,26 +79,7 @@ const Menus = (): React.ReactElement => {
                     />
                     <Link to="/"/>
                 </Menu.Item>
-                {RouteMenu.map((menu) => {
-                    return (
-                        hasPermission(userRole, menu.auth) && (
-                            <SubMenu key={menu.key} title={menu.name}>
-                                {menu.submenu &&
-                                    menu.submenu.map((sub) => {
-                                        return (
-                                            <Menu.Item key={sub.key}
-                                                       onClick={() => dispatch(setSelectMenu(sub.key))}>
-                                                <span>{sub.name}</span>
-                                                <Link to={sub.to}/>
-                                            </Menu.Item>
-
-                                        );
-                                    })}
-                            </SubMenu>
-                        )
-                    );
-                })}
-
+                {renderMenu()}
             </Menu>
             {userName !== 'UNKNOWN' ?
                 <Button type="link" icon={<LogoutOutlined/>} className="logout-button" onClick={logout}>

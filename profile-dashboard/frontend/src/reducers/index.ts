@@ -39,6 +39,10 @@ const customizedKeplerGlReducer = keplerGlReducer.initialState({
     mapStyle: {
         mapStyles,
         styleType: 'maptile'
+    },
+    uiState:{
+        activeSidePanel: null,
+        currentModal: null
     }
 });
 

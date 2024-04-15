@@ -54,5 +54,5 @@ export const setTokenExpDate = (expDate: number) => {
 // 액션 타입
 export interface AuthInfo {
     userName: string;
-    userRole: string[];
+    userRole: string[]|string;
 }

@@ -18,4 +18,5 @@ export const clearLocalStorage = () => {
     window.localStorage.removeItem("profileRefreshToken");
     window.localStorage.removeItem("userName");
     window.localStorage.removeItem("userRole");
+    window.localStorage.removeItem("expDate");
 }

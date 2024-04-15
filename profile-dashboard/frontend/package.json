@@ -14,6 +14,7 @@
   "license": "ISC",
   "dependencies": {
     "@ant-design/plots": "^1.2.5",
+    "@jridgewell/source-map": "^0.3.5",
     "@types/react": "^17.0.3",
     "@types/react-dom": "^17.0.3",
     "@types/react-redux": "^7.1.25",
@@ -26,6 +27,7 @@
     "jwt-decode": "^3.1.2",
     "kepler.gl": "^2.5.5",
     "less-loader": "^11.1.0",
+    "moment": "^2.29.4",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-palm": "^3.2.2",

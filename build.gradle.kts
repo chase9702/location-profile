@@ -80,6 +80,8 @@ configure(listOf(project(":profile-dashboard:backend"))) {
         implementation("org.springframework.boot:spring-boot-starter-cache")
         implementation("com.github.ben-manes.caffeine:caffeine:2.9.0")
 
+        implementation("com.uber:h3:4.0.2")
+
         implementation("io.trino:trino-jdbc:431")
 
         implementation("org.springdoc:springdoc-openapi-ui:1.6.11")
