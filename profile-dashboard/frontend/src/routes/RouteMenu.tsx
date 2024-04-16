@@ -3,6 +3,7 @@ import PlugProfileDashBoardStatistics from "@src/pages/plugControl/PlugProfileDa
 import PlugProfileDashBoardDevice from "@src/pages/plugControl/PlugProfileDashBoardDevice";
 import PlugProfileMap from "@src/pages/plugControl/PlugProfileMap";
 import DestinationProfileDashBoard from "@src/pages/locationProfile/DestinationProfileDashBoard";
+import MonitoringDashBoard from "@src/pages/monitoring/MonitoringDashBoard";
 
 
 
@@ -56,6 +57,20 @@ const RouteMenu: MenuInfo[] = [
                 to: '/plug/dashboard/map',
                 component: PlugProfileMap
             },
+        ],
+    },
+    {
+        name: 'Monitoring',
+        key: 'monitor',
+        desc: 'Monitoring 제공.',
+        auth: 'ROLE_DASHBOARD',
+        submenu: [
+            {
+                name: '모니터링 DashBoard',
+                key: 'monitoring-dashboard',
+                to: '/monitoring/dashboard',
+                component: MonitoringDashBoard,
+            }
         ],
     },
 ];
