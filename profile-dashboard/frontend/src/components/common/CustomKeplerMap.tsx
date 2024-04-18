@@ -1,4 +1,4 @@
-import {KeplerGl} from 'kepler.gl';
+import KeplerGl from '@kepler.gl/components';
 import React, {useEffect, useState} from "react";
 
 
