@@ -2,10 +2,10 @@ import React from "react";
 import {BrowserRouter as Router} from 'react-router-dom';
 import {Layout} from 'antd';
 import Menus from "@src/layout/Menus";
-import Pages from "@src/layout/Pages";
 import AuthProvider from "@src/common/auth/AuthProvider";
 import WithTimer from "@src/common/auth/WithTimer";
-
+import {connect} from 'react-redux';
+import Pages from "@src/layout/Pages";
 
 const {Header, Content} = Layout;
 
@@ -24,7 +24,6 @@ const App = () => {
                                 <Pages/>
                             </Content>
                         </Layout>
-
                     </Layout>
                 </Router>
             </WithTimer>
@@ -32,4 +31,7 @@ const App = () => {
 
     );
 };
-export default App;
+const mapStateToProps = state => state;
+const dispatchToProps = dispatch => ({dispatch});
+
+export default connect(mapStateToProps, dispatchToProps)(App);

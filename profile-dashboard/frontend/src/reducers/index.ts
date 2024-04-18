@@ -1,5 +1,5 @@
 import {combineReducers} from 'redux';
-import {keplerGlReducer} from 'kepler.gl/reducers';
+import {keplerGlReducer} from '@kepler.gl/reducers';
 import menuSelectReducer, {MenuSelectState} from "@src/reducers/MenuSelectReducer"
 import authReducer, {AuthState} from "@src/reducers/AuthReducer";
 import deviceReducer, {DeviceState} from "@src/reducers/DeviceReducer";

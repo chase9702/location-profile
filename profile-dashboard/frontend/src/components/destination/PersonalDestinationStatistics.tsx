@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import Button from "antd/lib/button";
 import Card from "antd/lib/card";
 import {personalFilter} from "@src/components/plugControl/types";
@@ -8,7 +8,7 @@ import Select from "antd/lib/select";
 import DatePicker from "antd/lib/date-picker";
 import CustomKeplerMap from "@src/components/common/CustomKeplerMap";
 import Table from "antd/lib/table";
-import {addDataToMap, updateMap, toggleSidePanel, removeDataset, wrapTo} from "kepler.gl/actions";
+import {addDataToMap, removeDataset, updateMap, wrapTo} from "@kepler.gl/actions";
 import {store} from "@src/index";
 import {Input, Radio, Space} from "antd";
 import {get} from "@src/api";
@@ -17,7 +17,7 @@ import {NotifyError} from "@src/components/common/Notification";
 import LoadingOutlined from "@ant-design/icons/LoadingOutlined";
 import Spin from "antd/lib/spin";
 import moment from "moment";
-import {processCsvData} from "kepler.gl/processors";
+import {processCsvData} from "@kepler.gl/processors";
 import {encodeQueryData} from "@src/common/utils";
 
 
