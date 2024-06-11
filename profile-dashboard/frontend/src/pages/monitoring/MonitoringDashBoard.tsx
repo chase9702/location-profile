@@ -28,18 +28,6 @@ const MonitoringDashBoard = (props: Props): React.ReactElement => {
             />
             <Card style={{padding: '10px'}}>
                 <Row gutter={16}>
-                    <Col span={12}>
-                        <div style={{padding: '10px'}}>
-                            <MonitoringMap/>
-                        </div>
-                    </Col>
-                    <Col span={12}>
-                        <div style={{padding: '10px'}}>
-                            <MonitoringRingStatistics/>
-                        </div>
-                    </Col>
-                </Row>
-                <Row gutter={16}>
                     <Col span={24}>
                         <div style={{padding: '10px'}}>
                             <MonitoringLineStatistics/>
@@ -47,14 +35,9 @@ const MonitoringDashBoard = (props: Props): React.ReactElement => {
                     </Col>
                 </Row>
                 <Row gutter={16}>
-                    <Col span={12}>
+                    <Col span={24}>
                         <div style={{padding: '10px'}}>
-                            <MonitoringAddressBarStatistics/>
-                        </div>
-                    </Col>
-                    <Col span={12}>
-                        <div style={{padding: '10px'}}>
-                            <MonitoringColumnStatistics/>
+                            <MonitoringMap/>
                         </div>
                     </Col>
                 </Row>
