@@ -1,7 +1,7 @@
 import React from "react";
 import PageTitle from "@src/components/common/PageTitle";
 import Card from "antd/lib/card";
-import MonitoringMap from "@src/components/monitoring/MonitoringMap";
+import MonitoringTop100 from "@src/components/monitoring/map/MonitoringTop100";
 import MonitoringRingStatistics from "@src/components/monitoring/MonitoringRingStatistics";
 import {Col, Row} from "antd";
 import MonitoringColumnStatistics from "@src/components/monitoring/MonitoringColumnStatistics";
@@ -30,14 +30,14 @@ const MonitoringDashBoard = (props: Props): React.ReactElement => {
                 <Row gutter={16}>
                     <Col span={24}>
                         <div style={{padding: '10px'}}>
-                            <MonitoringLineStatistics/>
+                            {/*<MonitoringLineStatistics/>*/}
                         </div>
                     </Col>
                 </Row>
                 <Row gutter={16}>
                     <Col span={24}>
                         <div style={{padding: '10px'}}>
-                            <MonitoringMap/>
+                            <MonitoringTop100/>
                         </div>
                     </Col>
                 </Row>

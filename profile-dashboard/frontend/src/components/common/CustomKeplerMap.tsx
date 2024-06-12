@@ -7,7 +7,8 @@ interface State {
 
 interface Props {
     id: string,
-    heightRatio: number,
+    heightRatio?: number | null,
+    height?: number | null
 }
 
 const CustomKeplerMap = (props: Props): React.ReactElement => {
@@ -17,8 +18,13 @@ const CustomKeplerMap = (props: Props): React.ReactElement => {
     useEffect(() => {
         const handleResize = () => setHeight(window.innerHeight - 100);
         window.addEventListener('resize', handleResize);
-        setHeight((window.innerHeight - 100) * (props.heightRatio * 0.01));
+        if (props.height) {
+            setHeight(props.height);
+        } else if (props.heightRatio) {
+            setHeight((window.innerHeight - 100) * (props.heightRatio * 0.01));
+        }
         return () => window.removeEventListener('resize', handleResize);
+
     }, []);
 
     return (
