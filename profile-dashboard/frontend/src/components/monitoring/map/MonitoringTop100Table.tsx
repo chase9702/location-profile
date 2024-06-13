@@ -2,12 +2,20 @@ import React, {useRef, useState} from "react";
 import {Button, Card, Col, DatePickerProps, Input, InputRef, Row, Space, TableColumnType} from "antd";
 import TimePicker from "antd/lib/time-picker";
 import DatePicker from "antd/lib/date-picker";
-import {Dayjs} from "dayjs";
+import dayjs, {Dayjs} from "dayjs";
 import {TableProps} from "antd/es/table";
 import Table from "antd/lib/table";
 import {FilterDropdownProps} from "antd/lib/table/interface";
 import {SearchOutlined} from "@ant-design/icons";
 import Highlighter from 'react-highlight-words';
+import {Top100TableDataType} from "@src/components/monitoring/map/data-types";
+import {useDispatch} from "react-redux";
+import {setSelectedTableData} from "@src/actions/MonitoringAction";
+import {now} from "moment";
+import {format} from "url";
+import {RangePickerProps} from "antd/es/date-picker";
+import {get} from "@src/api";
+import {NotifyError} from "@src/components/common/Notification";
 
 type TablePagination<T extends object> = NonNullable<Exclude<TableProps<T>['pagination'], boolean>>;
 type TablePaginationPosition = NonNullable<TablePagination<any>['position']>[number];
@@ -16,34 +24,54 @@ interface Props {
 
 }
 
-interface TableDataType {
-    key: string;
-    addr: string;
-}
 
-type DataIndex = keyof TableDataType;
+
+type DataIndex = keyof Top100TableDataType;
 
 const MonitoringTop100Table = (props: Props): React.ReactElement => {
 
-    const [selectedTime, setSelectedTime] = useState(null);
+    const dispatch = useDispatch();
+    const searchInput = useRef<InputRef>(null);
+
+    const [selectedTime, setSelectedTime] = useState(dayjs(now()));
+    const [selectedDate , setSelectedDate] = useState<Dayjs | null>(dayjs(now()).subtract(1,'day'));
     const [searchText, setSearchText] = useState('');
     const [searchedColumn, setSearchedColumn] = useState('');
-    const searchInput = useRef<InputRef>(null);
     const [bottom, setBottom] = useState<TablePaginationPosition>('bottomCenter');
-    const [selectedTop100, setSelectedTop100] = useState<string>('');
+
+    const [searchLoading , setSearchLoading] = useState<boolean>(false);
 
 
-    const onChange: DatePickerProps['onChange'] = (date, dateString) => {
-        console.log(date, dateString);
+    const handleClickSearch = () =>{
+        console.log('조회')
+        setSearchLoading(true);
+
+        get<[]>(`/api//destination/personal/?${queryString}`)
+            .then((jsonData) => {
+                console.log(jsonData);
+
+            })
+            .catch((error) => {
+                NotifyError(error)
+            })
+            .finally(() => {
+                setSearchLoading(false);;
+            });
+
+    }
+
+    const handleDatePickerChange: DatePickerProps['onChange'] = (date:Dayjs, dateString) => {
+        setSelectedDate(date);
     };
-
 
     const handleTimePickerChange = (date: Dayjs, dateString: string | string[]) => {
-        console.log(date)
-
-        // setSelectedTime(time);
+        setSelectedTime(dayjs(date));
     };
 
+    const disabledDate: RangePickerProps['disabledDate'] = (current) => {
+        console.log(dayjs().endOf('day'))
+        return current && current >= dayjs().startOf('day');
+    };
 
     const handleSearch = (
         selectedKeys: string[],
@@ -63,7 +91,7 @@ const MonitoringTop100Table = (props: Props): React.ReactElement => {
         confirm();
     };
 
-    const getColumnSearchProps = (dataIndex: DataIndex): TableColumnType<TableDataType> => ({
+    const getColumnSearchProps = (dataIndex: DataIndex): TableColumnType<Top100TableDataType> => ({
         filterDropdown: ({setSelectedKeys, selectedKeys, confirm, clearFilters, close}) => (
             <div style={{padding: 8}} onKeyDown={(e) => e.stopPropagation()}>
                 <Input
@@ -129,7 +157,7 @@ const MonitoringTop100Table = (props: Props): React.ReactElement => {
             ),
     });
 
-    const columns: TableProps<TableDataType>['columns'] = [
+    const columns: TableProps<Top100TableDataType>['columns'] = [
         {
             title: '주소',
             dataIndex: 'addr',
@@ -139,7 +167,7 @@ const MonitoringTop100Table = (props: Props): React.ReactElement => {
         },
     ];
 
-    const data: TableDataType[] = [];
+    const data: Top100TableDataType[] = [];
 
     for (let i = 0; i < 100; i++) {
         data.push({
@@ -161,10 +189,17 @@ const MonitoringTop100Table = (props: Props): React.ReactElement => {
                             showMinute={false}
                             showSecond={false}
                             hourStep={1}
-                            // options={hourOptions}
+                            needConfirm={false}
                         />
-                        <DatePicker/>
-                        <Button>
+                        <DatePicker
+                            value={selectedDate}
+                            onChange={handleDatePickerChange}
+                            disabledDate={disabledDate}
+                        />
+                        <Button
+                            onClick={handleClickSearch}
+                            loading={searchLoading}
+                        >
                             조회
                         </Button>
                     </Space>
@@ -181,8 +216,7 @@ const MonitoringTop100Table = (props: Props): React.ReactElement => {
                             onRow={(record, rowIndex) => {
                                 return {
                                     onClick: (event) => {
-                                        console.log(record)
-                                        setSelectedTop100(record.addr)
+                                        dispatch(setSelectedTableData(record))
                                     }, // click row
 
                                 };

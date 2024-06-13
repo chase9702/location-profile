@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {lazy, Suspense, useEffect, useState} from "react";
 import Button from "antd/lib/button";
 import Card from "antd/lib/card";
 import {useDispatch} from "react-redux";
@@ -9,9 +9,10 @@ import Select from "antd/lib/select";
 import {setSelectDate, setSelectDeviceGb} from "@src/actions/DeviceAction";
 import DatePicker from "antd/lib/date-picker";
 import dayjs, {Dayjs} from 'dayjs';
-import CustomKeplerMap from "@src/components/common/CustomKeplerMap";
 import Table from "antd/lib/table";
 import {wrapTo} from "@kepler.gl/actions";
+
+const CustomKeplerMap = lazy(() => import("@src/components/common/CustomKeplerMap"));
 
 interface Props {
 
@@ -121,10 +122,12 @@ const GroupDestinationStatistics = (props: Props): React.ReactElement => {
                     </Col>
                 </Row>
             </Card>
-            <CustomKeplerMap
-                heightRatio={70}
-                id={"groupMap"}
-            />
+            <Suspense fallback={<div>Loading Map...</div>}>
+                <CustomKeplerMap
+                    heightRatio={70}
+                    id={"groupMap"}
+                />
+            </Suspense>
             <Card>
                 <Table columns={columns}
                        dataSource={[]}

@@ -1,15 +1,14 @@
 const path = require('path');
 const Dotenv = require('dotenv-webpack');
 const crypto = require('crypto');
-
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
-
-
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const webpack = require('webpack');
 const theme = require('./theme');
-const {ProvidePlugin} = require("webpack");
+const { ProvidePlugin } = require("webpack");
 
 module.exports = (env, options) => {
     const outputPath = path.resolve(__dirname, 'build');
@@ -32,21 +31,16 @@ module.exports = (env, options) => {
             minimize: isProduction,
             minimizer: [
                 new CssMinimizerPlugin(),
-                isProduction
-                    ? new TerserPlugin({
-                        terserOptions: {
-                            compress: {
-                                drop_console: true,
-                            },
+                new TerserPlugin({
+                    terserOptions: {
+                        compress: {
+                            drop_console: true,
                         },
-                    })
-                    : null,
-            ].filter(Boolean),
+                    },
+                }),
+            ],
             splitChunks: {
                 cacheGroups: {
-                    default: false,
-                    vendors: false,
-                    defaultVendors: false,
                     core: {
                         test: /[\\/]node_modules[\\/](react|react-dom|react-router-dom)[\\/]/,
                         name: 'core',
@@ -96,11 +90,11 @@ module.exports = (env, options) => {
                     },
                     lib: {
                         test(module) {
-                            return (module.size() > 80000 && /node_modules[/\\]/.test(module.identifier()));
+                            return module.size() > 80000 && /node_modules[\\/]/.test(module.identifier());
                         },
                         name(module) {
                             const hash = crypto.createHash('sha1');
-                            hash.update(module.libIdent({context: __dirname}));
+                            hash.update(module.libIdent({ context: __dirname }));
                             return `common.${hash.digest('hex').substring(0, 8)}`;
                         },
                         chunks: 'all',
@@ -115,7 +109,8 @@ module.exports = (env, options) => {
                         priority: 10
                     }
                 }
-            }
+            },
+            runtimeChunk: 'single',
         },
         resolve: {
             extensions: ['.ts', '.tsx', '.js', '.jsx'],
@@ -135,29 +130,15 @@ module.exports = (env, options) => {
                 {
                     test: /\.css$/,
                     use: [
-                        {
-                            loader: 'style-loader'
-                        },
-                        {
-                            loader: 'css-loader',
-                            options: {
-                                sourceMap: true
-                            }
-                        }
+                        'style-loader',
+                        'css-loader',
                     ]
                 },
                 {
                     test: /\.less$/,
                     use: [
-                        {
-                            loader: 'style-loader'
-                        },
-                        {
-                            loader: 'css-loader',
-                            options: {
-                                sourceMap: true
-                            }
-                        },
+                        'style-loader',
+                        'css-loader',
                         {
                             loader: 'less-loader', // compiles less to css
                             options: {
@@ -188,33 +169,45 @@ module.exports = (env, options) => {
             new Dotenv(),
             new HtmlWebpackPlugin({
                 template: './public/index.html',
-                filename: path.resolve(outputPath, 'index.html')
+                filename: path.resolve(outputPath, 'index.html'),
+                inject: true,
+                chunksSortMode: 'auto',
             }),
             new ProvidePlugin({
                 process: 'process/browser',
+            }),
+            new CleanWebpackPlugin(),
+            new webpack.IgnorePlugin({
+                resourceRegExp: /^\.\/locale$/,
+                contextRegExp: /moment$/
+            }),
+            new BundleAnalyzerPlugin({
+                analyzerMode: 'static',
+                reportFilename: path.resolve(__dirname, 'build/bundle-report.html'),
+                openAnalyzer: false,
+                generateStatsFile: true,
+                statsFilename: path.resolve(outputPath, 'stats.json'),
+                statsOptions: { source: false }
             }),
         ],
     };
 
     if (config.mode === 'development') {
-        config.plugins = [
-            ...config.plugins,
+        config.plugins.push(
             new BundleAnalyzerPlugin({
                 openAnalyzer: false
             })
-        ];
+        );
 
         config.devServer = {
             static: {
-                directory: outputPath // 정적 파일 경로
+                directory: outputPath,
             },
             host: 'localhost',
             port: 3000,
-            // open: true,
             historyApiFallback: true,
             proxy: [{
                 context: ['/api', '/login', '/logout'],
-                // context: ['/api'],
                 target: 'http://localhost:8080',
                 secure: false
             }],
@@ -222,7 +215,6 @@ module.exports = (env, options) => {
                 'Access-Control-Allow-Origin': '*',
                 'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, PATCH, OPTIONS',
                 'Access-Control-Allow-Headers': 'X-Requested-With, content-type, Authorization',
-                // https: true
             }
         };
         config.devtool = 'inline-source-map';

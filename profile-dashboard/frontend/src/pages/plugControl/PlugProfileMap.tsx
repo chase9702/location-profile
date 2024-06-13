@@ -1,10 +1,12 @@
-import React, {useEffect, useState} from "react";
+import React, {lazy, Suspense, useEffect, useState} from "react";
 import {Card} from "antd";
 import PageTitle from "@src/components/common/PageTitle";
 import {addDataToMap, updateMap} from "@kepler.gl/actions";
 import {store} from "@src/index";
 import {processCsvData} from "@kepler.gl/processors";
-import CustomKeplerMap from "@src/components/common/CustomKeplerMap";
+
+const CustomKeplerMap = lazy(() => import("@src/components/common/CustomKeplerMap"));
+
 
 interface State {
 }
@@ -51,10 +53,13 @@ const PlugProfileMap = (props: Props): React.ReactElement => {
 
             />
             <Card>
-                <CustomKeplerMap
-                    heightRatio={70}
-                    id={"plugMap"}
-                />
+                <Suspense fallback={<div>Loading Map...</div>}>
+                    <CustomKeplerMap
+                        heightRatio={70}
+                        id={"plugMap"}
+                    />
+                </Suspense>
+
             </Card>
 
         </div>
