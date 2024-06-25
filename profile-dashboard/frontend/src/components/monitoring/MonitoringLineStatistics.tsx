@@ -13,6 +13,7 @@ const MonitoringLineStatistics = (props: Props): React.ReactElement => {
     useEffect(() => {
         asyncFetch();
     }, []);
+
     const asyncFetch = () => {
         fetch('https://gw.alipayobjects.com/os/bmw-prod/c48dbbb1-fccf-4a46-b68f-a3ddb4908b68.json')
             .then((response) => response.json())

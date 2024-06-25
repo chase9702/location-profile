@@ -8,9 +8,6 @@ import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 import java.util.*
 
-/**
- * Created by alvin on 2023/09/13.
- */
 @Tag(name = "Plug device controller")
 @RestController
 @RequestMapping("/api/plug/device")

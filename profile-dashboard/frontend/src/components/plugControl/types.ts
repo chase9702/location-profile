@@ -26,7 +26,62 @@ export const personalFilter = [
     {value: 'member_id', label: 'MEMBER ID'},
     {value: 'plyno', label: 'PLYNO'},
     {value: 'dvc_id', label: 'DIVC ID'},
+    {value: 'dvc_id', label: 'DIVC ID'},
+    {value: 'dvc_id', label: 'DIVC ID'},
 ]
+
+export const bbiMetricFilter = [
+    {value: 'total', label: 'Metric 전체'},
+    {value: 'loss', label: '유실율'},
+    {value: 'abn_loc', label: '이상위치'},
+    {value: 'abn_sp', label: '이상속도(전)'},
+    {value: 'abn_fs', label: '이상속도(후)'},
+    {value: 'fseg', label: 'dt>2 이상'},
+]
+
+export const bbiUnitFilter = [
+    {value: 'trip_id', label: 'trip'},
+    {value: 'dvc_id', label: 'dvc_id'},
+    {value: 'member_id', label: 'mem_id'},
+]
+
+export const bbiThresholdFilter = [
+    {value: 'total', label: 'Threshold 전체'},
+    {value: '0_1', label: '0.1'},
+    {value: '0_3', label: '0.3'},
+    {value: '0_5', label: '0.5'},
+    {value: '0_7', label: '0.7'},
+    {value: '0_9', label: '0.9'},
+]
+
+export const aiUnitFilter = [
+    {value: 'trip_id', label: 'trip'},
+    {value: 'dvc_id', label: 'dvc_id'},
+    {value: 'member_id', label: 'mem_id'},
+]
+
+export const bbiBehaviorFilter = [
+    {value: 'total_bbi', label: 'BBI 전체'},
+    {value: 'sac', label: '급가속'},
+    {value: 'sdc', label: '급감속'},
+    {value: 'sst', label: '급출발'},
+    {value: 'ssp', label: '급정지'},
+]
+
+export const aiLevelFilter = [
+    {value: '전체', label: '전체'},
+    {value: 'level1', label: 'Level 1'},
+    {value: 'level2', label: 'Level 2'},
+]
+
+export const aiStatusFilter = [
+    {value: '', label: '전체'},
+    {value: '99', label: '99'},
+    {value: '300', label: '300'},
+    {value: '301', label: '301'},
+    {value: '400', label: '400'},
+]
+
 export const deviceTop100Data = [
     "dvc_id",
     "plyno",
@@ -145,3 +200,4 @@ export const deviceTripData = [
 ]
 
 export const boxPlotField = ['max', 'mean+1std' , 'mean', 'mean-1std', 'min' ]
+
