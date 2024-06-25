@@ -3,7 +3,9 @@ package com.carrotins.backend.repository
 import com.carrotins.backend.repository.location.LocationAddressBoundaryData
 import com.carrotins.backend.utils.transformNullToEmptyString
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.exc.MismatchedInputException
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+
 import com.fasterxml.jackson.module.kotlin.readValue
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Repository
@@ -103,22 +105,58 @@ class MapMonitoringRepository(
                 seriousCnt = rs.getLong("serious_cnt"),
                 slightCnt = rs.getLong("slight_cnt"),
                 totalCnt = rs.getLong("total_cnt"),
-                violationCnt = parseViolationData(rs.getString("violation_cnt")),
-                violationRatio = parseViolationRatio(rs.getString("violation_ratio"))
+                violationCnt = parseViolationData(cleanJsonString(rs.getString("violation_cnt"))),
+                violationRatio = parseViolationRatio(cleanJsonString(rs.getString("violation_ratio")))
             )
         }
     }
 
+    fun cleanJsonString(jsonString: String): String {
+        // Add additional cleaning logic if needed
+        var cleanedString = jsonString.trim()
+        if (!cleanedString.startsWith("{")) {
+            val startIndex = cleanedString.indexOf("{")
+            if (startIndex != -1) {
+                cleanedString = cleanedString.substring(startIndex)
+            }
+        }
+        if (!cleanedString.endsWith("}")) {
+            val endIndex = cleanedString.lastIndexOf("}")
+            if (endIndex != -1) {
+                cleanedString = cleanedString.substring(0, endIndex + 1)
+            }
+        }
+        return cleanedString.replace("'", "\"")
+    }
 
     fun parseViolationData(jsonString: String): Map<String, Int> {
-        val mapper = jacksonObjectMapper()
-        return mapper.readValue(jsonString)
+        println("Original violationCnt string: $jsonString")
+        return try {
+            objectMapper.readValue(cleanJsonString(jsonString))
+        } catch (e: MismatchedInputException) {
+            println("Error parsing violationCnt: ${e.message}")
+            emptyMap()
+        } catch (e: Exception) {
+            println("Error parsing violationCnt: ${e.message}")
+            emptyMap()
+        }
     }
 
     fun parseViolationRatio(jsonString: String): Map<String, Double> {
-        val mapper = jacksonObjectMapper()
-        return mapper.readValue(jsonString)
+        println("Original violationRatio string: $jsonString")
+        return try {
+            objectMapper.readValue(cleanJsonString(jsonString))
+        } catch (e: MismatchedInputException) {
+            println("Error parsing violationRatio: ${e.message}")
+            emptyMap()
+        } catch (e: Exception) {
+            println("Error parsing violationRatio: ${e.message}")
+            emptyMap()
+        }
     }
+
+
+
 
     fun getAiMapData(addrCd: String, hour: String, date: String): List<Top100AiMapData> {
 

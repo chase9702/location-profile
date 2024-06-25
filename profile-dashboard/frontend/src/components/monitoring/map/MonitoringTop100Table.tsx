@@ -19,6 +19,7 @@ import {NotifyError} from "@src/components/common/Notification";
 import Dropdown from "antd/lib/dropdown/dropdown";
 import {MenuProps} from "antd/lib";
 import {encodeQueryData} from "@src/common/utils";
+import './map.css';
 
 type TablePagination<T extends object> = NonNullable<Exclude<TableProps<T>['pagination'], boolean>>;
 type TablePaginationPosition = NonNullable<TablePagination<any>['position']>[number];
@@ -43,6 +44,8 @@ const MonitoringTop100Table = (props: Props): React.ReactElement => {
     const [selectedFilter, setSelectedFilter] = useState('total_bbi')
     const [searchLoading, setSearchLoading] = useState<boolean>(false);
     const [top100DataList, setTop100DataList] = useState<Top100TableDataType[]>([]);
+
+    const [selectedRowIndex, setSelectedRowIndex] = useState(null);
 
     const makeQueryString = () => {
         const queryParams: Record<string, string | null> = {
@@ -174,7 +177,6 @@ const MonitoringTop100Table = (props: Props): React.ReactElement => {
             dataIndex: 'rank',
             key: 'rank',
             align: 'center',
-            ...getColumnSearchProps('rank')
         },
         {
             title: '주소',
@@ -188,7 +190,6 @@ const MonitoringTop100Table = (props: Props): React.ReactElement => {
             dataIndex: 'behavior_value',
             key: 'behavior_value',
             align: 'center',
-            ...getColumnSearchProps('behavior_value')
         },
     ];
 
@@ -246,9 +247,13 @@ const MonitoringTop100Table = (props: Props): React.ReactElement => {
                             dataSource={top100DataList}
                             scroll={{y: 550}}
                             pagination={{position: [bottom]}}
+                            rowClassName={(record, index) => {
+                                return index === selectedRowIndex ? 'selected-row' : '';
+                            }}
                             onRow={(record, rowIndex) => {
                                 return {
                                     onClick: (event) => {
+                                        setSelectedRowIndex(rowIndex);
                                         dispatch(setSelectedTableData(record))
                                     }, // click row
 

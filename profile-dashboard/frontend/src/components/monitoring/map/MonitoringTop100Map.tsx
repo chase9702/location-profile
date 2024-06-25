@@ -169,12 +169,10 @@ const MonitoringTop100Map = (props: Props): React.ReactElement => {
 
     useEffect(() => {
 
-        console.log("------------> selected data --------------------->")
         if (selectedTop100 !== null) {
-            console.log("------------> selected data ---------------------!!!!!!!!!!!!!!!!>")
             handleSearchBBIMapData()
             // handleSearchAIMapData()
-            // handleSearchPublicMapData()
+            handleSearchPublicMapData()
         }
     }, [selectedTop100])
 
@@ -191,14 +189,32 @@ const MonitoringTop100Map = (props: Props): React.ReactElement => {
                 }
             })));
         }
-    }, [csvFormattedBBIData]);
+        if (csvFormattedPublicData.length !== 0) {
+            store.dispatch(removeDataset(publicDataId));
+            store.dispatch(wrapToMap(addDataToMap({
+                datasets: {
+                    info: {
+                        label: 'Public',
+                        id: publicDataId
+                    },
+                    data: processCsvData(csvFormattedPublicData)
+                }
+            })));
+
+        }
+        if (csvFormattedAIData.length !== 0) {
+            store.dispatch(removeDataset(aiDataId));
+        }
+
+
+    }, [csvFormattedBBIData, csvFormattedPublicData, csvFormattedAIData]);
 
     const bbiH3FormatData = (data: Data[]): string => {
         if (data.length === 0) {
             return '';
         }
         return data.map((item) => {
-            return `"${item.sst},${item.sac},${item.ssp},${item.sdc},${item.total_bbi}`;
+            return `${item.sst},${item.sac},${item.ssp},${item.sdc},${item.total_bbi},"${item.hex}"`;
         }).join('\n');
     };
 
@@ -207,7 +223,7 @@ const MonitoringTop100Map = (props: Props): React.ReactElement => {
             return '';
         }
         return data.map((item) => {
-            return `"${item.serious_cnt},${item.slight_cnt},${item.total_cnt}`;
+            return `${item.seriousCnt},${item.slightCnt},${item.totalCnt},"${item.hex}"`;
         }).join('\n');
     };
 
@@ -216,7 +232,7 @@ const MonitoringTop100Map = (props: Props): React.ReactElement => {
             return '';
         }
         return data.map((item) => {
-            return `"${item.sst},${item.sac},${item.ssp},${item.sdc},${item.total_bbi}`;
+            return `${item.sst},${item.sac},${item.ssp},${item.sdc},${item.total_bbi},"${item.hex}"`;
         }).join('\n');
     };
 
@@ -233,7 +249,7 @@ const MonitoringTop100Map = (props: Props): React.ReactElement => {
         get<MapBBIHexData[]>(`/api/monitoring/map/bbi?${mapQuery()}`)
             .then((jsonData) => {
                 console.log(jsonData);
-                const csvData = "SST, SAC, SSP, SDC, TOTAL_BBI  \n" + bbiH3FormatData(jsonData)
+                const csvData = "SST, SAC, SSP, SDC, TOTAL_BBI, HEX  \n" + bbiH3FormatData(jsonData)
                 setCSVFormattedBBIData(csvData)
                 setBbiHexDataList(jsonData)
             })
@@ -251,7 +267,7 @@ const MonitoringTop100Map = (props: Props): React.ReactElement => {
             .then((jsonData) => {
                 console.log(jsonData);
                 setAiHexDataList(jsonData)
-                const csvData = "H3,주소,SST, SAC, SSP, SDC , TOTAL_BBI  \n" + aiH3FormatData(jsonData)
+                const csvData = "SST, SAC, SSP, SDC , TOTAL_BBI, HEX  \n" + aiH3FormatData(jsonData)
 
 
             })
@@ -279,16 +295,8 @@ const MonitoringTop100Map = (props: Props): React.ReactElement => {
             .then((jsonData) => {
                 console.log(jsonData);
                 setPublicHexDataList(jsonData)
-                const csvData = "H3,주소,SERIOUS_CNT, SLIGHT_CNT, TOTAL_CNT  \n" + publicH3FormatData(jsonData)
-                store.dispatch(wrapToMap(addDataToMap({
-                    datasets: {
-                        info: {
-                            label: 'Public',
-                            id: publicDataId
-                        },
-                        data: processCsvData(csvData)
-                    }
-                })));
+                const csvData = "SERIOUS_CNT, SLIGHT_CNT, TOTAL_CNT, HEX  \n" + publicH3FormatData(jsonData)
+                setCSVFormattedPublicData(csvData)
 
             })
             .catch((error) => {

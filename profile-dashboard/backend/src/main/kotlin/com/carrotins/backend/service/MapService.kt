@@ -1,6 +1,7 @@
 package com.carrotins.backend.service
 
 import com.carrotins.backend.repository.*
+import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Service
 
 /**
@@ -10,8 +11,9 @@ import org.springframework.stereotype.Service
 class MapService(
     private val mapMonitoringRepository: MapMonitoringRepository
 ) {
-    fun getTop100Data(behavior: String, hour: String, date: String): List<Top100TableData> {
 
+    @Cacheable("cacheTop100Table")
+    fun getTop100Data(behavior: String, hour: String, date: String): List<Top100TableData> {
         return mapMonitoringRepository.getTop100data(hour = hour, date = date, behavior = behavior)
     }
 
