@@ -1,13 +1,12 @@
 package com.carrotins.backend.api
 
-import com.carrotins.backend.repository.BbiMapData
+import com.carrotins.backend.repository.Top100AiMapData
+import com.carrotins.backend.repository.Top100BBIMapData
+import com.carrotins.backend.repository.Top100PublicMapData
 import com.carrotins.backend.repository.Top100TableData
 import com.carrotins.backend.service.MapService
 import org.springframework.security.access.prepost.PreAuthorize
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 /**
  * Created by alvin on 2024. 6. 13..
@@ -16,21 +15,49 @@ import org.springframework.web.bind.annotation.RestController
 @PreAuthorize("hasAnyAuthority('ROLE_DASHBOARD')")
 @RequestMapping("/api/monitoring/map")
 class MapMonitoringController(
-   private val mapService: MapService
+    private val mapService: MapService
 ) {
-    @GetMapping("/top100")
+    @GetMapping("/top100/{behavior}")
     fun getTop100Data(
-        @RequestParam("hour") hour: String?,
-        @RequestParam("date") date: String?,
-    ):List<Top100TableData>{
-        return mapService.getTop100Data(hour, date)
+        @PathVariable("behavior") behavior: String,
+        @RequestParam("hour") hour: String,
+        @RequestParam("part_dt") partDt: String,
+    ): List<Top100TableData> {
+        return mapService.getTop100Data(behavior, hour, partDt)
     }
 
     @GetMapping("/bbi")
-    fun getMonitoringMapData(
-        @RequestParam("address") address: String?,
-    ):List<BbiMapData>{
-        return mapService.getMonitoringMapData(address)
+    fun getMonitoringBBIMapData(
+        @RequestParam("addr_cd") addrCd: String,
+        @RequestParam("hour") hour: String,
+        @RequestParam("part_dt") partDt: String,
+    ): List<Top100BBIMapData> {
+        return mapService.getMonitoringBBIMapData(addrCd, hour, partDt)
+    }
+
+//    @GetMapping("/carrot")
+//    fun getMonitoringCarrotMapData(
+//        @RequestParam("addr_cd") addrCd: String,
+//        @RequestParam("hour") hour: String,
+//        @RequestParam("part_dt") partDt: String,
+//    ): List<Top100CarrotMapData> {
+//        return mapService.getMonitoringCarrotMapData(addrCd, hour, partDt)
+//    }
+//
+    @GetMapping("/ai")
+    fun getMonitoringAiMapData(
+        @RequestParam("addr_cd") addrCd: String,
+        @RequestParam("hour") hour: String,
+        @RequestParam("part_dt") partDt: String,
+    ): List<Top100AiMapData> {
+        return mapService.getMonitoringAiMapData(addrCd, hour, partDt)
+    }
+
+    @GetMapping("/public")
+    fun getMonitoringPublicMapData(
+        @RequestParam("addr_cd") addrCd: String,
+    ): List<Top100PublicMapData> {
+        return mapService.getMonitoringPublicMapData(addrCd)
     }
 
 }

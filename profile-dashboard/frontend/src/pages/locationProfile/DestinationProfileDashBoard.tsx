@@ -1,14 +1,9 @@
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import {downloadFileFromFrontendData} from "@src/common/file-download";
 import {NotifyError} from "@src/components/common/Notification";
 import PageTitle from "@src/components/common/PageTitle";
-import {addDataToMap, updateMap} from "kepler.gl/actions";
-import {store} from "@src/index";
-import {processCsvData} from "kepler.gl/processors";
 import Tabs from "antd/lib/tabs";
 import TabPane from "antd/es/tabs/TabPane";
-import Spin from "antd/lib/spin";
-import LoadingOutlined from "@ant-design/icons/LoadingOutlined";
 import Card from "antd/lib/card";
 import PersonalDestinationStatistics from "@src/components/destination/PersonalDestinationStatistics";
 import GroupDestinationStatistics from "@src/components/destination/GroupDestinationStatistics";
