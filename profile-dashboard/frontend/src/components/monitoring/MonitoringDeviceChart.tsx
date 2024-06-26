@@ -28,7 +28,7 @@ const MonitoringDeviceChart = (props:Props): React.ReactElement => {
     const [selectedEndTime, setSelectedEndTime] = useState(null);
     const [selectedMetric, setSelectedMetric] = useState('total');
     const [selectedThreshold, setSelectedThreshold] = useState('total');
-    const [selectedUnit, setSelectedUnit] = useState('trip_id');
+    const [selectedUnit, setSelectedUnit] = useState('trip');
 
     useEffect(() => {
         setBbiAbnormalLoading(true);
