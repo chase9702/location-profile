@@ -64,7 +64,7 @@ const MonitoringAiChart = (props: Props): React.ReactElement => {
 
     useEffect(() => {
         setAiDetectionLoading(true);
-        get<[]>(`/api/monitoring/ai/detection/?start_date=20240601&end_date=20240607`)
+        get<[]>(`/api/monitoring/ai/detection/?start_date=20240619&end_date=20240625`)
             .then((jsonData) => {
                 console.log(jsonData)
                 const transformedData = transformData(jsonData);
