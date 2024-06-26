@@ -36,8 +36,28 @@ export interface MapPublicHexData {
     serious_cnt: number;
     slight_cnt: number;
     total_cnt: number;
-    violation_cnt: PublicMetaData;
-    violation_ratio: PublicMetaData;
+    /*cnt*/
+    crossing_center_line_cnt: number,
+    etc_cnt: number,
+    il_u_turn_cnt: number,
+    intersection_cnt: number,
+    lane_cnt: number,
+    light_cnt: number,
+    obstruct_right_cnt: number,
+    pedestrian_cnt: number,
+    safe_distance_cnt: number,
+    safe_driving_cnt: number,
+    /*ratio*/
+    crossing_center_line_ratio: number,
+    etc_ratio: number,
+    il_u_turn_ratio: number,
+    intersection_ratio: number,
+    lane_ratio: number,
+    light_ratio: number,
+    obstruct_right_ratio: number,
+    pedestrian_ratio: number,
+    safe_distance_ratio: number,
+    safe_driving_ratio: number,
 }
 
 export interface MapAIHexData {

@@ -188,73 +188,81 @@ const MonitoringMetaTable = (props: Props): React.ReactElement => {
             ...getColumnSearchProps<ExtendedPublicMetaData>('type')
         },
         {
-            title: 'crossing_center_line',
+            title: '중앙선침범',
             dataIndex: 'crossing_center_line',
             key: 'crossing_center_line',
             align: 'center',
+            ellipsis: true,
             ...getColumnSearchProps<ExtendedPublicMetaData>('crossing_center_line')
         },
         {
-            title: 'etc',
+            title: '기타',
             dataIndex: 'etc',
             key: 'etc',
             align: 'center',
             ...getColumnSearchProps<ExtendedPublicMetaData>('etc')
         },
         {
-            title: 'il_u_turn',
+            title: '불법유턴',
             dataIndex: 'il_u_turn',
             key: 'il_u_turn',
             align: 'center',
+            ellipsis: true,
             ...getColumnSearchProps<ExtendedPublicMetaData>('il_u_turn')
         },
         {
-            title: 'intersection',
+            title: '교차로운행방법위반',
             dataIndex: 'intersection',
             key: 'intersection',
             align: 'center',
+            ellipsis: true,
             ...getColumnSearchProps<ExtendedPublicMetaData>('intersection')
         },
         {
-            title: 'lane',
+            title: '차로위반',
             dataIndex: 'lane',
             key: 'lane',
             align: 'center',
             ...getColumnSearchProps<ExtendedPublicMetaData>('lane')
         },
         {
-            title: 'light',
+            title: '신호위반',
             dataIndex: 'light',
             key: 'light',
             align: 'center',
+            ellipsis: true,
             ...getColumnSearchProps<ExtendedPublicMetaData>('light')
         },
         {
-            title: 'obstruct_right',
+            title: '직진우회전진행방해',
             dataIndex: 'obstruct_right',
             key: 'obstruct_right',
             align: 'center',
+            ellipsis: true,
             ...getColumnSearchProps<ExtendedPublicMetaData>('obstruct_right')
         },
         {
-            title: 'pedestrian',
+            title: '보행자보호의무위반',
             dataIndex: 'pedestrian',
             key: 'pedestrian',
             align: 'center',
+            ellipsis: true,
             ...getColumnSearchProps<ExtendedPublicMetaData>('pedestrian')
         },
         {
-            title: 'safe_distance',
+            title: '안전거리미확보',
             dataIndex: 'safe_distance',
             key: 'safe_distance',
             align: 'center',
+            ellipsis: true,
             ...getColumnSearchProps<ExtendedPublicMetaData>('safe_distance')
         },
         {
-            title: 'safe_driving',
+            title: '안전운전불이행',
             dataIndex: 'safe_driving',
             key: 'safe_driving',
             align: 'center',
+            ellipsis: true,
             ...getColumnSearchProps<ExtendedPublicMetaData>('safe_driving')
         },
     ];

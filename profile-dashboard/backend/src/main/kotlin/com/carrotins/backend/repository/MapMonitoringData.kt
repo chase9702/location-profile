@@ -51,6 +51,7 @@ data class BBIMetaData @JsonCreator constructor(
     @JsonProperty("sa") val sa: Double?
 )
 
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy::class)
 data class Top100PublicMapData(
     val addr: String,         // 주소
     val addrCd: String,       // 주소 코드
@@ -58,8 +59,28 @@ data class Top100PublicMapData(
     val seriousCnt: Long,     // 중대 사고 발생 횟수
     val slightCnt: Long,      // 경미한 사고 발생 횟수
     val totalCnt: Long,       // 사고 총 발생 횟수
-    val violationCnt: Map<String, Int>, // 법규위반 별 발생 횟수
-    val violationRatio: Map<String, Double> // 법규위반 별 발생 비율
+
+    val crossingCenterLineCnt: Int,
+    val etcCnt: Int,
+    val ilUTurnCnt: Int,
+    val intersectionCnt: Int,
+    val laneCnt: Int,
+    val lightCnt: Int,
+    val obstructRightCnt: Int,
+    val pedestrianCnt: Int,
+    val safeDistanceCnt: Int,
+    val safeDrivingCnt: Int,
+
+    val crossingCenterLineRatio: Double,
+    val etcRatio: Double,
+    val ilUTurnRatio: Double,
+    val intersectionRatio: Double,
+    val laneRatio: Double,
+    val lightRatio: Double,
+    val obstructRightRatio: Double,
+    val pedestrianRatio: Double,
+    val safeDistanceRatio: Double,
+    val safeDrivingRatio: Double,
 )
 
 data class Top100AiMapData(

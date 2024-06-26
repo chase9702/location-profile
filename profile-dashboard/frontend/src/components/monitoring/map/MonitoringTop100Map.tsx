@@ -102,7 +102,6 @@ const MonitoringTop100Map = (props: Props): React.ReactElement => {
 
     const findHexValue = (layer, listIndex) => {
         const hexList = dataIdToListMap[layer?.dataId];
-        debugger
         return hexList ? hexList[listIndex].hex : null;
     };
 
@@ -136,10 +135,47 @@ const MonitoringTop100Map = (props: Props): React.ReactElement => {
 
         let metaList: ExtendedPublicMetaData[] = []
 
-        if (publicHexDataList.length > 0) {
-            metaList.push({...publicHexItem.violation_cnt, type: 'CNT'})
-            metaList.push({...publicHexItem.violation_ratio, type: 'RATIO'})
-        }
+        const cntData: PublicMetaData = {
+            crossing_center_line: publicHexItem.crossing_center_line_cnt,
+            etc: publicHexItem.etc_cnt,
+            il_u_turn: publicHexItem.il_u_turn_cnt,
+            intersection: publicHexItem.intersection_cnt,
+            lane: publicHexItem.lane_cnt,
+            light: publicHexItem.light_cnt,
+            obstruct_right: publicHexItem.obstruct_right_cnt,
+            pedestrian: publicHexItem.pedestrian_cnt,
+            safe_distance: publicHexItem.safe_distance_cnt,
+            safe_driving: publicHexItem.safe_driving_cnt,
+        };
+
+        // Create the PublicMetaData for _ratio fields
+        const ratioData: PublicMetaData = {
+            crossing_center_line: publicHexItem.crossing_center_line_ratio,
+            etc: publicHexItem.etc_ratio,
+            il_u_turn: publicHexItem.il_u_turn_ratio,
+            intersection: publicHexItem.intersection_ratio,
+            lane: publicHexItem.lane_ratio,
+            light: publicHexItem.light_ratio,
+            obstruct_right: publicHexItem.obstruct_right_ratio,
+            pedestrian: publicHexItem.pedestrian_ratio,
+            safe_distance: publicHexItem.safe_distance_ratio,
+            safe_driving: publicHexItem.safe_driving_ratio,
+        };
+
+        // Create the ExtendedPublicMetaData objects
+        const extendedCntData: ExtendedPublicMetaData = {
+            ...cntData,
+            type: 'CNT'
+        };
+
+        const extendedRatioData: ExtendedPublicMetaData = {
+            ...ratioData,
+            type: 'RATIO'
+        };
+        
+        metaList.push(extendedCntData)
+        metaList.push(extendedRatioData)
+
         setPublicMetaList(metaList)
     }
 
@@ -223,7 +259,7 @@ const MonitoringTop100Map = (props: Props): React.ReactElement => {
             return '';
         }
         return data.map((item) => {
-            return `${item.seriousCnt},${item.slightCnt},${item.totalCnt},"${item.hex}"`;
+            return `${item.serious_cnt},${item.slight_cnt},${item.total_cnt},"${item.hex}"`;
         }).join('\n');
     };
 
@@ -419,7 +455,7 @@ const MonitoringTop100Map = (props: Props): React.ReactElement => {
             </Row>
             <Row gutter={16}>
                 <Col span={24}>
-                    <CustomKeplerMap id={"topMap"} heightRatio={50}/>
+                    <CustomKeplerMap id={"topMap"} heightRatio={30}/>
                 </Col>
             </Row>
             <Row gutter={16}>

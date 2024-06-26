@@ -105,57 +105,29 @@ class MapMonitoringRepository(
                 seriousCnt = rs.getLong("serious_cnt"),
                 slightCnt = rs.getLong("slight_cnt"),
                 totalCnt = rs.getLong("total_cnt"),
-                violationCnt = parseViolationData(cleanJsonString(rs.getString("violation_cnt"))),
-                violationRatio = parseViolationRatio(cleanJsonString(rs.getString("violation_ratio")))
+                crossingCenterLineCnt = rs.getInt("crossing_center_line_cnt"),
+                etcCnt = rs.getInt("etc_cnt"),
+                ilUTurnCnt = rs.getInt("il_u_turn_cnt"),
+                intersectionCnt = rs.getInt("intersection_cnt"),
+                laneCnt = rs.getInt("lane_cnt"),
+                lightCnt= rs.getInt("light_cnt"),
+                obstructRightCnt = rs.getInt("obstruct_right_cnt"),
+                pedestrianCnt =rs.getInt("pedestrian_cnt"),
+                safeDistanceCnt = rs.getInt("safe_distance_cnt"),
+                safeDrivingCnt = rs.getInt("safe_driving_cnt"),
+                crossingCenterLineRatio = rs.getDouble("crossing_center_line_ratio"),
+                etcRatio = rs.getDouble("etc_ratio"),
+                ilUTurnRatio = rs.getDouble("il_u_turn_ratio"),
+                intersectionRatio = rs.getDouble("intersection_ratio"),
+                laneRatio = rs.getDouble("lane_ratio"),
+                lightRatio = rs.getDouble("light_ratio"),
+                obstructRightRatio = rs.getDouble("obstruct_right_ratio"),
+                pedestrianRatio = rs.getDouble("pedestrian_ratio"),
+                safeDistanceRatio = rs.getDouble("safe_distance_ratio"),
+                safeDrivingRatio = rs.getDouble("safe_driving_ratio"),
             )
         }
     }
-
-    fun cleanJsonString(jsonString: String): String {
-        // Add additional cleaning logic if needed
-        var cleanedString = jsonString.trim()
-        if (!cleanedString.startsWith("{")) {
-            val startIndex = cleanedString.indexOf("{")
-            if (startIndex != -1) {
-                cleanedString = cleanedString.substring(startIndex)
-            }
-        }
-        if (!cleanedString.endsWith("}")) {
-            val endIndex = cleanedString.lastIndexOf("}")
-            if (endIndex != -1) {
-                cleanedString = cleanedString.substring(0, endIndex + 1)
-            }
-        }
-        return cleanedString.replace("'", "\"")
-    }
-
-    fun parseViolationData(jsonString: String): Map<String, Int> {
-        println("Original violationCnt string: $jsonString")
-        return try {
-            objectMapper.readValue(cleanJsonString(jsonString))
-        } catch (e: MismatchedInputException) {
-            println("Error parsing violationCnt: ${e.message}")
-            emptyMap()
-        } catch (e: Exception) {
-            println("Error parsing violationCnt: ${e.message}")
-            emptyMap()
-        }
-    }
-
-    fun parseViolationRatio(jsonString: String): Map<String, Double> {
-        println("Original violationRatio string: $jsonString")
-        return try {
-            objectMapper.readValue(cleanJsonString(jsonString))
-        } catch (e: MismatchedInputException) {
-            println("Error parsing violationRatio: ${e.message}")
-            emptyMap()
-        } catch (e: Exception) {
-            println("Error parsing violationRatio: ${e.message}")
-            emptyMap()
-        }
-    }
-
-
 
 
     fun getAiMapData(addrCd: String, hour: String, date: String): List<Top100AiMapData> {
