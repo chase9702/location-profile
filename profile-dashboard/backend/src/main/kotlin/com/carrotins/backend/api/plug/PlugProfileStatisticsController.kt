@@ -7,9 +7,6 @@ import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 
 
-/**
- * Created by alvin on 2023/07/19.
- */
 @Tag(name = "Plug statistics controller")
 @RestController
 @RequestMapping("/api/plug/statistic")
