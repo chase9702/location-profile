@@ -1,8 +1,8 @@
-import React, {useEffect, useState} from 'react';
+import React, {lazy, Suspense, useEffect, useState} from 'react';
 import {withRouter} from "react-router-dom";
 import Line from '@ant-design/plots/lib/components/line';
 import Card from 'antd/lib/card';
-import CustomKeplerMap from "@src/components/common/CustomKeplerMap";
+// import CustomKeplerMap from "@src/components/common/CustomKeplerMap";
 import {store} from "@src/index";
 import {updateMap} from "@kepler.gl/actions";
 import {get} from "@src/api";
@@ -12,6 +12,8 @@ import Spin from "antd/lib/spin";
 import {useSelector} from "react-redux";
 import {StoreState} from "@src/reducers";
 
+// 동적 import
+const CustomKeplerMap = lazy(() => import("@src/components/common/CustomKeplerMap"));
 
 interface State {
 }
@@ -92,10 +94,12 @@ const Home = (): React.ReactElement => {
                 ]}
             />
 
-            <CustomKeplerMap
-                heightRatio={70}
-                id={"homeMap"}
-            />
+            <Suspense fallback={<div>Loading Map...</div>}>
+                <CustomKeplerMap
+                    heightRatio={70}
+                    id={"homeMap"}
+                />
+            </Suspense>
 
             <Card style={{padding: '10px'}}>
                 <div>

@@ -1,10 +1,9 @@
-import React, {useEffect, useState} from "react";
+import React, {lazy, Suspense, useEffect, useState} from "react";
 import Button from "antd/lib/button";
 import Card from "antd/lib/card";
 import Row from "antd/lib/row";
 import Col from "antd/lib/col";
 import Select from "antd/lib/select";
-import CustomKeplerMap from "@src/components/common/CustomKeplerMap";
 import {addDataToMap, removeDataset, updateMap, wrapTo} from "@kepler.gl/actions";
 import {store} from "@src/index";
 import {Input, Radio, Space} from "antd";
@@ -15,6 +14,8 @@ import {processCsvData} from "@kepler.gl/processors";
 import LoadingOutlined from "@ant-design/icons/lib/icons/LoadingOutlined";
 import Spin from "antd/lib/spin";
 import {encodeQueryData} from "@src/common/utils";
+
+const CustomKeplerMap = lazy(() => import("@src/components/common/CustomKeplerMap"));
 
 interface Props {
 
@@ -273,11 +274,12 @@ const AddressReturn = (props: Props): React.ReactElement => {
                     </Card>
                     <Row>
                         <Col span={24}>
-
-                            <CustomKeplerMap
-                                heightRatio={70}
-                                id={"addrMap"}
-                            />
+                            <Suspense fallback={<div>Loading Map...</div>}>
+                                <CustomKeplerMap
+                                    heightRatio={70}
+                                    id={"addrMap"}
+                                />
+                            </Suspense>
                         </Col>
                     </Row>
                 </div>

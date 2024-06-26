@@ -3,7 +3,6 @@ package com.carrotins.backend.service.monitoring
 import com.carrotins.backend.repository.monitoring.BbiAbnormalData
 import com.carrotins.backend.repository.monitoring.BbiDetectionData
 import com.carrotins.backend.repository.monitoring.BbiMonitoringRepository
-import jdk.jfr.Threshold
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Service
 
@@ -11,36 +10,52 @@ import org.springframework.stereotype.Service
 class BbiMonitoringService(
     private val bbiMonitoringRepository: BbiMonitoringRepository
 ) {
-    fun buildQueryParams(startDate: String?, endDate: String?, metric: String?, threshold: String?, unit: String?): String {
+    fun buildBbiAbnormalQueryParams(startDate: String?, endDate: String?, metric: String?, threshold: String?, id: String?): String {
         return listOfNotNull(
             startDate.takeUnless { it == null }?.let { "part_dt>='$it'" },
             endDate.takeUnless { it == null }?.let { "part_dt<='$it'" },
             metric.takeUnless { it == null || it == "total" }?.let { "metric='$it'" },
             threshold.takeUnless { it == null || it == "total" }?.let { "threshold='$it'" },
-            unit.takeUnless { it == null }?.let { "unit='$it'" }
+            id.takeUnless { it == null}?.let { "unit='$it'" },
         ).joinToString(" and ")
     }
+
+    fun buildBbiDetectionQueryParams(hour: String?, startDate: String?, endDate: String?): String {
+        return listOfNotNull(
+            hour.takeUnless { it == null }?.let { "hour='$it'" },
+            startDate.takeUnless { it == null }?.let { "part_dt>='$it'" },
+            endDate.takeUnless { it == null }?.let { "part_dt<='$it'" },
+        ).joinToString(" and ")
+    }
+
     @Cacheable("cacheBbiAbnormal")
     fun getBbiAbnormal(
         startDate: String?,
         endDate: String?,
         metric: String?,
         threshold: String?,
-        unit: String?,
+        id: String?,
     ): List<BbiAbnormalData> {
-        val queryParams = buildQueryParams(startDate, endDate, metric, threshold, unit)
+        val queryParams = buildBbiAbnormalQueryParams(startDate, endDate, metric, threshold, id)
+        print(id)
         print(queryParams)
         return bbiMonitoringRepository.getBbiAbnormalData(queryParams)
     }
+
     @Cacheable("cacheBbiDetection")
     fun getBbiDetection(
+        hour: String?,
         startDate: String?,
         endDate: String?,
         id: String?,
     ): List<BbiDetectionData> {
-        println(startDate)
-        println(endDate)
-        println(id)
-        return bbiMonitoringRepository.getBbiDetectionData()
+        val queryParams = buildBbiDetectionQueryParams(hour, startDate, endDate)
+
+        return when (id) {
+            "trip_id" -> bbiMonitoringRepository.getBbiDetectionTripData(queryParams)
+            "dvc_id" -> bbiMonitoringRepository.getBbiDetectionDeviceIdData(queryParams)
+            "member_id" -> bbiMonitoringRepository.getBbiDetectionMemberData(queryParams)
+            else -> bbiMonitoringRepository.getBbiDetectionTripData(queryParams)
+        }
     }
 }

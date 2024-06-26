@@ -13,6 +13,7 @@ class CacheService {
         ,"cacheInterpolationTripDaily"
         ,"cacheDeviceTop"
         ,"cacheTripDataFromTopDevice"
-        ,"cacheHomeDevice"], allEntries = true)
+        ,"cacheHomeDevice"
+        ,"cacheTop100Table"], allEntries = true)
     fun clearALLCache() = Unit
 }

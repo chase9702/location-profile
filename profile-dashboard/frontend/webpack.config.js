@@ -2,10 +2,12 @@ const path = require('path');
 const Dotenv = require('dotenv-webpack');
 const crypto = require('crypto');
 
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
+const CompressionPlugin = require('compression-webpack-plugin');
 
 
 const theme = require('./theme');
@@ -128,61 +130,50 @@ module.exports = (env, options) => {
                 {
                     test: /\.(ts|js)x?$/,
                     exclude: /node_modules/,
-                    use: {
-                        loader: 'babel-loader'
-                    }
+                    use: 'babel-loader',
                 },
                 {
                     test: /\.css$/,
                     use: [
-                        {
-                            loader: 'style-loader'
-                        },
+                        MiniCssExtractPlugin.loader,
                         {
                             loader: 'css-loader',
                             options: {
-                                sourceMap: true
-                            }
-                        }
-                    ]
+                                sourceMap: !isProduction,
+                            },
+                        },
+                    ],
                 },
                 {
                     test: /\.less$/,
                     use: [
-                        {
-                            loader: 'style-loader'
-                        },
+                        MiniCssExtractPlugin.loader,
                         {
                             loader: 'css-loader',
                             options: {
-                                sourceMap: true
-                            }
+                                sourceMap: !isProduction,
+                            },
                         },
                         {
-                            loader: 'less-loader', // compiles less to css
+                            loader: 'less-loader',
                             options: {
-                                sourceMap: true,
+                                sourceMap: !isProduction,
                                 lessOptions: {
                                     modifyVars: theme,
                                     javascriptEnabled: true,
-                                }
+                                },
                             },
-                        }
-                    ]
+                        },
+                    ],
                 },
                 {
                     test: /\.(woff|woff2|eot|ttf|svg)$/,
-                    use: [
-                        {
-                            loader: 'file-loader',
-                            options: {
-                                name: '[name].[ext]',
-                                outputPath: 'fonts/'
-                            }
-                        }
-                    ]
-                }
-            ]
+                    type: 'asset/resource',
+                    generator: {
+                        filename: 'fonts/[name][ext]',
+                    },
+                },
+            ],
         },
         plugins: [
             new Dotenv(),
@@ -193,7 +184,17 @@ module.exports = (env, options) => {
             new ProvidePlugin({
                 process: 'process/browser',
             }),
-        ],
+            new MiniCssExtractPlugin({
+                filename: isProduction ? 'css/[name].[contenthash].css' : 'css/[name].css',
+            }),
+            isProduction &&
+            new CompressionPlugin({
+                algorithm: 'gzip',
+                test: /\.(js|css|html|svg)$/,
+                threshold: 10240,
+                minRatio: 0.8,
+            }),
+        ].filter(Boolean),
     };
 
     if (config.mode === 'development') {

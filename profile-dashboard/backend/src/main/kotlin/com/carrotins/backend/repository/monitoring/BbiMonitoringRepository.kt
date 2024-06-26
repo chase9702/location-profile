@@ -34,31 +34,93 @@ class BbiMonitoringRepository(
         }
     }
 
-    fun getBbiDetectionData(): List<BbiDetectionData> {
+    fun getBbiDetectionDeviceIdData(queryParams: String): List<BbiDetectionData> {
         val query: String = """
-             SELECT 
-                  dvc_id,
-                  mem_id,
-                  trp_id,
-                  day,
-                  day_en,
-                  hour,
-                  nst,
-                  nac,
-                  ndc,
-                  nsp,
-                  sst,
-                  sac,
-                  sdc,
-                  ssp,
-                  traffic,
-                  total_bbi,
-                  part_dt
-               FROM dw.bbi_detection
-              WHERE 1=1
+           SELECT 
+             dvc_id as dvc_id,
+             max(mem_id) as mem_id,
+             max(trp_id) as trp_id,
+             max(day) as day,
+             max(day_en) as day_en,
+             sum(hour) as hour,
+             sum(nst) as nst,
+             sum(nac) as nac,
+             sum(ndc) as ndc,
+             sum(nsp) as nsp,
+             sum(sst) as sst,
+             sum(sac) as sac,
+             sum(sdc) as sdc,
+             sum(ssp) as ssp,
+             sum(traffic) as traffic,
+             sum(total_bbi) as total_bbi,
+             part_dt
+          FROM dw.bbi_detection
+         WHERE 1=1
+           AND $queryParams
+         GROUP BY dvc_id, part_dt
+    """.trimIndent()
 
-        """.trimIndent()
+        return executeBbiDetectionQuery(query)
+    }
 
+    fun getBbiDetectionMemberData(queryParams: String): List<BbiDetectionData> {
+        val query: String = """
+         SELECT 
+             max(dvc_id) as dvc_id,
+             mem_id,
+             max(trp_id) as trp_id,
+             max(day) as day,
+             max(day_en) as day_en,
+             sum(hour) as hour,
+             sum(nst) as nst,
+             sum(nac) as nac,
+             sum(ndc) as ndc,
+             sum(nsp) as nsp,
+             sum(sst) as sst,
+             sum(sac) as sac,
+             sum(sdc) as sdc,
+             sum(ssp) as ssp,
+             sum(traffic) as traffic,
+             sum(total_bbi) as total_bbi,
+             part_dt
+          FROM dw.bbi_detection
+         WHERE 1=1
+           AND $queryParams
+         GROUP BY mem_id, part_dt
+    """.trimIndent()
+
+        return executeBbiDetectionQuery(query)
+    }
+
+    fun getBbiDetectionTripData(queryParams: String): List<BbiDetectionData> {
+        val query: String = """
+         SELECT 
+              dvc_id,
+              mem_id,
+              trp_id,
+              day,
+              day_en,
+              hour,
+              nst,
+              nac,
+              ndc,
+              nsp,
+              sst,
+              sac,
+              sdc,
+              ssp,
+              traffic,
+              total_bbi,
+              part_dt
+           FROM dw.bbi_detection
+          WHERE 1=1
+            AND $queryParams
+    """.trimIndent()
+
+        return executeBbiDetectionQuery(query)
+    }
+
+    fun executeBbiDetectionQuery(query: String): List<BbiDetectionData> {
         return hiveJdbcTemplate.query(query) { rs, _ ->
             BbiDetectionData(
                 dvcId = transformNullToEmptyString(rs.getString("dvc_id")),

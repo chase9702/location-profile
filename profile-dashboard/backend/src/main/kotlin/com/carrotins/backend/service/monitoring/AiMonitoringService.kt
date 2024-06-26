@@ -9,12 +9,11 @@ import org.springframework.stereotype.Service
 class AiMonitoringService (
     private val aiMonitoringRepository: AiMonitoringRepository
 ) {
-    fun buildQueryParams(hour: String?, startDate: String?, endDate: String?, id: String?, status: String?): String {
+    fun buildQueryParams(hour: String?, startDate: String?, endDate: String?, status: String?): String {
         return listOfNotNull(
-            hour?.takeUnless { it == null }?.let { "hour='$it'" },
+            hour?.takeUnless { false }?.let { "dtct_hh='$it'" },
             startDate.takeUnless { it == null }?.let { "part_dt>='$it'" },
             endDate.takeUnless { it == null }?.let { "part_dt<='$it'" },
-            id.takeUnless { it == null }?.let { "id='$it'" },
             status.takeUnless { it == null }?.let { "stcd='$it'" }
         ).joinToString(" and ")
     }
@@ -27,7 +26,7 @@ class AiMonitoringService (
         id: String?,
         status: String?,
     ): List<AiDetectionData> {
-        val queryParams = buildQueryParams(hour, startDate, endDate, id, status)
+        val queryParams = buildQueryParams(hour, startDate, endDate, status)
 
         when (id) {
             "trip_id" -> print("trip_id\n")
@@ -36,10 +35,10 @@ class AiMonitoringService (
         }
 
         return when (id) {
-            "trip_id" -> aiMonitoringRepository.getAiDetectionTripData()
-            "dvc_id" -> aiMonitoringRepository.getAiDetectionTripData()
-            "member_id" -> aiMonitoringRepository.getAiDetectionTripData()
-            else -> aiMonitoringRepository.getAiDetectionTripData()
+            "trip_id" -> aiMonitoringRepository.getAiDetectionTripData(queryParams)
+            "dvc_id" -> aiMonitoringRepository.getAiDetectionDeviceIdData(queryParams)
+            "member_id" -> aiMonitoringRepository.getAiDetectionMemberData(queryParams)
+            else -> aiMonitoringRepository.getAiDetectionTripData(queryParams)
         }
     }
 }

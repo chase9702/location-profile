@@ -40,9 +40,9 @@ export const bbiMetricFilter = [
 ]
 
 export const bbiUnitFilter = [
-    {value: 'trip_id', label: 'trip'},
-    {value: 'dvc_id', label: 'dvc_id'},
-    {value: 'member_id', label: 'mem_id'},
+    {value: 'trip', label: 'trip'},
+    {value: 'dvc', label: 'dvc_id'},
+    {value: 'member', label: 'mem_id'},
 ]
 
 export const bbiThresholdFilter = [
@@ -61,7 +61,7 @@ export const aiUnitFilter = [
 ]
 
 export const bbiBehaviorFilter = [
-    {value: 'total_bbi', label: 'BBI 전체'},
+    {value: 'total_bbi', label: '전체'},
     {value: 'sac', label: '급가속'},
     {value: 'sdc', label: '급감속'},
     {value: 'sst', label: '급출발'},

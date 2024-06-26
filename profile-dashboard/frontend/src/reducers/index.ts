@@ -3,13 +3,21 @@ import {keplerGlReducer} from '@kepler.gl/reducers';
 import menuSelectReducer, {MenuSelectState} from "@src/reducers/MenuSelectReducer"
 import authReducer, {AuthState} from "@src/reducers/AuthReducer";
 import deviceReducer, {DeviceState} from "@src/reducers/DeviceReducer";
+import mapReducer, {MapState} from "@src/reducers/MapReducer";
+import monitoringReducer, {MonitoringState} from "@src/reducers/MonitoringReducer";
+import {KeplerGlState} from "kepler.gl/src/reducers";
 
+interface CustomKeplerGlState extends KeplerGlState {
+    topMap?: any; // 특정 맵 ID를 타입에 명시
+}
 
 export interface StoreState {
     menuSelect: MenuSelectState
     auth: AuthState
     device: DeviceState
-
+    map: MapState,
+    monitoring: MonitoringState,
+    keplerGl: CustomKeplerGlState
 }
 
 const styleURL =
@@ -19,16 +27,6 @@ const styleURL =
 
 
 const mapStyles = {
-    // local: {
-    //     id: 'local',
-    //     label: 'Voyager',
-    //     url: 'https://api.maptiler.com/maps/voyager/style.json?key=ySQ0fIYn7eSl3ppOeEJd',
-    // },
-    // white: {
-    //     id: 'terrain1',
-    //     label: 'white',
-    //     url: 'http://localhost:8081/style.json',
-    // },
     map: {
         id: 'maptile',
         label: 'map',
@@ -40,7 +38,7 @@ const customizedKeplerGlReducer = keplerGlReducer.initialState({
         mapStyles,
         styleType: 'maptile'
     },
-    uiState:{
+    uiState: {
         activeSidePanel: null,
         currentModal: null
     }
@@ -51,7 +49,9 @@ const rootReducer = combineReducers({
     keplerGl: customizedKeplerGlReducer,
     menuSelect: menuSelectReducer,
     auth: authReducer,
-    device: deviceReducer
+    device: deviceReducer,
+    map: mapReducer,
+    monitoring: monitoringReducer
 });
 
 export default rootReducer;
