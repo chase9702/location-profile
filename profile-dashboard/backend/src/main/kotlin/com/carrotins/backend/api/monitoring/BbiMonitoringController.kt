@@ -21,17 +21,18 @@ class BbiMonitoringController(
         @RequestParam("end_date") endDate: String?,
         @RequestParam("metric") metric: String?,
         @RequestParam("threshold") threshold: String?,
-        @RequestParam("unit") unit: String?,
+        @RequestParam("unit") id: String?,
         ): List<BbiAbnormalData> {
-        return bbiMonitoringService.getBbiAbnormal(startDate, endDate, metric, threshold, unit)
+        return bbiMonitoringService.getBbiAbnormal(startDate, endDate, metric, threshold, id)
     }
 
     @GetMapping("/detection")
     fun getBbiDetectionData(
+        @RequestParam("hour") hour: String?,
         @RequestParam("start_date") startDate: String?,
         @RequestParam("end_date") endDate: String?,
         @RequestParam("id") id: String?,
         ): List<BbiDetectionData> {
-        return bbiMonitoringService.getBbiDetection(startDate, endDate, id,)
+        return bbiMonitoringService.getBbiDetection(hour, startDate, endDate, id,)
     }
 }

@@ -64,7 +64,7 @@ const MonitoringAiChart = (props: Props): React.ReactElement => {
 
     useEffect(() => {
         setAiDetectionLoading(true);
-        get<[]>(`/api/monitoring/ai/detection/`)
+        get<[]>(`/api/monitoring/ai/detection/?start_date=20240601&end_date=20240607`)
             .then((jsonData) => {
                 console.log(jsonData)
                 const transformedData = transformData(jsonData);
@@ -76,31 +76,36 @@ const MonitoringAiChart = (props: Props): React.ReactElement => {
             });
     }, []);
 
+    const aiDetectionFetch = (queryString: string) => {
+        setAiDetectionLoading(true);
+        get<DetectionItem[]>(`/api/monitoring/ai/detection/?${queryString}`)
+            .then((jsonData) => {
+                const transformedData = transformData(jsonData);
+                console.log(transformedData);
+                setAiDetectionData(transformedData);
+            })
+            .finally(() => {
+                setAiDetectionLoading(false);
+            });
+    };
+
     const transformData = (data: any) => {
         if (!data) {
             return [];
         }
 
-        return data.flatMap((item: { part_dt: any; lv_1_cnt: any; lv_2_cnt: any;}) => [
+        const transformedData = data.flatMap((item: { part_dt: any; lv_1_cnt: any; lv_2_cnt: any; }) => [
             {part_dt: item.part_dt, level: 'level 1', count: item.lv_1_cnt},
             {part_dt: item.part_dt, level: 'level 2', count: item.lv_2_cnt},
         ]);
-    };
 
-    const aiDetectionFetch = (queryString: string) => {
-        setAiDetectionLoading(true);
-        get<DetectionItem[]>(`/api/monitoring/ai/detection/?${queryString}`)
-            .then((jsonData) => {
-                const processedData = jsonData.map(item => ({
-                    ...item,
-                    total_cnt: item.lv_2_cnt + item.lv_1_cnt
-                }));
-                console.log(processedData);
-                setAiDetectionData(processedData);
-            })
-            .finally(() => {
-                setAiDetectionLoading(false);
-            });
+        transformedData.sort((a: { part_dt: number; }, b: { part_dt: number; }) => {
+            if (a.part_dt < b.part_dt) return -1;
+            if (a.part_dt > b.part_dt) return 1;
+            return 0;
+        });
+
+        return transformedData;
     };
 
     const handleTimeChartChange = (time: moment.Moment | null, timeString: string) => {
@@ -137,16 +142,6 @@ const MonitoringAiChart = (props: Props): React.ReactElement => {
         // setClickGetData(false);
         // dispatch(setSelectDeviceGb(value))
         setSelectedId(value);
-    };
-
-    const handleLevelSelectChange = (value: string, option: { value: string; label: string; } | {
-        value: string;
-        label: string;
-    }[]) => {
-        console.log(`selected ${value}`);
-        // setClickGetData(false);
-        // dispatch(setSelectDeviceGb(value))
-        setSelectedLevel(value)
     };
 
     const handleStatusSelectChange = (value: string, option: { value: string; label: string; } | {
@@ -198,7 +193,7 @@ const MonitoringAiChart = (props: Props): React.ReactElement => {
                 조회
             </Button>
             <Row gutter={16}>
-                <Col span={4}>
+                <Col span={5}>
                     <TimePicker
                         className={"h3-margin"}
                         value={selectedTime}
@@ -212,7 +207,7 @@ const MonitoringAiChart = (props: Props): React.ReactElement => {
                         style={{ width: '100%' }}
                     />
                 </Col>
-                <Col span={8}>
+                <Col span={10}>
                     <RangePicker
                         className={"h3-margin"}
                         defaultValue={selectedRangeValue}
@@ -223,7 +218,7 @@ const MonitoringAiChart = (props: Props): React.ReactElement => {
                         onOk={onOk}
                     />
                 </Col>
-                <Col span={4}>
+                <Col span={5}>
                     <Select
                         className={"h3-margin"}
                         showSearch
@@ -241,25 +236,7 @@ const MonitoringAiChart = (props: Props): React.ReactElement => {
                         ))}
                     </Select>
                 </Col>
-                <Col span={5}>
-                    <Select
-                        className={"h3-margin"}
-                        showSearch
-                        placeholder="Level 선택"
-                        optionFilterProp="children"
-                        style={{ width: '100%' }}
-                        onChange={handleLevelSelectChange}
-                        defaultValue={'Level 전체'}
-                        options={aiLevelFilter}
-                    >
-                        {aiLevelFilter.map((data, index) => (
-                            <Select.Option value={data.value} key={index}>
-                                {data.value}
-                            </Select.Option>
-                        ))}
-                    </Select>
-                </Col>
-                <Col span={3}>
+                <Col span={4}>
                     <Select
                         className={"h3-margin"}
                         showSearch

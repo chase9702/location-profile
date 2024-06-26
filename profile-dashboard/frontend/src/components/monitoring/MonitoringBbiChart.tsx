@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useState, useMemo} from "react";
 import {Violin} from "@ant-design/plots";
 import TimePicker from "antd/lib/time-picker";
 import DatePicker from "antd/lib/date-picker";
@@ -33,7 +33,7 @@ const MonitoringBbiChart = (props: Props): React.ReactElement => {
 
     useEffect(() => {
         setBbiDetectionLoading(true);
-        get<[]>(`/api/monitoring/bbi/detection/`)
+        get<[]>(`/api/monitoring/bbi/detection/?start_date=20240601&end_date=20240603`)
             .then((jsonData) => {
                 const transformedData = transformData(jsonData)
                 console.log(transformedData)
@@ -50,8 +50,8 @@ const MonitoringBbiChart = (props: Props): React.ReactElement => {
         get<[]>(`/api/monitoring/bbi/detection/?${queryString}`)
             .then((jsonData) => {
                 console.log(jsonData);
-                const transformedData = transformData(jsonData)
-                console.log(transformedData)
+                const transformedData = transformData(jsonData);
+                console.log(transformedData);
                 setBbiDetectionData(transformedData);
             })
             .finally(() => {
@@ -59,25 +59,31 @@ const MonitoringBbiChart = (props: Props): React.ReactElement => {
             });
     };
 
-    const transformData = (data: any) => {
+    const transformData = (data) => {
         if (!data) {
             return [];
         }
 
-        return data.flatMap((item: { part_dt: any; sac: any; sdc: any; ssp: any; sst: any; }) => [
-            {part_dt: item.part_dt, behavior: '급가속', count: item.sac},
-            {part_dt: item.part_dt, behavior: '급감속', count: item.sdc},
-            {part_dt: item.part_dt, behavior: '급정지', count: item.ssp},
-            {part_dt: item.part_dt, behavior: '급출발', count: item.sst},
+        const transformedData = data.flatMap((item) => [
+            { part_dt: item.part_dt, behavior: '급가속', count: item.sac },
+            { part_dt: item.part_dt, behavior: '급감속', count: item.sdc },
+            { part_dt: item.part_dt, behavior: '급정지', count: item.ssp },
+            { part_dt: item.part_dt, behavior: '급출발', count: item.sst },
         ]);
+
+        transformedData.sort((a: { part_dt: number; }, b: { part_dt: number; }) => {
+            if (a.part_dt < b.part_dt) return -1;
+            if (a.part_dt > b.part_dt) return 1;
+            return 0;
+        });
+
+        return transformedData;
     };
 
     const handleTimeChartChange = (time: moment.Moment | null, timeString: string) => {
         setSelectedTime(time);
         setSelectedHour(timeString);
-        // setButtonDisabled(false);
     };
-
 
     const onRangePickerChartChange = (value: RangePickerProps['value'], dateString: [string, string] | string,) => {
         const startDate = dateString[0];
@@ -99,20 +105,9 @@ const MonitoringBbiChart = (props: Props): React.ReactElement => {
         return current < thirtyDaysAgo || current > currentDate;
     };
 
-    const handleBbiTripSelect = (value: string, option: { value: string; label: string; } | {
-        value: string;
-        label: string;
-    }[]) => {
+    const handleBbiTripSelect = (value: string) => {
         console.log(`selected ${value}`);
-        setBbiTripValue(value)
-    };
-
-    const handleBbiBehaviorSelect = (value: string, option: { value: string; label: string; } | {
-        value: string;
-        label: string;
-    }[]) => {
-        console.log(`selected ${value}`);
-        setBbiBehaviorValue(value)
+        setBbiTripValue(value);
     };
 
     const makeQueryChartString = () => {
@@ -122,21 +117,26 @@ const MonitoringBbiChart = (props: Props): React.ReactElement => {
             end_date: formattedEndTime,
             id: bbiTripValue,
         };
-        return encodeQueryData(queryParams)
-    }
+        return encodeQueryData(queryParams);
+    };
 
     const handleClickFetchChartData = () => {
         console.log(makeQueryChartString());
         bbiDetectionFetch(makeQueryChartString());
     };
 
-    const config = {
+    const config = ({
         violinType: 'normal',
         data: bbiDetectionData,
         xField: 'part_dt',
         yField: 'count',
         seriesField: 'behavior',
-    };
+        meta: {
+            part_dt: {
+                alias: '일자',
+            },
+        },
+    });
 
     return (
         <div>
@@ -167,7 +167,7 @@ const MonitoringBbiChart = (props: Props): React.ReactElement => {
                         style={{width: '100%'}}
                     />
                 </Col>
-                <Col span={10}>
+                <Col span={12}>
                     <RangePicker
                         className={"h3-margin"}
                         defaultValue={selectedRangeValue}
@@ -178,7 +178,7 @@ const MonitoringBbiChart = (props: Props): React.ReactElement => {
                         onOk={onOk}
                     />
                 </Col>
-                <Col span={4}>
+                <Col span={6}>
                     <Select
                         className={"h3-margin"}
                         showSearch
@@ -190,24 +190,6 @@ const MonitoringBbiChart = (props: Props): React.ReactElement => {
                         options={bbiUnitFilter}
                     >
                         {bbiUnitFilter.map((data, index) => (
-                            <Select.Option value={data.value} key={index}>
-                                {data.value}
-                            </Select.Option>
-                        ))}
-                    </Select>
-                </Col>
-                <Col span={4}>
-                    <Select
-                        className={"h3-margin"}
-                        showSearch
-                        placeholder="BBI 선택"
-                        optionFilterProp="children"
-                        style={{width: '100%'}}
-                        onChange={handleBbiBehaviorSelect}
-                        defaultValue={'BBI 전체'}
-                        options={bbiBehaviorFilter}
-                    >
-                        {bbiBehaviorFilter.map((data, index) => (
                             <Select.Option value={data.value} key={index}>
                                 {data.value}
                             </Select.Option>
