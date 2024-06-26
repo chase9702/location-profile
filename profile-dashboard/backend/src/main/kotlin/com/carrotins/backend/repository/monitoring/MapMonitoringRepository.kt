@@ -1,10 +1,7 @@
-package com.carrotins.backend.repository
+package com.carrotins.backend.repository.monitoring
 
-import com.carrotins.backend.repository.location.LocationAddressBoundaryData
 import com.carrotins.backend.utils.transformNullToEmptyString
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.exc.MismatchedInputException
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 
 import com.fasterxml.jackson.module.kotlin.readValue
 import org.springframework.jdbc.core.JdbcTemplate

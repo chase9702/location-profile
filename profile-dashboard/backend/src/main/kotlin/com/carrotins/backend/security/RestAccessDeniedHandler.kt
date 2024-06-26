@@ -19,6 +19,6 @@ class RestAccessDeniedHandler : AccessDeniedHandler {
         accessDeniedException: AccessDeniedException?
     ) {
         log.error("Response:" + HttpServletResponse.SC_FORBIDDEN + ":" + accessDeniedException!!.message)
-        response!!.sendError(HttpServletResponse.SC_FORBIDDEN, accessDeniedException!!.message)
+        response!!.sendError(HttpServletResponse.SC_FORBIDDEN, accessDeniedException.message)
     }
 }

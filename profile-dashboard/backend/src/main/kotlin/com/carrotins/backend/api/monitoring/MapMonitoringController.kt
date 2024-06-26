@@ -1,10 +1,10 @@
-package com.carrotins.backend.api
+package com.carrotins.backend.api.monitoring
 
-import com.carrotins.backend.repository.Top100AiMapData
-import com.carrotins.backend.repository.Top100BBIMapData
-import com.carrotins.backend.repository.Top100PublicMapData
-import com.carrotins.backend.repository.Top100TableData
-import com.carrotins.backend.service.MapService
+import com.carrotins.backend.repository.monitoring.Top100AiMapData
+import com.carrotins.backend.repository.monitoring.Top100BBIMapData
+import com.carrotins.backend.repository.monitoring.Top100PublicMapData
+import com.carrotins.backend.repository.monitoring.Top100TableData
+import com.carrotins.backend.service.monitoring.MapMonitoringService
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
 
@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*
 @PreAuthorize("hasAnyAuthority('ROLE_DASHBOARD')")
 @RequestMapping("/api/monitoring/map")
 class MapMonitoringController(
-    private val mapService: MapService
+    private val mapMonitoringService: MapMonitoringService
 ) {
     @GetMapping("/top100/{behavior}")
     fun getTop100Data(
@@ -23,7 +23,7 @@ class MapMonitoringController(
         @RequestParam("hour") hour: String,
         @RequestParam("part_dt") partDt: String,
     ): List<Top100TableData> {
-        return mapService.getTop100Data(behavior, hour, partDt)
+        return mapMonitoringService.getTop100Data(behavior, hour, partDt)
     }
 
     @GetMapping("/bbi")
@@ -32,7 +32,7 @@ class MapMonitoringController(
         @RequestParam("hour") hour: String,
         @RequestParam("part_dt") partDt: String,
     ): List<Top100BBIMapData> {
-        return mapService.getMonitoringBBIMapData(addrCd, hour, partDt)
+        return mapMonitoringService.getMonitoringBBIMapData(addrCd, hour, partDt)
     }
 
 //    @GetMapping("/carrot")
@@ -50,14 +50,14 @@ class MapMonitoringController(
         @RequestParam("hour") hour: String,
         @RequestParam("part_dt") partDt: String,
     ): List<Top100AiMapData> {
-        return mapService.getMonitoringAiMapData(addrCd, hour, partDt)
+        return mapMonitoringService.getMonitoringAiMapData(addrCd, hour, partDt)
     }
 
     @GetMapping("/public")
     fun getMonitoringPublicMapData(
         @RequestParam("addr_cd") addrCd: String,
     ): List<Top100PublicMapData> {
-        return mapService.getMonitoringPublicMapData(addrCd)
+        return mapMonitoringService.getMonitoringPublicMapData(addrCd)
     }
 
 }

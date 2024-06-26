@@ -134,7 +134,6 @@ const MonitoringTop100Map = (props: Props): React.ReactElement => {
     const makePublicMetaDataList = (publicHexItem: MapPublicHexData) => {
 
         let metaList: ExtendedPublicMetaData[] = []
-
         const cntData: PublicMetaData = {
             crossing_center_line: publicHexItem.crossing_center_line_cnt,
             etc: publicHexItem.etc_cnt,

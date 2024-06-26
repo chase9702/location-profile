@@ -11,7 +11,7 @@ class AiMonitoringService (
 ) {
     fun buildQueryParams(hour: String?, startDate: String?, endDate: String?, status: String?): String {
         return listOfNotNull(
-            hour?.takeUnless { it == null }?.let { "dtct_hh='$it'" },
+            hour?.takeUnless { false }?.let { "dtct_hh='$it'" },
             startDate.takeUnless { it == null }?.let { "part_dt>='$it'" },
             endDate.takeUnless { it == null }?.let { "part_dt<='$it'" },
             status.takeUnless { it == null }?.let { "stcd='$it'" }

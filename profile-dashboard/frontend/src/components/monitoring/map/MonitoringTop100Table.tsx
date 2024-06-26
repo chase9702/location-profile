@@ -1,4 +1,4 @@
-import React, {useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {Button, Card, Col, DatePickerProps, Input, InputRef, Row, Space, TableColumnType} from "antd";
 import TimePicker from "antd/lib/time-picker";
 import DatePicker from "antd/lib/date-picker";
@@ -46,6 +46,10 @@ const MonitoringTop100Table = (props: Props): React.ReactElement => {
     const [top100DataList, setTop100DataList] = useState<Top100TableDataType[]>([]);
 
     const [selectedRowIndex, setSelectedRowIndex] = useState(null);
+
+    useEffect(() => {
+        handleClickSearch()
+    }, []);
 
     const makeQueryString = () => {
         const queryParams: Record<string, string | null> = {

@@ -1,4 +1,4 @@
-package com.carrotins.backend.repository
+package com.carrotins.backend.repository.monitoring
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.PropertyNamingStrategies
@@ -62,7 +62,7 @@ data class Top100PublicMapData(
 
     val crossingCenterLineCnt: Int,
     val etcCnt: Int,
-    val ilUTurnCnt: Int,
+    @JsonProperty("il_u_turn_cnt") val ilUTurnCnt: Int,
     val intersectionCnt: Int,
     val laneCnt: Int,
     val lightCnt: Int,
@@ -73,7 +73,7 @@ data class Top100PublicMapData(
 
     val crossingCenterLineRatio: Double,
     val etcRatio: Double,
-    val ilUTurnRatio: Double,
+    @JsonProperty("il_u_turn_ratio") val ilUTurnRatio: Double,
     val intersectionRatio: Double,
     val laneRatio: Double,
     val lightRatio: Double,

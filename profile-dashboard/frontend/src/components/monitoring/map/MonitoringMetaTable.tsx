@@ -185,6 +185,8 @@ const MonitoringMetaTable = (props: Props): React.ReactElement => {
             dataIndex: 'type',
             key: 'type',
             align: 'center',
+            fixed: 'left',
+            width: 80,
             ...getColumnSearchProps<ExtendedPublicMetaData>('type')
         },
         {
@@ -192,6 +194,7 @@ const MonitoringMetaTable = (props: Props): React.ReactElement => {
             dataIndex: 'crossing_center_line',
             key: 'crossing_center_line',
             align: 'center',
+            width: 100,
             ellipsis: true,
             ...getColumnSearchProps<ExtendedPublicMetaData>('crossing_center_line')
         },
@@ -199,6 +202,7 @@ const MonitoringMetaTable = (props: Props): React.ReactElement => {
             title: '기타',
             dataIndex: 'etc',
             key: 'etc',
+            width: 80,
             align: 'center',
             ...getColumnSearchProps<ExtendedPublicMetaData>('etc')
         },
@@ -207,6 +211,7 @@ const MonitoringMetaTable = (props: Props): React.ReactElement => {
             dataIndex: 'il_u_turn',
             key: 'il_u_turn',
             align: 'center',
+            width: 100,
             ellipsis: true,
             ...getColumnSearchProps<ExtendedPublicMetaData>('il_u_turn')
         },
@@ -215,6 +220,7 @@ const MonitoringMetaTable = (props: Props): React.ReactElement => {
             dataIndex: 'intersection',
             key: 'intersection',
             align: 'center',
+            width: 100,
             ellipsis: true,
             ...getColumnSearchProps<ExtendedPublicMetaData>('intersection')
         },
@@ -223,6 +229,7 @@ const MonitoringMetaTable = (props: Props): React.ReactElement => {
             dataIndex: 'lane',
             key: 'lane',
             align: 'center',
+            width: 100,
             ...getColumnSearchProps<ExtendedPublicMetaData>('lane')
         },
         {
@@ -230,6 +237,7 @@ const MonitoringMetaTable = (props: Props): React.ReactElement => {
             dataIndex: 'light',
             key: 'light',
             align: 'center',
+            width: 100,
             ellipsis: true,
             ...getColumnSearchProps<ExtendedPublicMetaData>('light')
         },
@@ -238,6 +246,7 @@ const MonitoringMetaTable = (props: Props): React.ReactElement => {
             dataIndex: 'obstruct_right',
             key: 'obstruct_right',
             align: 'center',
+            width: 100,
             ellipsis: true,
             ...getColumnSearchProps<ExtendedPublicMetaData>('obstruct_right')
         },
@@ -246,6 +255,7 @@ const MonitoringMetaTable = (props: Props): React.ReactElement => {
             dataIndex: 'pedestrian',
             key: 'pedestrian',
             align: 'center',
+            width: 100,
             ellipsis: true,
             ...getColumnSearchProps<ExtendedPublicMetaData>('pedestrian')
         },
@@ -254,6 +264,7 @@ const MonitoringMetaTable = (props: Props): React.ReactElement => {
             dataIndex: 'safe_distance',
             key: 'safe_distance',
             align: 'center',
+            width: 100,
             ellipsis: true,
             ...getColumnSearchProps<ExtendedPublicMetaData>('safe_distance')
         },
@@ -262,6 +273,7 @@ const MonitoringMetaTable = (props: Props): React.ReactElement => {
             dataIndex: 'safe_driving',
             key: 'safe_driving',
             align: 'center',
+            width: 100,
             ellipsis: true,
             ...getColumnSearchProps<ExtendedPublicMetaData>('safe_driving')
         },

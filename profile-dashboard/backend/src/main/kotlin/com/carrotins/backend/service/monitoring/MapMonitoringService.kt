@@ -1,6 +1,6 @@
-package com.carrotins.backend.service
+package com.carrotins.backend.service.monitoring
 
-import com.carrotins.backend.repository.*
+import com.carrotins.backend.repository.monitoring.*
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Service
 
@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service
  * Created by alvin on 2024. 6. 13..
  */
 @Service
-class MapService(
+class MapMonitoringService(
     private val mapMonitoringRepository: MapMonitoringRepository
 ) {
 
