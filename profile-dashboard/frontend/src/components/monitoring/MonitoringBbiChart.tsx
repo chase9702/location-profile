@@ -33,7 +33,7 @@ const MonitoringBbiChart = (props: Props): React.ReactElement => {
 
     useEffect(() => {
         setBbiDetectionLoading(true);
-        get<[]>(`/api/monitoring/bbi/detection/?start_date=20240601&end_date=20240603`)
+        get<[]>(`/api/monitoring/bbi/detection/?start_date=20240601&end_date=20240607`)
             .then((jsonData) => {
                 const transformedData = transformData(jsonData)
                 console.log(transformedData)
