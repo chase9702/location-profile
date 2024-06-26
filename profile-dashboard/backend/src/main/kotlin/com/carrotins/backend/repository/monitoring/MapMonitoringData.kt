@@ -33,22 +33,22 @@ data class Top100BBIMapData(
     val sdc: Int,
     val totalBbi: Int,
     val traffic: Int,
-    val sstMeta: List<BBIMetaData>,
-    val sacMeta: List<BBIMetaData>,
-    val sspMeta: List<BBIMetaData>,
-    val sdcMeta: List<BBIMetaData>,
 )
 
-
-data class BBIMetaData @JsonCreator constructor(
-    @JsonProperty("trip_id") val tripId: String,
-    @JsonProperty("ct") val ct: Long?,
-    @JsonProperty("sp") val sp: Double?,
-    @JsonProperty("fs") val fs: Double?,
-    @JsonProperty("durt") val durt: Long?,
-    @JsonProperty("accel") val accel: Double?,
-    @JsonProperty("ac") val ac: Double?,
-    @JsonProperty("sa") val sa: Double?
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy::class)
+data class BBIMetaData(
+    val hex: String,
+    val hour: String,
+    val partDt: String,
+    val behavior: String,
+    val tripId: String,
+    val ct: Long?,
+    val sp: Double?,
+    val fs: Double?,
+    val durt: Long?,
+    val accel: Double?,
+    val ac: Double?,
+    val sa: Double?
 )
 
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy::class)

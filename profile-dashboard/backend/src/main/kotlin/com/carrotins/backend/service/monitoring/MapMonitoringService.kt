@@ -29,4 +29,8 @@ class MapMonitoringService(
     fun getMonitoringAiMapData(addrCd: String, hour: String, date: String): List<Top100AiMapData> {
         return mapMonitoringRepository.getAiMapData(addrCd = addrCd, hour = hour, date = date);
     }
+
+    fun getMonitoringBBIMapMetaData(hex: String, hour: String, partDt: String): List<BBIMetaData> {
+        return mapMonitoringRepository.getBbiMapMetaData(hex = hex, hour = hour, partDt = partDt);
+    }
 }

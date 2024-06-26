@@ -23,10 +23,6 @@ export interface MapBBIHexData {
     sdc: number;
     total_bbi: number;
     traffic: number;
-    sst_meta: MapMetaData[];
-    sac_meta: MapMetaData[];
-    ssp_meta: MapMetaData[];
-    sdc_meta: MapMetaData[];
 }
 
 export interface MapPublicHexData {
@@ -72,12 +68,11 @@ export interface MapAIHexData {
     traffic: number;
 }
 
-
-export interface ExtendedMapMetaData extends MapMetaData {
-    type: string,
-}
-
-export interface MapMetaData {
+export interface BBIMetaData {
+    hex: string,
+    hour: string,
+    part_dt: string,
+    behavior: string,
     trip_id: string,
     ct: number,
     sp: number,
@@ -91,6 +86,7 @@ export interface MapMetaData {
 export interface ExtendedPublicMetaData extends PublicMetaData {
     type: string,
 }
+
 export interface PublicMetaData {
     crossing_center_line: number,
     etc: number,

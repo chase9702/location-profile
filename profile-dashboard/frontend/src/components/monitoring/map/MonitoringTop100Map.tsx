@@ -4,14 +4,12 @@ import {Button, Col, Row, Space} from "antd";
 import {useDispatch, useSelector} from "react-redux";
 import {StoreState} from "@src/reducers";
 import {
-    AiMetaData,
-    ExtendedMapMetaData,
+    AiMetaData, BBIMetaData,
     ExtendedPublicMetaData,
     MapAIHexData,
     MapBBIHexData,
     MapPublicHexData,
     PublicMetaData,
-    TestHexData
 } from "@src/components/monitoring/map/data-types";
 import {store} from "@src/index";
 import {addDataToMap, layerConfigChange, removeDataset, updateMap, wrapTo} from "@kepler.gl/actions";
@@ -65,11 +63,10 @@ const MonitoringTop100Map = (props: Props): React.ReactElement => {
     const [csvFormattedPublicData, setCSVFormattedPublicData] = useState<string>('');
     const [carrotHexDataList, setCarrotHexDataList] = useState<MapAIHexData[]>([]);
 
-    const [bbiMetaList, setBBIBbiMetaList] = useState<ExtendedMapMetaData[]>([]);
+    const [bbiMetaList, setBBIBbiMetaList] = useState<BBIMetaData[]>([]);
     const [publicMetaList, setPublicMetaList] = useState<ExtendedPublicMetaData[]>([]);
     const [aiMetaList, setAiMetaList] = useState<AiMetaData[]>([]);
 
-    const [testHexDataList, setTestHexDataList] = useState<TestHexData[]>([]);
 
 
     useEffect(() => {
@@ -109,22 +106,28 @@ const MonitoringTop100Map = (props: Props): React.ReactElement => {
         return list.find(item => item.hex === hexValue);
     };
 
-    const transformMapMetaDataList = (data: any[], type: string): any[] => {
-        return data.map(item => ({
-            ...item,
-            type: type
-        }));
-    };
-
     const makeBBIMetaDataList = (bbiHexItem: MapBBIHexData) => {
-        let metaList: ExtendedMapMetaData[] = []
-        if (bbiHexDataList.length > 0) {
-            metaList.push(...transformMapMetaDataList(bbiHexItem.sac_meta, "SAC"))
-            metaList.push(...transformMapMetaDataList(bbiHexItem.sst_meta, "SST"))
-            metaList.push(...transformMapMetaDataList(bbiHexItem.ssp_meta, "SSP"))
-            metaList.push(...transformMapMetaDataList(bbiHexItem.sdc_meta, "SDC"))
+
+        if(bbiHexItem === null || undefined === bbiHexItem) {
+            setBBIBbiMetaList([])
+            return;
         }
-        setBBIBbiMetaList(metaList)
+        get<BBIMetaData[]>(`/api/monitoring/map/meta/bbi?${encodeQueryData({
+            hex: bbiHexItem.hex,
+            hour: selectedTop100.hour,
+            part_dt: selectedTop100.part_dt
+        })}`)
+            .then((jsonData) => {
+                console.log(jsonData);
+                setBBIBbiMetaList(jsonData)
+
+            })
+            .catch((error) => {
+                NotifyError(error)
+            })
+            .finally(() => {
+
+            });
     }
 
     const makeAIMetaDataList = (aiHexItem: MapAIHexData) => {
@@ -134,6 +137,10 @@ const MonitoringTop100Map = (props: Props): React.ReactElement => {
     const makePublicMetaDataList = (publicHexItem: MapPublicHexData) => {
 
         let metaList: ExtendedPublicMetaData[] = []
+        if(publicHexItem === null || undefined === publicHexItem) {
+            setPublicMetaList(metaList)
+            return;
+        }
         const cntData: PublicMetaData = {
             crossing_center_line: publicHexItem.crossing_center_line_cnt,
             etc: publicHexItem.etc_cnt,
@@ -171,7 +178,7 @@ const MonitoringTop100Map = (props: Props): React.ReactElement => {
             ...ratioData,
             type: 'RATIO'
         };
-        
+
         metaList.push(extendedCntData)
         metaList.push(extendedRatioData)
 
@@ -182,11 +189,10 @@ const MonitoringTop100Map = (props: Props): React.ReactElement => {
 //메타 만들기
     }
     useEffect(() => {
-        if (mapData && selectedLayer) {
+        if (mapData && Object.keys(selectedLayer).length !== 0) {
             let listIndex = mapIndex === -1 ? 0 : mapIndex;
             const layer = findLayer();
             let hexValue = findHexValue(layer, listIndex);
-
 
             const bbiHexItem = findHexInList(bbiHexDataList, hexValue);
             const aiHexItem = findHexInList(aiHexDataList, hexValue);
@@ -404,7 +410,7 @@ const MonitoringTop100Map = (props: Props): React.ReactElement => {
                 }
                 break;
             case "public":
-                setCarrotButtonType(prevType => (prevType === 'primary' ? 'default' : 'primary'))
+                setPublicButtonType(prevType => (prevType === 'primary' ? 'default' : 'primary'))
                 if (mapData) {
                     const layer = mapData.visState.layers.find(layer => layer.config.dataId === publicDataId);
                     if (layer) {

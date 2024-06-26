@@ -13,10 +13,7 @@ import org.springframework.stereotype.Repository
 @Repository
 class MapMonitoringRepository(
     private val hiveJdbcTemplate: JdbcTemplate
-
-
 ) {
-    private val objectMapper = ObjectMapper()
     fun getTop100data(hour: String, date: String, behavior: String): List<Top100TableData> {
 
         val query: String = """
@@ -67,21 +64,8 @@ class MapMonitoringRepository(
                 sdc = rs.getInt("sdc"),
                 totalBbi = rs.getInt("total_bbi"),
                 traffic = rs.getInt("traffic"),
-                sstMeta = parseMetaData(rs.getString("sst_meta")),
-                sacMeta = parseMetaData(rs.getString("sac_meta")),
-                sspMeta = parseMetaData(rs.getString("ssp_meta")),
-                sdcMeta = parseMetaData(rs.getString("sdc_meta")),
                 partDt = rs.getString("part_dt")
             )
-        }
-    }
-
-
-    fun parseMetaData(jsonString: String?): List<BBIMetaData> {
-        return if (jsonString != null) {
-            objectMapper.readValue(jsonString)
-        } else {
-            emptyList()
         }
     }
 
@@ -92,7 +76,7 @@ class MapMonitoringRepository(
             FROM dw.public_clm_per_addr
             WHERE 1=1
              AND addr_cd = ?
-""".trimIndent()
+        """.trimIndent()
 
         return hiveJdbcTemplate.query(query, arrayOf(addrCd)) { rs, _ ->
             Top100PublicMapData(
@@ -131,6 +115,32 @@ class MapMonitoringRepository(
 
 
         return listOf()
+    }
+
+    fun getBbiMapMetaData(hex: String, hour: String, partDt: String): List<BBIMetaData> {
+
+        val query = """
+            SELECT *
+            FROM dw.meta_hex_hr
+            WHERE part_dt = ? AND hour = ? AND hex = ?
+        """.trimIndent()
+
+        return hiveJdbcTemplate.query(query, arrayOf(partDt, hour, hex)) { rs, _ ->
+            BBIMetaData(
+                hex = rs.getString("hex"),
+                hour = rs.getString("hour"),
+                partDt = rs.getString("part_dt"),
+                behavior = rs.getString("behavior"),
+                tripId = rs.getString("trip_id"),
+                ct = rs.getLong("ct"),
+                sp = rs.getDouble("sp"),
+                fs = rs.getDouble("fs"),
+                durt = rs.getLong("durt"),
+                accel = rs.getDouble("accel"),
+                ac = rs.getDouble("ac"),
+                sa = rs.getDouble("sa"),
+            )
+        }
     }
 
 

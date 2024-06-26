@@ -1,9 +1,6 @@
 package com.carrotins.backend.api.monitoring
 
-import com.carrotins.backend.repository.monitoring.Top100AiMapData
-import com.carrotins.backend.repository.monitoring.Top100BBIMapData
-import com.carrotins.backend.repository.monitoring.Top100PublicMapData
-import com.carrotins.backend.repository.monitoring.Top100TableData
+import com.carrotins.backend.repository.monitoring.*
 import com.carrotins.backend.service.monitoring.MapMonitoringService
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
@@ -34,6 +31,16 @@ class MapMonitoringController(
     ): List<Top100BBIMapData> {
         return mapMonitoringService.getMonitoringBBIMapData(addrCd, hour, partDt)
     }
+
+    @GetMapping("/meta/bbi")
+    fun getMonitoringBBIMapMetaData(
+        @RequestParam("hex") hex: String,
+        @RequestParam("hour") hour: String,
+        @RequestParam("part_dt") partDt: String,
+    ): List<BBIMetaData> {
+        return mapMonitoringService.getMonitoringBBIMapMetaData(hex, hour, partDt)
+    }
+
 
 //    @GetMapping("/carrot")
 //    fun getMonitoringCarrotMapData(

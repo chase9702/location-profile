@@ -1,6 +1,10 @@
-import React, {useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import Table from "antd/lib/table";
-import {AiMetaData, ExtendedMapMetaData, ExtendedPublicMetaData} from "@src/components/monitoring/map/data-types";
+import {
+    AiMetaData,
+    BBIMetaData,
+    ExtendedPublicMetaData
+} from "@src/components/monitoring/map/data-types";
 import {TableProps} from "antd/es/table";
 import {Button, Input, InputRef, Space, TableColumnType} from "antd";
 import {SearchOutlined} from "@ant-design/icons";
@@ -13,12 +17,11 @@ type TablePagination<T extends object> = NonNullable<Exclude<TableProps<T>['pagi
 type TablePaginationPosition = NonNullable<TablePagination<any>['position']>[number];
 
 interface Props {
-    bbiMetaList: ExtendedMapMetaData[],
+    bbiMetaList: BBIMetaData[],
     publicMetaList: ExtendedPublicMetaData[],
     aiMetaList: AiMetaData[],
 }
 
-// type DataIndex = keyof ExtendedMapMetaData | keyof AiMetaData | keyof PublicMetaData;
 type DataIndex<T> = keyof T;
 
 const MonitoringMetaTable = (props: Props): React.ReactElement => {
@@ -113,69 +116,76 @@ const MonitoringMetaTable = (props: Props): React.ReactElement => {
             ),
     });
 
-    const bbiColumns: TableProps<ExtendedMapMetaData>['columns'] = [
+    useEffect(() => {
+        console.log("0-0-0-0-0-0-0-00-0-")
+        console.log(props.bbiMetaList)
+    }, [props.bbiMetaList]);
+
+    const bbiColumns: TableProps<BBIMetaData>['columns'] = [
         {
             title: '분류',
-            dataIndex: 'type',
-            key: 'type',
+            dataIndex: 'behavior',
+            key: 'behavior',
             align: 'center',
-            ...getColumnSearchProps<ExtendedMapMetaData>('type')
+            ...getColumnSearchProps<BBIMetaData>('behavior')
         },
         {
             title: '트립ID',
             dataIndex: 'trip_id',
             key: 'trip_id',
             align: 'center',
-            ...getColumnSearchProps<ExtendedMapMetaData>('trip_id')
+            width: 100,
+            ellipsis: true,
+            ...getColumnSearchProps<BBIMetaData>('trip_id')
         },
         {
             title: 'CT',
             dataIndex: 'ct',
             key: 'ct',
             align: 'center',
-            ...getColumnSearchProps<ExtendedMapMetaData>('ct')
+            ...getColumnSearchProps<BBIMetaData>('ct')
         },
         {
             title: 'SP',
             dataIndex: 'sp',
             key: 'sp',
             align: 'center',
-            ...getColumnSearchProps<ExtendedMapMetaData>('sp')
+            ...getColumnSearchProps<BBIMetaData>('sp')
         },
         {
             title: 'FS',
             dataIndex: 'fs',
             key: 'fs',
             align: 'center',
-            ...getColumnSearchProps<ExtendedMapMetaData>('fs')
+            ...getColumnSearchProps<BBIMetaData>('fs')
         },
         {
             title: 'DURT',
             dataIndex: 'durt',
             key: 'durt',
             align: 'center',
-            ...getColumnSearchProps<ExtendedMapMetaData>('durt')
+            ...getColumnSearchProps<BBIMetaData>('durt')
         },
         {
             title: 'ACCEL',
             dataIndex: 'accel',
             key: 'accel',
             align: 'center',
-            ...getColumnSearchProps<ExtendedMapMetaData>('accel')
+            ...getColumnSearchProps<BBIMetaData>('accel')
         },
         {
             title: 'AC',
             dataIndex: 'ac',
             key: 'ac',
             align: 'center',
-            ...getColumnSearchProps<ExtendedMapMetaData>('ac')
+            ...getColumnSearchProps<BBIMetaData>('ac')
         },
         {
             title: 'SA',
             dataIndex: 'sa',
             key: 'sa',
             align: 'center',
-            ...getColumnSearchProps<ExtendedMapMetaData>('sa')
+            ...getColumnSearchProps<BBIMetaData>('sa')
         }
     ];
 
@@ -310,7 +320,7 @@ const MonitoringMetaTable = (props: Props): React.ReactElement => {
                     <Table
                         columns={bbiColumns}
                         dataSource={props.bbiMetaList}
-                        scroll={{y: 190}}
+                        scroll={{y: 200}}
                         pagination={{position: [bottom]}}
                     />
                 </TabPane>
@@ -318,7 +328,7 @@ const MonitoringMetaTable = (props: Props): React.ReactElement => {
                     <Table
                         columns={publicColumns}
                         dataSource={props.publicMetaList}
-                        scroll={{y: 190}}
+                        scroll={{y: 200}}
                         pagination={{position: [bottom]}}
                     />
                 </TabPane>
@@ -326,7 +336,7 @@ const MonitoringMetaTable = (props: Props): React.ReactElement => {
                     <Table
                         columns={aiColumns}
                         dataSource={props.aiMetaList}
-                        scroll={{y: 190}}
+                        scroll={{y: 200}}
                         pagination={{position: [bottom]}}
                     />
                 </TabPane>
