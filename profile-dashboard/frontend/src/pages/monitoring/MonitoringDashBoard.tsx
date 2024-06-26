@@ -23,10 +23,10 @@ const MonitoringDashBoard = (props: Props): React.ReactElement => {
     return (
         <div>
             <PageTitle
-                title="타이틀 들어갈 곳"
+                title="BBI, AI 모니터링"
                 description={[
-                    '목적지 통계 데이터를 확인할 수 있습니다.',
-                    '그룹, 개인 통계를 각각 확인 할 수 있습니다.',
+                    'BBI, AI, 이상 디바이스에 대한 데이터를 확인할 수 있습니다.',
+                    'Kepler 지도로 위치 데이터를 확인할 수 있습니다.',
                 ]}
             />
             <Card style={{padding: '10px'}}>
