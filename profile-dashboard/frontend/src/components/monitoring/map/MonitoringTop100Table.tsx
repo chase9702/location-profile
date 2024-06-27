@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from "react";
-import {Button, Card, Col, DatePickerProps, Input, InputRef, Row, Space, TableColumnType} from "antd";
+import {Button, Card, Col, DatePickerProps, Input, InputRef, Modal, Row, Space, TableColumnType} from "antd";
 import TimePicker from "antd/lib/time-picker";
 import DatePicker from "antd/lib/date-picker";
 import dayjs, {Dayjs} from "dayjs";
@@ -12,7 +12,6 @@ import {Top100DropMenuItems, Top100TableDataType} from "@src/components/monitori
 import {useDispatch} from "react-redux";
 import {setSelectedTableData} from "@src/actions/MonitoringAction";
 import {now} from "moment";
-import {format} from "url";
 import {RangePickerProps} from "antd/es/date-picker";
 import {get} from "@src/api";
 import {NotifyError} from "@src/components/common/Notification";
@@ -20,6 +19,7 @@ import Dropdown from "antd/lib/dropdown/dropdown";
 import {MenuProps} from "antd/lib";
 import {encodeQueryData} from "@src/common/utils";
 import './map.css';
+import MonitoringTop100Map from "@src/components/monitoring/map/MonitoringTop100Map";
 
 type TablePagination<T extends object> = NonNullable<Exclude<TableProps<T>['pagination'], boolean>>;
 type TablePaginationPosition = NonNullable<TablePagination<any>['position']>[number];
@@ -36,16 +36,20 @@ const MonitoringTop100Table = (props: Props): React.ReactElement => {
     const dispatch = useDispatch();
     const searchInput = useRef<InputRef>(null);
 
-    const [selectedTime, setSelectedTime] = useState(dayjs(now()));
-    const [selectedDate, setSelectedDate] = useState<Dayjs | null>(dayjs(now()).subtract(1, 'day'));
+
     const [searchText, setSearchText] = useState('');
     const [searchedColumn, setSearchedColumn] = useState('');
+    const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
+
+    const [selectedTime, setSelectedTime] = useState(dayjs(now()));
+    const [selectedDate, setSelectedDate] = useState<Dayjs | null>(dayjs(now()).subtract(1, 'day'));
     const [bottom, setBottom] = useState<TablePaginationPosition>('bottomCenter');
     const [selectedFilter, setSelectedFilter] = useState('total_bbi')
     const [searchLoading, setSearchLoading] = useState<boolean>(false);
     const [top100DataList, setTop100DataList] = useState<Top100TableDataType[]>([]);
 
     const [selectedRowIndex, setSelectedRowIndex] = useState(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     useEffect(() => {
         handleClickSearch()
@@ -61,8 +65,13 @@ const MonitoringTop100Table = (props: Props): React.ReactElement => {
 
     const handleClickSearch = () => {
         setSearchLoading(true);
+        setSearchText('');
+        setSearchedColumn('');
+        setSelectedKeys([]);
+
         get<Top100TableDataType[]>(`/api/monitoring/map/top100/${selectedFilter}?` + makeQueryString())
             .then((jsonData) => {
+
                 setTop100DataList(jsonData)
 
             })
@@ -101,6 +110,8 @@ const MonitoringTop100Table = (props: Props): React.ReactElement => {
     ) => {
         clearFilters();
         setSearchText('');
+        setSearchedColumn('');
+        setSelectedKeys([]);
         confirm();
     };
 
@@ -169,6 +180,18 @@ const MonitoringTop100Table = (props: Props): React.ReactElement => {
                 text
             ),
     });
+
+    const showModal = () => {
+        setIsModalOpen(true);
+    };
+
+    const handleOk = () => {
+        setIsModalOpen(false);
+    };
+
+    const handleCancel = () => {
+        setIsModalOpen(false);
+    };
 
 
     const getLabelByKey = (key: string): string | undefined => {
@@ -258,6 +281,7 @@ const MonitoringTop100Table = (props: Props): React.ReactElement => {
                                 return {
                                     onClick: (event) => {
                                         setSelectedRowIndex(rowIndex);
+                                        showModal()
                                         dispatch(setSelectedTableData(record))
                                     }, // click row
 
@@ -265,6 +289,13 @@ const MonitoringTop100Table = (props: Props): React.ReactElement => {
                             }}
                         />
                     </Space>
+
+                    <Modal title="Kepler & Meta Info" width={'95%'} open={isModalOpen} onOk={handleOk}>
+                        <Card style={{height: '700px', overflowY: 'auto'}}>
+                            <MonitoringTop100Map/>
+                        </Card>
+                    </Modal>
+
                 </Col>
             </Row>
 

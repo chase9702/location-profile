@@ -68,7 +68,6 @@ const MonitoringTop100Map = (props: Props): React.ReactElement => {
     const [aiMetaList, setAiMetaList] = useState<AiMetaData[]>([]);
 
 
-
     useEffect(() => {
         store.dispatch(updateMap({
             latitude: 37.5658, longitude: 126.9889, // 캐롯 좌표
@@ -76,17 +75,8 @@ const MonitoringTop100Map = (props: Props): React.ReactElement => {
     }, []);
 
     const findLayer = () => {
-        const layersConfig = [
-            {dataId: bbiDataId},
-            {dataId: aiDataId},
-            {dataId: publicDataId},
-            {dataId: carrotDataId},
-        ];
-
-        return layersConfig.find(({dataId}) => {
-            const layer = mapData.visState.layers.find(layer => layer.config.dataId === dataId);
-            return layer !== undefined;
-        });
+        const layer = mapData.visState.layers.find(layer => layer.id === selectedLayer.id)
+        return layer.config.dataId
     }
 
 
@@ -98,7 +88,7 @@ const MonitoringTop100Map = (props: Props): React.ReactElement => {
     };
 
     const findHexValue = (layer, listIndex) => {
-        const hexList = dataIdToListMap[layer?.dataId];
+        const hexList = dataIdToListMap[layer];
         return hexList ? hexList[listIndex].hex : null;
     };
 
@@ -108,10 +98,11 @@ const MonitoringTop100Map = (props: Props): React.ReactElement => {
 
     const makeBBIMetaDataList = (bbiHexItem: MapBBIHexData) => {
 
-        if(bbiHexItem === null || undefined === bbiHexItem) {
+        if (bbiHexItem === null || undefined === bbiHexItem) {
             setBBIBbiMetaList([])
             return;
         }
+
         get<BBIMetaData[]>(`/api/monitoring/map/meta/bbi?${encodeQueryData({
             hex: bbiHexItem.hex,
             hour: selectedTop100.hour,
@@ -137,7 +128,7 @@ const MonitoringTop100Map = (props: Props): React.ReactElement => {
     const makePublicMetaDataList = (publicHexItem: MapPublicHexData) => {
 
         let metaList: ExtendedPublicMetaData[] = []
-        if(publicHexItem === null || undefined === publicHexItem) {
+        if (publicHexItem === null || undefined === publicHexItem) {
             setPublicMetaList(metaList)
             return;
         }
@@ -190,14 +181,27 @@ const MonitoringTop100Map = (props: Props): React.ReactElement => {
     }
     useEffect(() => {
         if (mapData && Object.keys(selectedLayer).length !== 0) {
+
+
             let listIndex = mapIndex === -1 ? 0 : mapIndex;
             const layer = findLayer();
+
             let hexValue = findHexValue(layer, listIndex);
 
-            const bbiHexItem = findHexInList(bbiHexDataList, hexValue);
-            const aiHexItem = findHexInList(aiHexDataList, hexValue);
-            const publicHexItem = findHexInList(publicHexDataList, hexValue);
-            const carrotHexItem = findHexInList(carrotHexDataList, hexValue);
+            const lists = [
+                {list: bbiHexDataList, item: null},
+                {list: aiHexDataList, item: null},
+                {list: publicHexDataList, item: null},
+                {list: carrotHexDataList, item: null},
+            ];
+
+            lists.forEach((obj, index) => {
+                if (obj.list && obj.list.length > 0) {
+                    lists[index].item = findHexInList(obj.list, hexValue);
+                }
+            });
+
+            const [bbiHexItem, aiHexItem, publicHexItem, carrotHexItem] = lists.map(obj => obj.item);
 
             makeBBIMetaDataList(bbiHexItem);
             makeAIMetaDataList(aiHexItem);
@@ -460,7 +464,7 @@ const MonitoringTop100Map = (props: Props): React.ReactElement => {
             </Row>
             <Row gutter={16}>
                 <Col span={24}>
-                    <CustomKeplerMap id={"topMap"} heightRatio={30}/>
+                    <CustomKeplerMap id={"topMap"} heightRatio={65}/>
                 </Col>
             </Row>
             <Row gutter={16}>

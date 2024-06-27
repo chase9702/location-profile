@@ -7,21 +7,23 @@ const MonitoringTop100 = (): React.ReactElement => {
 
     return (
         <div>
-            <Card>
-                <h3>Top100</h3>
-                <Row gutter={16}>
-                    <Col span={8}>
-                        <Card style={{height: '800px', overflowY: 'auto'}}>
-                            <MonitoringTop100Table/>
-                        </Card>
-                    </Col>
-                    <Col span={16}>
-                        <Card style={{height: '800px', overflowY: 'auto'}}>
-                            <MonitoringTop100Map/>
-                        </Card>
-                    </Col>
-                </Row>
-            </Card>
+
+            <h3>Top100</h3>
+            <Row gutter={16}>
+                <Col span={24}>
+                    <Card style={{height: '500px', overflowY: 'auto'}}>
+                        <MonitoringTop100Table/>
+                    </Card>
+                </Col>
+            </Row>
+            {/*<Row gutter={16}>*/}
+            {/*    <Col span={24}>*/}
+            {/*        <Card style={{height: '800px', overflowY: 'auto'}}>*/}
+            {/*            <MonitoringTop100Map/>*/}
+            {/*        </Card>*/}
+            {/*    </Col>*/}
+            {/*</Row>*/}
+
         </div>
     )
 };
