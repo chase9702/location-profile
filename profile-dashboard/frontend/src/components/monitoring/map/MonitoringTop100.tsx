@@ -11,19 +11,11 @@ const MonitoringTop100 = (): React.ReactElement => {
             <h3>Top100</h3>
             <Row gutter={16}>
                 <Col span={24}>
-                    <Card style={{height: '500px', overflowY: 'auto'}}>
+                    <Card style={{height: '800px', overflowY: 'auto'}}>
                         <MonitoringTop100Table/>
                     </Card>
                 </Col>
             </Row>
-            {/*<Row gutter={16}>*/}
-            {/*    <Col span={24}>*/}
-            {/*        <Card style={{height: '800px', overflowY: 'auto'}}>*/}
-            {/*            <MonitoringTop100Map/>*/}
-            {/*        </Card>*/}
-            {/*    </Col>*/}
-            {/*</Row>*/}
-
         </div>
     )
 };

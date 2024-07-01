@@ -35,11 +35,10 @@ const MonitoringTop100Table = (props: Props): React.ReactElement => {
 
     const dispatch = useDispatch();
     const searchInput = useRef<InputRef>(null);
-
+    const [searchStatus, setSearchStatus] = useState<boolean>(false);
 
     const [searchText, setSearchText] = useState('');
     const [searchedColumn, setSearchedColumn] = useState('');
-    const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
 
     const [selectedTime, setSelectedTime] = useState(dayjs(now()));
     const [selectedDate, setSelectedDate] = useState<Dayjs | null>(dayjs(now()).subtract(1, 'day'));
@@ -50,6 +49,7 @@ const MonitoringTop100Table = (props: Props): React.ReactElement => {
 
     const [selectedRowIndex, setSelectedRowIndex] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [modalTitle, setModalTitle] = useState<string>('');
 
     useEffect(() => {
         handleClickSearch()
@@ -65,9 +65,10 @@ const MonitoringTop100Table = (props: Props): React.ReactElement => {
 
     const handleClickSearch = () => {
         setSearchLoading(true);
-        setSearchText('');
-        setSearchedColumn('');
-        setSelectedKeys([]);
+
+        setSearchStatus(true);
+        setTimeout(() => setSearchStatus(false), 0); //
+
 
         get<Top100TableDataType[]>(`/api/monitoring/map/top100/${selectedFilter}?` + makeQueryString())
             .then((jsonData) => {
@@ -100,6 +101,7 @@ const MonitoringTop100Table = (props: Props): React.ReactElement => {
         confirm: FilterDropdownProps['confirm'],
         dataIndex: DataIndex,
     ) => {
+
         confirm();
         setSearchText(selectedKeys[0]);
         setSearchedColumn(dataIndex);
@@ -111,76 +113,87 @@ const MonitoringTop100Table = (props: Props): React.ReactElement => {
         clearFilters();
         setSearchText('');
         setSearchedColumn('');
-        setSelectedKeys([]);
         confirm();
     };
 
-    const getColumnSearchProps = (dataIndex: DataIndex): TableColumnType<Top100TableDataType> => ({
-        filterDropdown: ({setSelectedKeys, selectedKeys, confirm, clearFilters, close}) => (
-            <div style={{padding: 8}} onKeyDown={(e) => e.stopPropagation()}>
-                <Input
-                    ref={searchInput}
-                    placeholder={`Search ${dataIndex}`}
-                    value={selectedKeys[0]}
-                    onChange={(e) => setSelectedKeys(e.target.value ? [e.target.value] : [])}
-                    onPressEnter={() => handleSearch(selectedKeys as string[], confirm, dataIndex)}
-                    style={{marginBottom: 8, display: 'block'}}
-                />
-                <Space>
-                    <Button
-                        type="primary"
-                        onClick={() => handleSearch(selectedKeys as string[], confirm, dataIndex)}
-                        icon={<SearchOutlined/>}
-                        size="small"
-                        style={{width: 90}}
-                    >
-                        Search
-                    </Button>
-                    <Button
-                        onClick={() => clearFilters && handleReset(clearFilters, confirm)}
-                        size="small"
-                        style={{width: 90}}
-                    >
-                        Reset
-                    </Button>
-                    <Button
-                        type="link"
-                        size="small"
-                        onClick={() => {
-                            close();
-                        }}
-                    >
-                        close
-                    </Button>
-                </Space>
-            </div>
-        ),
-        filterIcon: (filtered: boolean) => (
-            <SearchOutlined style={{color: filtered ? '#1677ff' : undefined}}/>
-        ),
-        onFilter: (value, record) =>
-            record[dataIndex]
-                .toString()
-                .toLowerCase()
-                .includes((value as string).toLowerCase()),
-        onFilterDropdownOpenChange: (visible) => {
-            if (visible) {
-                setTimeout(() => searchInput.current?.select(), 100);
-            }
-        },
-        render: (text) =>
-            searchedColumn === dataIndex ? (
-                <Highlighter
-                    highlightStyle={{backgroundColor: '#ffc069', padding: 0}}
-                    searchWords={[searchText]}
-                    autoEscape
-                    textToHighlight={text ? text.toString() : ''}
-                />
-            ) : (
-                text
+    const getColumnSearchProps = (dataIndex: DataIndex, searchStatus: boolean): TableColumnType<Top100TableDataType> => {
+        return {
+            filterDropdown: ({setSelectedKeys, selectedKeys, confirm, clearFilters, close}) => {
+                useEffect(() => {
+                    if (searchStatus) {
+                        clearFilters && handleReset(clearFilters, confirm)
+                    }
+                }, [searchStatus]);
+                return (
+                    <div style={{padding: 8}} onKeyDown={(e) => e.stopPropagation()}>
+                        <Input
+                            ref={searchInput}
+                            placeholder={`Search ${dataIndex}`}
+                            value={selectedKeys[0]}
+                            onChange={(e) => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+                            onPressEnter={() => handleSearch(selectedKeys as string[], confirm, dataIndex)}
+                            style={{marginBottom: 8, display: 'block'}}
+                        />
+                        <Space>
+                            <Button
+                                type="primary"
+                                onClick={() => handleSearch(selectedKeys as string[], confirm, dataIndex)}
+                                icon={<SearchOutlined/>}
+                                size="small"
+                                style={{width: 90}}
+                            >
+                                Search
+                            </Button>
+                            <Button
+                                onClick={() => clearFilters && handleReset(clearFilters, confirm)}
+                                size="small"
+                                style={{width: 90}}
+                            >
+                                Reset
+                            </Button>
+                            <Button
+                                type="link"
+                                size="small"
+                                onClick={() => {
+                                    close();
+                                }}
+                            >
+                                close
+                            </Button>
+                        </Space>
+                    </div>
+                )
+            },
+            filterIcon: (filtered: boolean) => (
+                <SearchOutlined style={{color: filtered ? '#1677ff' : undefined}}/>
             ),
-    });
+            onFilter: (value, record) => {
+                return (
+                    record[dataIndex]
+                        .toString()
+                        .toLowerCase()
+                        .includes((value))
+                )
+            },
+            onFilterDropdownOpenChange: (visible) => {
+                if (visible) {
+                    setTimeout(() => searchInput.current?.select(), 100);
+                }
+            },
+            render: (text) =>
+                searchedColumn === dataIndex ? (
+                    <Highlighter
+                        highlightStyle={{backgroundColor: '#ffc069', padding: 0}}
+                        searchWords={[searchText]}
+                        autoEscape
+                        textToHighlight={text ? text.toString() : ''}
+                    />
+                ) : (
+                    text
+                ),
 
+        }
+    }
     const showModal = () => {
         setIsModalOpen(true);
     };
@@ -210,7 +223,7 @@ const MonitoringTop100Table = (props: Props): React.ReactElement => {
             dataIndex: 'addr',
             key: 'addr',
             align: 'center',
-            ...getColumnSearchProps('addr')
+            ...getColumnSearchProps('addr', searchStatus)
         },
         {
             title: getLabelByKey(selectedFilter),
@@ -272,7 +285,7 @@ const MonitoringTop100Table = (props: Props): React.ReactElement => {
                         <Table
                             columns={columns}
                             dataSource={top100DataList}
-                            scroll={{y: 550}}
+                            scroll={{y: 750}}
                             pagination={{position: [bottom]}}
                             rowClassName={(record, index) => {
                                 return index === selectedRowIndex ? 'selected-row' : '';
@@ -281,6 +294,7 @@ const MonitoringTop100Table = (props: Props): React.ReactElement => {
                                 return {
                                     onClick: (event) => {
                                         setSelectedRowIndex(rowIndex);
+                                        setModalTitle(record.addr);
                                         showModal()
                                         dispatch(setSelectedTableData(record))
                                     }, // click row
@@ -290,7 +304,8 @@ const MonitoringTop100Table = (props: Props): React.ReactElement => {
                         />
                     </Space>
 
-                    <Modal title="Kepler & Meta Info" width={'95%'} open={isModalOpen} onOk={handleOk}>
+                    <Modal title={modalTitle} width={'95%'} open={isModalOpen} onOk={handleOk}
+                           onCancel={handleCancel} onClose={handleCancel}>
                         <Card style={{height: '700px', overflowY: 'auto'}}>
                             <MonitoringTop100Map/>
                         </Card>

@@ -46,7 +46,7 @@ const MonitoringTop100Map = (props: Props): React.ReactElement => {
     const wrapToMap = wrapTo('topMap')
 
     const [bbiButtonType, setBbiButtonType] = useState<ButtonType>('primary');
-    const [accButtonType, setAccButtonType] = useState<ButtonType>('primary');
+    const [aiButtonType, setAiButtonType] = useState<ButtonType>('primary');
     const [publicButtonType, setPublicButtonType] = useState<ButtonType>('primary');
     const [carrotButtonType, setCarrotButtonType] = useState<ButtonType>('default');
 
@@ -214,6 +214,11 @@ const MonitoringTop100Map = (props: Props): React.ReactElement => {
 
     useEffect(() => {
 
+        setAiButtonType("primary")
+        setBbiButtonType("primary")
+        setPublicButtonType("primary")
+        setCarrotButtonType("primary")
+
         if (selectedTop100 !== null) {
             handleSearchBBIMapData()
             // handleSearchAIMapData()
@@ -380,7 +385,7 @@ const MonitoringTop100Map = (props: Props): React.ReactElement => {
                 }
                 break;
             case "acc":
-                setAccButtonType(prevType => (prevType === 'primary' ? 'default' : 'primary'))
+                setAiButtonType(prevType => (prevType === 'primary' ? 'default' : 'primary'))
                 if (mapData) {
                     const layer = mapData.visState.layers.find(layer => layer.config.dataId === aiDataId);
                     if (layer) {
@@ -447,7 +452,7 @@ const MonitoringTop100Map = (props: Props): React.ReactElement => {
                         </Button>
                         <Button
                             onClick={(e) => clickButton(e, 'acc')}
-                            type={accButtonType}
+                            type={aiButtonType}
                             disabled={buttonDisabled()}
                         >
                             사고인지

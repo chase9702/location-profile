@@ -1,3 +1,5 @@
+import {TableProps} from "antd/es/table";
+
 export interface Top100TableDataType {
     part_dt: string;
     addr_cd: string;
@@ -134,4 +136,194 @@ export const Top100DropMenuItems = [
     },
 ];
 
+export const bbiColumns: TableProps<BBIMetaData>['columns'] = [
+    {
+        title: '분류',
+        dataIndex: 'behavior',
+        key: 'behavior',
+        align: 'center',
 
+    },
+    {
+        title: '트립ID',
+        dataIndex: 'trip_id',
+        key: 'trip_id',
+        align: 'center',
+        width: 100,
+        ellipsis: true,
+
+    },
+    {
+        title: 'CT',
+        dataIndex: 'ct',
+        key: 'ct',
+        align: 'center',
+
+    },
+    {
+        title: 'SP',
+        dataIndex: 'sp',
+        key: 'sp',
+        align: 'center',
+
+    },
+    {
+        title: 'FS',
+        dataIndex: 'fs',
+        key: 'fs',
+        align: 'center',
+
+    },
+    {
+        title: 'DURT',
+        dataIndex: 'durt',
+        key: 'durt',
+        align: 'center',
+
+    },
+    {
+        title: 'ACCEL',
+        dataIndex: 'accel',
+        key: 'accel',
+        align: 'center',
+
+    },
+    {
+        title: 'AC',
+        dataIndex: 'ac',
+        key: 'ac',
+        align: 'center',
+
+    },
+    {
+        title: 'SA',
+        dataIndex: 'sa',
+        key: 'sa',
+        align: 'center',
+
+    }
+];
+
+export const publicColumns: TableProps<ExtendedPublicMetaData>['columns'] = [
+    {
+        title: '분류',
+        dataIndex: 'type',
+        key: 'type',
+        align: 'center',
+        fixed: 'left',
+        width: 80,
+
+    },
+    {
+        title: '중앙선침범',
+        dataIndex: 'crossing_center_line',
+        key: 'crossing_center_line',
+        align: 'center',
+        width: 100,
+        ellipsis: true,
+
+    },
+    {
+        title: '기타',
+        dataIndex: 'etc',
+        key: 'etc',
+        width: 80,
+        align: 'center',
+
+    },
+    {
+        title: '불법유턴',
+        dataIndex: 'il_u_turn',
+        key: 'il_u_turn',
+        align: 'center',
+        width: 100,
+        ellipsis: true,
+
+    },
+    {
+        title: '교차로운행방법위반',
+        dataIndex: 'intersection',
+        key: 'intersection',
+        align: 'center',
+        width: 100,
+        ellipsis: true,
+
+    },
+    {
+        title: '차로위반',
+        dataIndex: 'lane',
+        key: 'lane',
+        align: 'center',
+        width: 100,
+
+    },
+    {
+        title: '신호위반',
+        dataIndex: 'light',
+        key: 'light',
+        align: 'center',
+        width: 100,
+        ellipsis: true,
+
+    },
+    {
+        title: '직진우회전진행방해',
+        dataIndex: 'obstruct_right',
+        key: 'obstruct_right',
+        align: 'center',
+        width: 100,
+        ellipsis: true,
+
+    },
+    {
+        title: '보행자보호의무위반',
+        dataIndex: 'pedestrian',
+        key: 'pedestrian',
+        align: 'center',
+        width: 100,
+        ellipsis: true,
+
+    },
+    {
+        title: '안전거리미확보',
+        dataIndex: 'safe_distance',
+        key: 'safe_distance',
+        align: 'center',
+        width: 100,
+        ellipsis: true,
+
+    },
+    {
+        title: '안전운전불이행',
+        dataIndex: 'safe_driving',
+        key: 'safe_driving',
+        align: 'center',
+        width: 100,
+        ellipsis: true,
+
+    },
+];
+
+export const aiColumns: TableProps<AiMetaData>['columns'] = [
+    {
+        title: '트립ID',
+        dataIndex: 'trip_id',
+        key: 'trip_id',
+        align: 'center',
+
+    },
+    {
+        title: 'CT',
+        dataIndex: 'ct',
+        key: 'ct',
+        align: 'center',
+
+    },
+    {
+        title: 'SP',
+        dataIndex: 'sp',
+        key: 'sp',
+        align: 'center',
+
+    },
+];
