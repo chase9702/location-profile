@@ -17,7 +17,7 @@ class MapMonitoringController(
     @GetMapping("/top100/{behavior}")
     fun getTop100Data(
         @PathVariable("behavior") behavior: String,
-        @RequestParam("hour") hour: String,
+        @RequestParam("hour") hour: String?,
         @RequestParam("part_dt") partDt: String,
     ): List<Top100TableData> {
         return mapMonitoringService.getTop100Data(behavior, hour, partDt)

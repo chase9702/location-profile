@@ -40,7 +40,8 @@ const MonitoringTop100Table = (props: Props): React.ReactElement => {
     const [searchText, setSearchText] = useState('');
     const [searchedColumn, setSearchedColumn] = useState('');
 
-    const [selectedTime, setSelectedTime] = useState(dayjs(now()));
+    const [selectedTime, setSelectedTime] = useState<Dayjs | null>(dayjs(now()));
+    const hourOptions = Array.from({length: 24}, (_, i) => ({value: i + 1, label: `${i + 1}`}));
     const [selectedDate, setSelectedDate] = useState<Dayjs | null>(dayjs(now()).subtract(1, 'day'));
     const [bottom, setBottom] = useState<TablePaginationPosition>('bottomCenter');
     const [selectedFilter, setSelectedFilter] = useState('total_bbi')
@@ -57,7 +58,7 @@ const MonitoringTop100Table = (props: Props): React.ReactElement => {
 
     const makeQueryString = () => {
         const queryParams: Record<string, string | null> = {
-            hour: selectedTime.format("HH"),
+            hour: selectedTime === null ? null : selectedTime.format("HH"),
             part_dt: selectedDate.format("YYYYMMDD"),
         };
         return encodeQueryData(queryParams)
@@ -89,7 +90,7 @@ const MonitoringTop100Table = (props: Props): React.ReactElement => {
     };
 
     const handleTimePickerChange = (date: Dayjs, dateString: string | string[]) => {
-        setSelectedTime(dayjs(date));
+        setSelectedTime(date);
     };
 
     const disabledDate: RangePickerProps['disabledDate'] = (current) => {

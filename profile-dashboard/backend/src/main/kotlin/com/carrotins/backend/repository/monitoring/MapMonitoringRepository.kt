@@ -14,9 +14,11 @@ import org.springframework.stereotype.Repository
 class MapMonitoringRepository(
     private val hiveJdbcTemplate: JdbcTemplate
 ) {
-    fun getTop100data(hour: String, date: String, behavior: String): List<Top100TableData> {
+    fun getTop100data(hour: String?, date: String, behavior: String): List<Top100TableData> {
+        var query: String
 
-        val query: String = """
+        if (hour != null) {
+            query = """
              SELECT 
                  part_dt, 
                  hour,
@@ -30,6 +32,21 @@ class MapMonitoringRepository(
                AND hour = '$hour'
                LIMIT 100
         """.trimIndent()
+        } else {
+            query = """
+             SELECT 
+                 part_dt, 
+                 'all' as hour,
+                 rank() OVER(PARTITION BY part_dt ORDER BY $behavior desc) AS rank,
+                 addr,
+                 addr_cd,
+                 $behavior as behavior_value
+               FROM dw.swp_bbi_dong_hr
+             WHERE 1=1
+               AND part_dt = '$date'
+               LIMIT 100
+        """.trimIndent()
+        }
 
         return hiveJdbcTemplate.query(query) { rs, _ ->
             Top100TableData(
@@ -41,6 +58,7 @@ class MapMonitoringRepository(
                 behaviorValue = rs.getInt("behavior_value")
             )
         }
+
     }
 
     fun getBbiMapData(date: String, hour: String, addrCd: String): List<Top100BBIMapData> {
@@ -91,9 +109,9 @@ class MapMonitoringRepository(
                 ilUTurnCnt = rs.getInt("il_u_turn_cnt"),
                 intersectionCnt = rs.getInt("intersection_cnt"),
                 laneCnt = rs.getInt("lane_cnt"),
-                lightCnt= rs.getInt("light_cnt"),
+                lightCnt = rs.getInt("light_cnt"),
                 obstructRightCnt = rs.getInt("obstruct_right_cnt"),
-                pedestrianCnt =rs.getInt("pedestrian_cnt"),
+                pedestrianCnt = rs.getInt("pedestrian_cnt"),
                 safeDistanceCnt = rs.getInt("safe_distance_cnt"),
                 safeDrivingCnt = rs.getInt("safe_driving_cnt"),
                 crossingCenterLineRatio = rs.getDouble("crossing_center_line_ratio"),

@@ -13,7 +13,7 @@ class MapMonitoringService(
 ) {
 
     @Cacheable("cacheTop100Table")
-    fun getTop100Data(behavior: String, hour: String, date: String): List<Top100TableData> {
+    fun getTop100Data(behavior: String, hour: String?, date: String): List<Top100TableData> {
         return mapMonitoringRepository.getTop100data(hour = hour, date = date, behavior = behavior)
     }
 
