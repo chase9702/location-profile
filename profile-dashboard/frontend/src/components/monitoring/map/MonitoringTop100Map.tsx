@@ -300,6 +300,7 @@ const MonitoringTop100Map = (props: Props): React.ReactElement => {
             .then((jsonData) => {
                 console.log(jsonData);
                 const csvData = "SST, SAC, SSP, SDC, TOTAL_BBI, HEX  \n" + bbiH3FormatData(jsonData)
+                console.log(csvData)
                 setCSVFormattedBBIData(csvData)
                 setBbiHexDataList(jsonData)
             })

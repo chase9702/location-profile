@@ -26,7 +26,7 @@ class MapMonitoringController(
     @GetMapping("/bbi")
     fun getMonitoringBBIMapData(
         @RequestParam("addr_cd") addrCd: String,
-        @RequestParam("hour") hour: String,
+        @RequestParam("hour") hour: String?,
         @RequestParam("part_dt") partDt: String,
     ): List<Top100BBIMapData> {
         return mapMonitoringService.getMonitoringBBIMapData(addrCd, hour, partDt)
@@ -35,7 +35,7 @@ class MapMonitoringController(
     @GetMapping("/meta/bbi")
     fun getMonitoringBBIMapMetaData(
         @RequestParam("hex") hex: String,
-        @RequestParam("hour") hour: String,
+        @RequestParam("hour") hour: String?,
         @RequestParam("part_dt") partDt: String,
     ): List<BBIMetaData> {
         return mapMonitoringService.getMonitoringBBIMapMetaData(hex, hour, partDt)

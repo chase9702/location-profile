@@ -21,7 +21,7 @@ class MapMonitoringService(
         return mapMonitoringRepository.getPublicMapData(addrCd)
     }
 
-    fun getMonitoringBBIMapData(addrCd: String, hour: String, date: String): List<Top100BBIMapData> {
+    fun getMonitoringBBIMapData(addrCd: String, hour: String?, date: String): List<Top100BBIMapData> {
         val result = mapMonitoringRepository.getBbiMapData(date = date, hour = hour, addrCd = addrCd)
         return result
     }
@@ -30,7 +30,7 @@ class MapMonitoringService(
         return mapMonitoringRepository.getAiMapData(addrCd = addrCd, hour = hour, date = date);
     }
 
-    fun getMonitoringBBIMapMetaData(hex: String, hour: String, partDt: String): List<BBIMetaData> {
+    fun getMonitoringBBIMapMetaData(hex: String, hour: String?, partDt: String): List<BBIMetaData> {
         return mapMonitoringRepository.getBbiMapMetaData(hex = hex, hour = hour, partDt = partDt);
     }
 }

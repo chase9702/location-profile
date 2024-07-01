@@ -142,7 +142,13 @@ export const bbiColumns: TableProps<BBIMetaData>['columns'] = [
         dataIndex: 'behavior',
         key: 'behavior',
         align: 'center',
-
+        fixed: 'left',
+    },
+    {
+        title: '시간',
+        dataIndex: 'hour',
+        key: 'hour',
+        align: 'center',
     },
     {
         title: '트립ID',

@@ -61,16 +61,44 @@ class MapMonitoringRepository(
 
     }
 
-    fun getBbiMapData(date: String, hour: String, addrCd: String): List<Top100BBIMapData> {
+    fun getBbiMapData(date: String, hour: String?, addrCd: String): List<Top100BBIMapData> {
 
-        val query = """
+        var query: String
+        if (!hour.equals("all")) {
+            query = """
             SELECT *
             FROM dw.swp_bbi_hex_hr
-            WHERE part_dt = ? AND hour = ? AND addr_cd = ?
+            WHERE 1=1
+            AND part_dt = '$date' 
+            AND total_bbi > 0
+            AND hour = '$hour' 
+            AND addr_cd = '$addrCd'
             
         """.trimIndent()
+        } else {
+            query = """
+            SELECT hex,
+                'all' as hour,
+                addr,
+                addr_cd,
+                sum(sst) as sst,
+                sum(sac) as sac,
+                sum(sdc) as sdc,
+                sum(ssp) as ssp,
+                sum(total_bbi) as total_bbi,
+                sum(traffic) as traffic,
+                part_dt
+            FROM dw.swp_bbi_hex_hr
+            WHERE 1=1
+            AND part_dt = '$date'
+            AND total_bbi > 0
+            AND addr_cd = '$addrCd'
+            GROUP BY hex, part_dt, addr, addr_cd
+            
+        """.trimIndent()
+        }
 
-        return hiveJdbcTemplate.query(query, arrayOf(date, hour, addrCd)) { rs, _ ->
+        return hiveJdbcTemplate.query(query) { rs, _ ->
             Top100BBIMapData(
                 hex = rs.getString("hex"),
                 hour = rs.getString("hour"),
@@ -135,15 +163,31 @@ class MapMonitoringRepository(
         return listOf()
     }
 
-    fun getBbiMapMetaData(hex: String, hour: String, partDt: String): List<BBIMetaData> {
+    fun getBbiMapMetaData(hex: String, hour: String?, partDt: String): List<BBIMetaData> {
 
-        val query = """
+        var query: String
+
+        if (!hour.equals("all")) {
+            query = """
             SELECT *
             FROM dw.meta_hex_hr
-            WHERE part_dt = ? AND hour = ? AND hex = ?
+             WHERE 1=1
+             AND part_dt = '$partDt' 
+             AND hour = '$hour' 
+             AND hex = '$hex'
+           
         """.trimIndent()
-
-        return hiveJdbcTemplate.query(query, arrayOf(partDt, hour, hex)) { rs, _ ->
+        } else {
+            query = """
+            SELECT *
+            FROM dw.meta_hex_hr
+            WHERE 1=1
+            AND part_dt = '$partDt' 
+            AND hex = '$hex'
+            ORDER BY hour asc
+        """.trimIndent()
+        }
+        return hiveJdbcTemplate.query(query) { rs, _ ->
             BBIMetaData(
                 hex = rs.getString("hex"),
                 hour = rs.getString("hour"),
