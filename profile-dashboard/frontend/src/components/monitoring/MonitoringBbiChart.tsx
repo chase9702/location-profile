@@ -12,6 +12,8 @@ import {get} from "@src/api";
 import {encodeQueryData} from "@src/common/utils";
 import LoadingOutlined from "@ant-design/icons/lib/icons/LoadingOutlined";
 import Spin from "antd/lib/spin";
+import dayjs, {Dayjs} from "dayjs";
+import {now} from "moment/moment";
 
 interface Props {
 
@@ -21,13 +23,12 @@ const MonitoringBbiChart = (props: Props): React.ReactElement => {
     const {RangePicker} = DatePicker;
     const hourOptions = Array.from({length: 24}, (_, i) => ({value: i + 1, label: `${i + 1}`}));
     const [selectedHour, setSelectedHour] = useState(null);
-    const [selectedTime, setSelectedTime] = useState(null);
-    const [selectedRangeValue, setSelectedRangeValue] = useState(null);
+    const [selectedTime, setSelectedTime] = useState(dayjs(now()));
+    const [selectedStartDate, setSelectedStartDate] = useState<Dayjs | null>(dayjs().subtract(7, 'day'));
+    const [selectedEndDate, setSelectedEndDate] = useState<Dayjs | null>(dayjs().subtract(1, 'day'));
     const [buttonDisabled, setButtonDisabled] = useState(true);
     const [bbiDetectionLoading, setBbiDetectionLoading] = useState(false);
     const [bbiDetectionData, setBbiDetectionData] = useState<any[]>([]);
-    const [formattedStartTime, setFormattedStartTime] = useState(null);
-    const [formattedEndTime, setFormattedEndTime] = useState(null);
     const [bbiTripValue, setBbiTripValue] = useState('trip_id');
     const [bbiBehaviorValue, setBbiBehaviorValue] = useState(null);
 
@@ -80,17 +81,19 @@ const MonitoringBbiChart = (props: Props): React.ReactElement => {
         return transformedData;
     };
 
-    const handleTimeChartChange = (time: moment.Moment | null, timeString: string) => {
-        setSelectedTime(time);
-        setSelectedHour(timeString);
+    const handleTimeChartChange = (date: Dayjs, dateString: string | string[]) => {
+        setSelectedTime(dayjs(date));
     };
 
-    const onRangePickerChartChange = (value: RangePickerProps['value'], dateString: [string, string] | string,) => {
-        const startDate = dateString[0];
-        const endDate = dateString[1];
+    const onRangePickerChartChange = (dateString: (string | number | dayjs.Dayjs | Date)[]) => {
+        const startDate = dayjs(dateString[0]);
+        const endDate = dayjs(dateString[1]);
 
-        setFormattedStartTime(startDate);
-        setFormattedEndTime(endDate);
+        console.log(startDate)
+        console.log(endDate)
+
+        setSelectedStartDate(startDate);
+        setSelectedEndDate(endDate);
         setButtonDisabled(false);
     };
 
@@ -112,9 +115,9 @@ const MonitoringBbiChart = (props: Props): React.ReactElement => {
 
     const makeQueryChartString = () => {
         const queryParams: Record<string, string | null> = {
-            hour: selectedHour,
-            start_date: formattedStartTime,
-            end_date: formattedEndTime,
+            hour: selectedTime.format('HH'),
+            start_date: selectedStartDate.format('YYYYMMDD'),
+            end_date: selectedEndDate.format('YYYYMMDD'),
             id: bbiTripValue,
         };
         return encodeQueryData(queryParams);
@@ -163,18 +166,18 @@ const MonitoringBbiChart = (props: Props): React.ReactElement => {
                         showMinute={false}
                         showSecond={false}
                         hourStep={1}
-                        options={hourOptions}
-                        style={{width: '100%'}}
+                        needConfirm={false}
                     />
                 </Col>
                 <Col span={12}>
                     <RangePicker
                         className={"h3-margin"}
-                        defaultValue={selectedRangeValue}
+                        value={[selectedStartDate,selectedEndDate]}
                         style={{width: '100%'}}
                         format="YYYYMMDD"
                         onChange={onRangePickerChartChange}
                         disabledDate={disabledRangePickerChartDate}
+                        allowClear={false}
                         onOk={onOk}
                     />
                 </Col>

@@ -3,60 +3,29 @@ import {Violin} from '@ant-design/plots';
 import {Button, Col, Row} from "antd";
 import TimePicker from "antd/lib/time-picker";
 import Select from "antd/lib/select";
-import {aiLevelFilter, aiStatusFilter, aiUnitFilter} from "@src/components/plugControl/types";
+import {aiStatusFilter, aiUnitFilter} from "@src/components/plugControl/types";
 import DatePicker from "antd/lib/date-picker";
 import moment from "moment/moment";
 import {RangePickerProps} from "antd/es/date-picker";
 import {get} from "@src/api";
 import {Simulate} from "react-dom/test-utils";
-import error = Simulate.error;
 import Spin from "antd/lib/spin";
 import LoadingOutlined from "@ant-design/icons/lib/icons/LoadingOutlined";
 import {encodeQueryData} from "@src/common/utils";
+import dayjs, {Dayjs} from "dayjs";
 
 
 interface Props {
 }
-
-interface  AiDetectionItem {
-    lv_1_cnt: number,
-    lv_2_cnt: number,
-    part_dt: string,
-}
-
-interface AiDetectionTripItem extends AiDetectionItem {
-    plyno: string;
-    dvc_id: string;
-    trip_id: string;
-    trip_distance: number;
-    trip_time: number;
-    dtct_dt: string;
-    dtct_hh: string;
-    lv_1_cnt: number;
-    lv_2_cnt: number;
-    stcd: string;
-    part_dt: string;
-}
-
-interface AiDetectionMemberItem extends AiDetectionItem {
-    member_id: string;
-    lv_1_cnt: number;
-    lv_2_cnt: number;
-    part_dt: string;
-}
-
-type DetectionItem = AiDetectionTripItem | AiDetectionMemberItem;
 
 const MonitoringAiChart = (props: Props): React.ReactElement => {
     const {RangePicker} = DatePicker;
     const hourOptions = Array.from({length: 24}, (_, i) => ({value: i + 1, label: `${i + 1}`}));
     const [selectedTime, setSelectedTime] = useState(null);
     const [selectedHour, setSelectedHour] = useState(null);
-    const [selectedStartTime, setSelectedStartTime] = useState(null);
-    const [selectedEndTime, setSelectedEndTime] = useState(null);
-    const [selectedRangeValue, setSelectedRangeValue] = useState(null);
+    const [selectedStartDate, setSelectedStartDate] = useState<Dayjs | null>(dayjs().subtract(7, 'day'));
+    const [selectedEndDate, setSelectedEndDate] = useState<Dayjs | null>(dayjs().subtract(1, 'day'));
     const [selectedId, setSelectedId] = useState("trip_id");
-    const [selectedLevel, setSelectedLevel] = useState(null);
     const [selectedStatus, setSelectedStatus] = useState(null);
     const [aiDetectionLoading, setAiDetectionLoading] = useState(false);
     const [aiDetectionData, setAiDetectionData] = useState([]);
@@ -70,6 +39,9 @@ const MonitoringAiChart = (props: Props): React.ReactElement => {
                 const transformedData = transformData(jsonData);
                 setAiDetectionData(transformedData)
             })
+            .catch((error) => {
+                console.error('Error fetching AI detection data:', error);
+            })
             .finally(() => {
                 setAiDetectionLoading(false);
                 setButtonDisabled(true);
@@ -78,11 +50,15 @@ const MonitoringAiChart = (props: Props): React.ReactElement => {
 
     const aiDetectionFetch = (queryString: string) => {
         setAiDetectionLoading(true);
-        get<DetectionItem[]>(`/api/monitoring/ai/detection/?${queryString}`)
+        get<[]>(`/api/monitoring/ai/detection/?${queryString}`)
             .then((jsonData) => {
+                console.log('Fetched data:', jsonData);
                 const transformedData = transformData(jsonData);
-                console.log(transformedData);
+                console.log('Transformed data:', transformedData);
                 setAiDetectionData(transformedData);
+            })
+            .catch((error) => {
+                console.error('Error fetching AI detection data:', error);
             })
             .finally(() => {
                 setAiDetectionLoading(false);
@@ -94,10 +70,16 @@ const MonitoringAiChart = (props: Props): React.ReactElement => {
             return [];
         }
 
+        const manualData = [
+            {part_dt: '20240430', level: 'level 2', count: 0.00}
+        ];
+
         const transformedData = data.flatMap((item: { part_dt: any; lv_1_cnt: any; lv_2_cnt: any; }) => [
             {part_dt: item.part_dt, level: 'level 1', count: item.lv_1_cnt},
             {part_dt: item.part_dt, level: 'level 2', count: item.lv_2_cnt},
         ]);
+
+        transformedData.push(...manualData);
 
         transformedData.sort((a: { part_dt: number; }, b: { part_dt: number; }) => {
             if (a.part_dt < b.part_dt) return -1;
@@ -108,18 +90,22 @@ const MonitoringAiChart = (props: Props): React.ReactElement => {
         return transformedData;
     };
 
+
     const handleTimeChartChange = (time: moment.Moment | null, timeString: string) => {
         setSelectedTime(time);
         setSelectedHour(timeString);
         setButtonDisabled(false);
     };
 
-    const onRangePickerChartChange = (value: RangePickerProps['value'], dateString: [string, string] | string,) => {
-        const startDate = dateString[0];
-        const endDate = dateString[1];
+    const onRangePickerAiChange = (dateString: (string | number | dayjs.Dayjs | Date)[]) => {
+        const startDate = dayjs(dateString[0]);
+        const endDate = dayjs(dateString[1]);
 
-        setSelectedStartTime(startDate);
-        setSelectedEndTime(endDate);
+        console.log(startDate)
+        console.log(endDate)
+
+        setSelectedStartDate(startDate);
+        setSelectedEndDate(endDate);
         setButtonDisabled(false);
     };
 
@@ -162,8 +148,8 @@ const MonitoringAiChart = (props: Props): React.ReactElement => {
     const makeQueryChartString = () => {
         const queryParams: Record<string, string | null> = {
             hour: selectedHour,
-            start_date: selectedStartTime,
-            end_date: selectedEndTime,
+            start_date: selectedStartDate.format('YYYYMMDD'),
+            end_date: selectedEndDate.format('YYYYMMDD'),
             id: selectedId,
             status: selectedStatus,
         };
@@ -203,18 +189,18 @@ const MonitoringAiChart = (props: Props): React.ReactElement => {
                         showMinute={false}
                         showSecond={false}
                         hourStep={1}
-                        options={hourOptions}
-                        style={{ width: '100%' }}
+                        needConfirm={false}
                     />
                 </Col>
                 <Col span={10}>
                     <RangePicker
                         className={"h3-margin"}
-                        defaultValue={selectedRangeValue}
-                        style={{ width: '100%' }}
+                        value={[selectedStartDate, selectedEndDate]}
+                        style={{width: '100%'}}
                         format="YYYYMMDD"
-                        onChange={onRangePickerChartChange}
+                        onChange={onRangePickerAiChange}
                         disabledDate={disabledRangePickerChartDate}
+                        allowClear={false}
                         onOk={onOk}
                     />
                 </Col>
@@ -224,7 +210,7 @@ const MonitoringAiChart = (props: Props): React.ReactElement => {
                         showSearch
                         placeholder="Trip 선택"
                         optionFilterProp="children"
-                        style={{ width: '100%' }}
+                        style={{width: '100%'}}
                         onChange={handleTripSelectChange}
                         defaultValue={'trip'}
                         options={aiUnitFilter}
@@ -242,7 +228,7 @@ const MonitoringAiChart = (props: Props): React.ReactElement => {
                         showSearch
                         placeholder="처리 상태 선택"
                         optionFilterProp="children"
-                        style={{ width: '100%' }}
+                        style={{width: '100%'}}
                         onChange={handleStatusSelectChange}
                         defaultValue={'전체'}
                         options={aiStatusFilter}
