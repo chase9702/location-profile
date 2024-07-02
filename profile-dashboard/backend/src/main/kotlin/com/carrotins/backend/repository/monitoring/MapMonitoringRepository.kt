@@ -1,9 +1,6 @@
 package com.carrotins.backend.repository.monitoring
 
 import com.carrotins.backend.utils.transformNullToEmptyString
-import com.fasterxml.jackson.databind.ObjectMapper
-
-import com.fasterxml.jackson.module.kotlin.readValue
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Repository
 
@@ -12,40 +9,46 @@ import org.springframework.stereotype.Repository
  */
 @Repository
 class MapMonitoringRepository(
-    private val hiveJdbcTemplate: JdbcTemplate
+    private val hiveJdbcTemplate: JdbcTemplate,
 ) {
-    fun getTop100data(hour: String?, date: String, behavior: String): List<Top100TableData> {
+    fun getTop100data(
+        hour: String?,
+        date: String,
+        behavior: String,
+    ): List<Top100TableData> {
         var query: String
 
         if (hour != null) {
-            query = """
-             SELECT 
-                 part_dt, 
-                 hour,
-                 rank() OVER(PARTITION BY part_dt, hour ORDER BY $behavior desc) AS rank,
-                 addr,
-                 addr_cd,
-                 $behavior as behavior_value
-               FROM dw.swp_bbi_dong_hr
-             WHERE 1=1
-               AND part_dt = '$date'
-               AND hour = '$hour'
-               LIMIT 100
-        """.trimIndent()
+            query =
+                """
+                SELECT 
+                    part_dt, 
+                    hour,
+                    rank() OVER(PARTITION BY part_dt, hour ORDER BY $behavior desc) AS rank,
+                    addr,
+                    addr_cd,
+                    $behavior as behavior_value
+                  FROM dw.swp_bbi_dong_hr
+                WHERE 1=1
+                  AND part_dt = '$date'
+                  AND hour = '$hour'
+                  LIMIT 100
+                """.trimIndent()
         } else {
-            query = """
-             SELECT 
-                 part_dt, 
-                 'all' as hour,
-                 rank() OVER(PARTITION BY part_dt ORDER BY $behavior desc) AS rank,
-                 addr,
-                 addr_cd,
-                 $behavior as behavior_value
-               FROM dw.swp_bbi_dong_hr
-             WHERE 1=1
-               AND part_dt = '$date'
-               LIMIT 100
-        """.trimIndent()
+            query =
+                """
+                SELECT 
+                    part_dt, 
+                    'all' as hour,
+                    rank() OVER(PARTITION BY part_dt ORDER BY $behavior desc) AS rank,
+                    addr,
+                    addr_cd,
+                    $behavior as behavior_value
+                  FROM dw.swp_bbi_dong_hr
+                WHERE 1=1
+                  AND part_dt = '$date'
+                  LIMIT 100
+                """.trimIndent()
         }
 
         return hiveJdbcTemplate.query(query) { rs, _ ->
@@ -55,47 +58,51 @@ class MapMonitoringRepository(
                 rank = rs.getInt("rank"),
                 addr = transformNullToEmptyString(rs.getString("addr")),
                 addrCd = transformNullToEmptyString(rs.getString("addr_cd")),
-                behaviorValue = rs.getInt("behavior_value")
+                behaviorValue = rs.getInt("behavior_value"),
             )
         }
-
     }
 
-    fun getBbiMapData(date: String, hour: String?, addrCd: String): List<Top100BBIMapData> {
-
+    fun getBbiMapData(
+        date: String,
+        hour: String?,
+        addrCd: String,
+    ): List<Top100BBIMapData> {
         var query: String
         if (!hour.equals("all")) {
-            query = """
-            SELECT *
-            FROM dw.swp_bbi_hex_hr
-            WHERE 1=1
-            AND part_dt = '$date' 
-            AND total_bbi > 0
-            AND hour = '$hour' 
-            AND addr_cd = '$addrCd'
-            
-        """.trimIndent()
+            query =
+                """
+                SELECT *
+                FROM dw.swp_bbi_hex_hr
+                WHERE 1=1
+                AND part_dt = '$date' 
+                AND total_bbi > 0
+                AND hour = '$hour' 
+                AND addr_cd = '$addrCd'
+                
+                """.trimIndent()
         } else {
-            query = """
-            SELECT hex,
-                'all' as hour,
-                addr,
-                addr_cd,
-                sum(sst) as sst,
-                sum(sac) as sac,
-                sum(sdc) as sdc,
-                sum(ssp) as ssp,
-                sum(total_bbi) as total_bbi,
-                sum(traffic) as traffic,
-                part_dt
-            FROM dw.swp_bbi_hex_hr
-            WHERE 1=1
-            AND part_dt = '$date'
-            AND total_bbi > 0
-            AND addr_cd = '$addrCd'
-            GROUP BY hex, part_dt, addr, addr_cd
-            
-        """.trimIndent()
+            query =
+                """
+                SELECT hex,
+                    'all' as hour,
+                    addr,
+                    addr_cd,
+                    sum(sst) as sst,
+                    sum(sac) as sac,
+                    sum(sdc) as sdc,
+                    sum(ssp) as ssp,
+                    sum(total_bbi) as total_bbi,
+                    sum(traffic) as traffic,
+                    part_dt
+                FROM dw.swp_bbi_hex_hr
+                WHERE 1=1
+                AND part_dt = '$date'
+                AND total_bbi > 0
+                AND addr_cd = '$addrCd'
+                GROUP BY hex, part_dt, addr, addr_cd
+                
+                """.trimIndent()
         }
 
         return hiveJdbcTemplate.query(query) { rs, _ ->
@@ -110,19 +117,19 @@ class MapMonitoringRepository(
                 sdc = rs.getInt("sdc"),
                 totalBbi = rs.getInt("total_bbi"),
                 traffic = rs.getInt("traffic"),
-                partDt = rs.getString("part_dt")
+                partDt = rs.getString("part_dt"),
             )
         }
     }
 
     fun getPublicMapData(addrCd: String): List<Top100PublicMapData> {
-
-        val query = """
+        val query =
+            """
             SELECT *
             FROM dw.public_clm_per_addr
             WHERE 1=1
              AND addr_cd = ?
-        """.trimIndent()
+            """.trimIndent()
 
         return hiveJdbcTemplate.query(query, arrayOf(addrCd)) { rs, _ ->
             Top100PublicMapData(
@@ -156,36 +163,40 @@ class MapMonitoringRepository(
         }
     }
 
+    fun getAiMapData(
+        addrCd: String,
+        hour: String,
+        date: String,
+    ): List<Top100AiMapData> = listOf()
 
-    fun getAiMapData(addrCd: String, hour: String, date: String): List<Top100AiMapData> {
-
-
-        return listOf()
-    }
-
-    fun getBbiMapMetaData(hex: String, hour: String?, partDt: String): List<BBIMetaData> {
-
+    fun getBbiMapMetaData(
+        hex: String,
+        hour: String?,
+        partDt: String,
+    ): List<BBIMetaData> {
         var query: String
 
         if (!hour.equals("all")) {
-            query = """
-            SELECT *
-            FROM dw.meta_hex_hr
-             WHERE 1=1
-             AND part_dt = '$partDt' 
-             AND hour = '$hour' 
-             AND hex = '$hex'
-           
-        """.trimIndent()
+            query =
+                """
+                SELECT *
+                FROM dw.meta_hex_hr
+                 WHERE 1=1
+                 AND part_dt = '$partDt' 
+                 AND hour = '$hour' 
+                 AND hex = '$hex'
+                
+                """.trimIndent()
         } else {
-            query = """
-            SELECT *
-            FROM dw.meta_hex_hr
-            WHERE 1=1
-            AND part_dt = '$partDt' 
-            AND hex = '$hex'
-            ORDER BY hour asc
-        """.trimIndent()
+            query =
+                """
+                SELECT *
+                FROM dw.meta_hex_hr
+                WHERE 1=1
+                AND part_dt = '$partDt' 
+                AND hex = '$hex'
+                ORDER BY hour asc
+                """.trimIndent()
         }
         return hiveJdbcTemplate.query(query) { rs, _ ->
             BBIMetaData(
@@ -204,6 +215,4 @@ class MapMonitoringRepository(
             )
         }
     }
-
-
 }

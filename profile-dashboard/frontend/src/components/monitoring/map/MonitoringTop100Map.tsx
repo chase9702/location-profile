@@ -218,6 +218,9 @@ const MonitoringTop100Map = (props: Props): React.ReactElement => {
         setBbiButtonType("primary")
         setPublicButtonType("primary")
         setCarrotButtonType("primary")
+        setBBIBbiMetaList([])
+        setPublicMetaList([])
+        setAiMetaList([])
 
         if (selectedTop100 !== null) {
             handleSearchBBIMapData()

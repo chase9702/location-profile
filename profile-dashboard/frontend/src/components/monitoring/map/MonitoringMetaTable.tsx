@@ -35,7 +35,7 @@ const MonitoringMetaTable = (props: Props): React.ReactElement => {
                     <Table
                         columns={bbiColumns}
                         dataSource={props.bbiMetaList}
-                        scroll={{y: 200}}
+                        scroll={{y: 500}}
                         pagination={{position: [bottom]}}
                     />
                 </TabPane>
@@ -43,7 +43,7 @@ const MonitoringMetaTable = (props: Props): React.ReactElement => {
                     <Table
                         columns={publicColumns}
                         dataSource={props.publicMetaList}
-                        scroll={{y: 200}}
+                        scroll={{y: 500}}
                         pagination={{position: [bottom]}}
                     />
                 </TabPane>
@@ -51,7 +51,7 @@ const MonitoringMetaTable = (props: Props): React.ReactElement => {
                     <Table
                         columns={aiColumns}
                         dataSource={props.aiMetaList}
-                        scroll={{y: 200}}
+                        scroll={{y: 500}}
                         pagination={{position: [bottom]}}
                     />
                 </TabPane>

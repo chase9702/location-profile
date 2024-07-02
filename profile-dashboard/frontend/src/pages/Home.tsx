@@ -14,19 +14,10 @@ import {StoreState} from "@src/reducers";
 
 // 동적 import
 const CustomKeplerMap = lazy(() => import("@src/components/common/CustomKeplerMap"));
-
 interface State {
 }
 
 interface Props {
-}
-
-interface DataType {
-    key: string;
-    name: string;
-    age: number;
-    address: string;
-    tags: string[];
 }
 
 const Home = (): React.ReactElement => {

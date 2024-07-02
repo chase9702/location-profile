@@ -40,7 +40,6 @@ const AuthProvider = ({children}) => {
         }).catch((e) => {
             NotifyError(e);
         });
-
     }
 
     const jwtLogin = (response) => {
