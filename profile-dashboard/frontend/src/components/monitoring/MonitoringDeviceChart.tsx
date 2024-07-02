@@ -21,7 +21,7 @@ const MonitoringDeviceChart = (props:Props): React.ReactElement => {
     const [buttonDisabled, setButtonDisabled] = useState(true);
     const [bbiAbnormalLoading, setBbiAbnormalLoading] = useState(false);
     const [bbiAbnormalData, setBbiAbnormalData] = useState(null);
-    const [selectedRangeValue, setSelectedRangeValue] = useState(null);
+    // const [selectedRangeValue, setSelectedRangeValue] = useState(null);
     const [selectedTime, setSelectedTime] = useState(null);
     const [selectedHour, setSelectedHour] = useState(null);
     const [selectedStartTime, setSelectedStartTime] = useState(null);
@@ -29,6 +29,18 @@ const MonitoringDeviceChart = (props:Props): React.ReactElement => {
     const [selectedMetric, setSelectedMetric] = useState('total');
     const [selectedThreshold, setSelectedThreshold] = useState('total');
     const [selectedUnit, setSelectedUnit] = useState('trip');
+
+    useEffect(() => {
+        const currentDate = moment().utcOffset('+09:00');
+        const startDate = currentDate.clone().subtract(7, 'days').format('YYYYMMDD');
+        const endDate = currentDate.clone().subtract(1, 'days').format('YYYYMMDD');
+
+        console.log(startDate)
+        console.log(endDate)
+
+        setSelectedStartTime(startDate);
+        setSelectedEndTime(endDate);
+    }, []);
 
     useEffect(() => {
         setBbiAbnormalLoading(true);
@@ -121,6 +133,7 @@ const MonitoringDeviceChart = (props:Props): React.ReactElement => {
         const startDate = dateString[0];
         const endDate = dateString[1];
 
+        console.log(startDate)
         setSelectedStartTime(startDate);
         setSelectedEndTime(endDate);
         setButtonDisabled(false);
@@ -186,12 +199,12 @@ const MonitoringDeviceChart = (props:Props): React.ReactElement => {
                 <Col span={10}>
                     <RangePicker
                         className={"h3-margin"}
-                        defaultValue={selectedRangeValue}
                         style={{ width: '100%' }}
                         format="YYYYMMDD"
                         onChange={onRangePickerChartChange}
                         disabledDate={disabledRangePickerChartDate}
-                        onOk={onOk}
+                        onOk={(value) => console.log(value)}
+                        defaultValue={[selectedStartTime, selectedEndTime]}
                     />
                 </Col>
                 <Col span={4}>
