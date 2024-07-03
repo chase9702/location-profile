@@ -2,7 +2,7 @@ import React, {lazy, Suspense, useEffect, useState} from 'react';
 import {withRouter} from "react-router-dom";
 import Line from '@ant-design/plots/lib/components/line';
 import Card from 'antd/lib/card';
-// import CustomKeplerMap from "@src/components/common/CustomKeplerMap";
+import CustomKeplerMap from "@src/components/common/CustomKeplerMap";
 import {store} from "@src/index";
 import {updateMap} from "@kepler.gl/actions";
 import {get} from "@src/api";
@@ -13,7 +13,6 @@ import {useSelector} from "react-redux";
 import {StoreState} from "@src/reducers";
 
 // 동적 import
-const CustomKeplerMap = lazy(() => import("@src/components/common/CustomKeplerMap"));
 interface State {
 }
 
@@ -81,17 +80,14 @@ const Home = (): React.ReactElement => {
                 description={[
                     'LI는 캐롯의 위치정보를 분석할 수 있는 플랫폼입니다.',
                     '플러그관제를 하실 수 있습니다.',
-                    '위치정보 데이터들을 이용하여 다양한 인사이트를 얻을 수 있습니다.',
+                    '위치정보 데이터들을 이용하여 다양한 인사이트를' +
+                    ' 얻을 수 있습니다.',
                 ]}
             />
-
-            <Suspense fallback={<div>Loading Map...</div>}>
-                <CustomKeplerMap
-                    heightRatio={70}
-                    id={"homeMap"}
-                />
-            </Suspense>
-
+            <CustomKeplerMap
+                heightRatio={70}
+                id={"homeMap"}
+            />
             <Card style={{padding: '10px'}}>
                 <div>
                     <h3>
