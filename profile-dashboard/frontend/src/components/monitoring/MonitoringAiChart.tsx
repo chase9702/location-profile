@@ -13,6 +13,7 @@ import Spin from "antd/lib/spin";
 import LoadingOutlined from "@ant-design/icons/lib/icons/LoadingOutlined";
 import {encodeQueryData} from "@src/common/utils";
 import dayjs, {Dayjs} from "dayjs";
+import {now} from "moment";
 
 
 interface Props {
@@ -21,15 +22,14 @@ interface Props {
 const MonitoringAiChart = (props: Props): React.ReactElement => {
     const {RangePicker} = DatePicker;
     const hourOptions = Array.from({length: 24}, (_, i) => ({value: i + 1, label: `${i + 1}`}));
-    const [selectedTime, setSelectedTime] = useState(null);
-    const [selectedHour, setSelectedHour] = useState(null);
+    const [selectedTime, setSelectedTime] = useState(dayjs(now()));
     const [selectedStartDate, setSelectedStartDate] = useState<Dayjs | null>(dayjs().subtract(7, 'day'));
     const [selectedEndDate, setSelectedEndDate] = useState<Dayjs | null>(dayjs().subtract(1, 'day'));
     const [selectedId, setSelectedId] = useState("trip_id");
     const [selectedStatus, setSelectedStatus] = useState(null);
     const [aiDetectionLoading, setAiDetectionLoading] = useState(false);
     const [aiDetectionData, setAiDetectionData] = useState([]);
-    const [buttonDisabled, setButtonDisabled] = useState(true);
+    const [buttonDisabled, setButtonDisabled] = useState(false);
 
     useEffect(() => {
         setAiDetectionLoading(true);
@@ -44,7 +44,7 @@ const MonitoringAiChart = (props: Props): React.ReactElement => {
             })
             .finally(() => {
                 setAiDetectionLoading(false);
-                setButtonDisabled(true);
+                setButtonDisabled(false);
             });
     }, []);
 
@@ -90,24 +90,36 @@ const MonitoringAiChart = (props: Props): React.ReactElement => {
         return transformedData;
     };
 
-
-    const handleTimeChartChange = (time: moment.Moment | null, timeString: string) => {
-        setSelectedTime(time);
-        setSelectedHour(timeString);
-        setButtonDisabled(false);
+    const handleTimeChartChange = (date: Dayjs, dateString: string | string[]) => {
+        setSelectedTime(date);
     };
 
-    const onRangePickerAiChange = (dateString: (string | number | dayjs.Dayjs | Date)[]) => {
-        const startDate = dayjs(dateString[0]);
-        const endDate = dayjs(dateString[1]);
+    const onRangePickerAiChange = (dates: [Dayjs | null, Dayjs | null], dateStrings: [string, string]) => {
+        if (dates) {
+            const startDate = dates[0];
+            const endDate = dates[1];
 
-        console.log(startDate)
-        console.log(endDate)
-
-        setSelectedStartDate(startDate);
-        setSelectedEndDate(endDate);
-        setButtonDisabled(false);
+            setSelectedStartDate(startDate);
+            setSelectedEndDate(endDate);
+            setButtonDisabled(false);
+        } else {
+            setSelectedStartDate(null);
+            setSelectedEndDate(null);
+            setButtonDisabled(true);
+        }
     };
+    //
+    // const onRangePickerAiChange = (dateString: (string | number | dayjs.Dayjs | Date)[]) => {
+    //     const startDate = dayjs(dateString[0]);
+    //     const endDate = dayjs(dateString[1]);
+    //
+    //     console.log(startDate)
+    //     console.log(endDate)
+    //
+    //     setSelectedStartDate(startDate);
+    //     setSelectedEndDate(endDate);
+    //     setButtonDisabled(false);
+    // };
 
     const onOk = (value: RangePickerProps['value']) => {
         console.log('onOk: ', value);
@@ -147,9 +159,9 @@ const MonitoringAiChart = (props: Props): React.ReactElement => {
 
     const makeQueryChartString = () => {
         const queryParams: Record<string, string | null> = {
-            hour: selectedHour,
-            start_date: selectedStartDate.format('YYYYMMDD'),
-            end_date: selectedEndDate.format('YYYYMMDD'),
+            hour: selectedTime === null ? null : selectedTime.format("HH"),
+            start_date:selectedStartDate === null ? null : selectedStartDate.format('YYYYMMDD'),
+            end_date:selectedEndDate === null ? null : selectedEndDate.format('YYYYMMDD'),
             id: selectedId,
             status: selectedStatus,
         };
@@ -185,7 +197,6 @@ const MonitoringAiChart = (props: Props): React.ReactElement => {
                         value={selectedTime}
                         onChange={handleTimeChartChange}
                         format="HH"
-                        showHour={true}
                         showMinute={false}
                         showSecond={false}
                         hourStep={1}
@@ -200,7 +211,6 @@ const MonitoringAiChart = (props: Props): React.ReactElement => {
                         format="YYYYMMDD"
                         onChange={onRangePickerAiChange}
                         disabledDate={disabledRangePickerChartDate}
-                        allowClear={false}
                         onOk={onOk}
                     />
                 </Col>

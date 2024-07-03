@@ -11,6 +11,7 @@ import {RangePickerProps} from "antd/es/date-picker";
 import DatePicker from "antd/lib/date-picker";
 import LoadingOutlined from "@ant-design/icons/lib/icons/LoadingOutlined";
 import Spin from "antd/lib/spin";
+import dayjs, {Dayjs} from "dayjs";
 
 interface Props {
 
@@ -18,29 +19,14 @@ interface Props {
 
 const MonitoringDeviceChart = (props:Props): React.ReactElement => {
     const {RangePicker} = DatePicker;
-    const [buttonDisabled, setButtonDisabled] = useState(true);
+    const [buttonDisabled, setButtonDisabled] = useState(false);
     const [bbiAbnormalLoading, setBbiAbnormalLoading] = useState(false);
     const [bbiAbnormalData, setBbiAbnormalData] = useState(null);
-    // const [selectedRangeValue, setSelectedRangeValue] = useState(null);
-    const [selectedTime, setSelectedTime] = useState(null);
-    const [selectedHour, setSelectedHour] = useState(null);
-    const [selectedStartTime, setSelectedStartTime] = useState(null);
-    const [selectedEndTime, setSelectedEndTime] = useState(null);
+    const [selectedStartDate, setSelectedStartDate] = useState<Dayjs | null>(dayjs().subtract(7, 'day'));
+    const [selectedEndDate, setSelectedEndDate] = useState<Dayjs | null>(dayjs().subtract(1, 'day'));
     const [selectedMetric, setSelectedMetric] = useState('total');
     const [selectedThreshold, setSelectedThreshold] = useState('total');
     const [selectedUnit, setSelectedUnit] = useState('trip');
-
-    useEffect(() => {
-        const currentDate = moment().utcOffset('+09:00');
-        const startDate = currentDate.clone().subtract(7, 'days').format('YYYYMMDD');
-        const endDate = currentDate.clone().subtract(1, 'days').format('YYYYMMDD');
-
-        console.log(startDate)
-        console.log(endDate)
-
-        setSelectedStartTime(startDate);
-        setSelectedEndTime(endDate);
-    }, []);
 
     useEffect(() => {
         setBbiAbnormalLoading(true);
@@ -53,7 +39,7 @@ const MonitoringDeviceChart = (props:Props): React.ReactElement => {
             })
             .finally(() => {
                 setBbiAbnormalLoading(false);
-                setButtonDisabled(true);
+                setButtonDisabled(false);
             });
     }, []);
 
@@ -82,7 +68,6 @@ const MonitoringDeviceChart = (props:Props): React.ReactElement => {
         };
 
         data.forEach(item => {
-            // metric 값을 변환
             const metric = metricMapping[item.metric] || item.metric;
             const key = `${item.part_dt}-${metric}`;
 
@@ -102,7 +87,13 @@ const MonitoringDeviceChart = (props:Props): React.ReactElement => {
             grouped[key].sum = Math.round(grouped[key].sum * 100) / 100;
         });
 
-        return Object.values(grouped);
+        const sortedGroupedArray = Object.values(grouped).sort((a, b) => {
+            if (a.part_dt < b.part_dt) return -1;
+            if (a.part_dt > b.part_dt) return 1;
+            return 0;
+        });
+
+        return sortedGroupedArray;
     };
 
     const handleMetricSelectChange = (value: string, option: { value: string; label: string; } | {
@@ -129,14 +120,19 @@ const MonitoringDeviceChart = (props:Props): React.ReactElement => {
         setSelectedUnit(value)
     };
 
-    const onRangePickerChartChange = (value: RangePickerProps['value'], dateString: [string, string] | string,) => {
-        const startDate = dateString[0];
-        const endDate = dateString[1];
+    const onRangePickerChartChange = (dates: [Dayjs | null, Dayjs | null], dateStrings: [string, string]) => {
+        if (dates) {
+            const startDate = dates[0];
+            const endDate = dates[1];
 
-        console.log(startDate)
-        setSelectedStartTime(startDate);
-        setSelectedEndTime(endDate);
-        setButtonDisabled(false);
+            setSelectedStartDate(startDate);
+            setSelectedEndDate(endDate);
+            setButtonDisabled(false);
+        } else {
+            setSelectedStartDate(null);
+            setSelectedEndDate(null);
+            setButtonDisabled(true);
+        }
     };
 
     const disabledRangePickerChartDate = (current: any) => {
@@ -157,8 +153,8 @@ const MonitoringDeviceChart = (props:Props): React.ReactElement => {
 
     const makeQueryChartString = () => {
         const queryParams: Record<string, string | null> = {
-            start_date: selectedStartTime,
-            end_date: selectedEndTime,
+            start_date:selectedStartDate === null ? null : selectedStartDate.format('YYYYMMDD'),
+            end_date:selectedEndDate === null ? null : selectedEndDate.format('YYYYMMDD'),
             metric: selectedMetric,
             threshold: selectedThreshold,
             unit: selectedUnit,
@@ -204,7 +200,7 @@ const MonitoringDeviceChart = (props:Props): React.ReactElement => {
                         onChange={onRangePickerChartChange}
                         disabledDate={disabledRangePickerChartDate}
                         onOk={(value) => console.log(value)}
-                        defaultValue={[selectedStartTime, selectedEndTime]}
+                        defaultValue={[selectedStartDate, selectedEndDate]}
                     />
                 </Col>
                 <Col span={4}>
