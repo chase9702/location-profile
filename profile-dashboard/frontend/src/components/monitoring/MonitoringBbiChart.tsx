@@ -26,7 +26,7 @@ const MonitoringBbiChart = (props: Props): React.ReactElement => {
     const [selectedTime, setSelectedTime] = useState(dayjs(now()));
     const [selectedStartDate, setSelectedStartDate] = useState<Dayjs | null>(dayjs().subtract(7, 'day'));
     const [selectedEndDate, setSelectedEndDate] = useState<Dayjs | null>(dayjs().subtract(1, 'day'));
-    const [buttonDisabled, setButtonDisabled] = useState(true);
+    const [buttonDisabled, setButtonDisabled] = useState(false);
     const [bbiDetectionLoading, setBbiDetectionLoading] = useState(false);
     const [bbiDetectionData, setBbiDetectionData] = useState<any[]>([]);
     const [bbiTripValue, setBbiTripValue] = useState('trip_id');
@@ -42,7 +42,7 @@ const MonitoringBbiChart = (props: Props): React.ReactElement => {
             })
             .finally(() => {
                 setBbiDetectionLoading(false);
-                setButtonDisabled(true);
+                setButtonDisabled(false);
             });
     }, []);
 
@@ -82,19 +82,22 @@ const MonitoringBbiChart = (props: Props): React.ReactElement => {
     };
 
     const handleTimeChartChange = (date: Dayjs, dateString: string | string[]) => {
-        setSelectedTime(dayjs(date));
+        setSelectedTime(date);
     };
 
-    const onRangePickerChartChange = (dateString: (string | number | dayjs.Dayjs | Date)[]) => {
-        const startDate = dayjs(dateString[0]);
-        const endDate = dayjs(dateString[1]);
+    const onRangePickerChartChange = (dates: [Dayjs | null, Dayjs | null], dateStrings: [string, string]) => {
+        if (dates) {
+            const startDate = dates[0];
+            const endDate = dates[1];
 
-        console.log(startDate)
-        console.log(endDate)
-
-        setSelectedStartDate(startDate);
-        setSelectedEndDate(endDate);
-        setButtonDisabled(false);
+            setSelectedStartDate(startDate);
+            setSelectedEndDate(endDate);
+            setButtonDisabled(false);
+        } else {
+            setSelectedStartDate(null);
+            setSelectedEndDate(null);
+            setButtonDisabled(true);
+        }
     };
 
     const onOk = (value: RangePickerProps['value']) => {
@@ -115,9 +118,9 @@ const MonitoringBbiChart = (props: Props): React.ReactElement => {
 
     const makeQueryChartString = () => {
         const queryParams: Record<string, string | null> = {
-            hour: selectedTime.format('HH'),
-            start_date: selectedStartDate.format('YYYYMMDD'),
-            end_date: selectedEndDate.format('YYYYMMDD'),
+            hour: selectedTime === null ? null : selectedTime.format("HH"),
+            start_date:selectedStartDate === null ? null : selectedStartDate.format('YYYYMMDD'),
+            end_date:selectedEndDate === null ? null : selectedEndDate.format('YYYYMMDD'),
             id: bbiTripValue,
         };
         return encodeQueryData(queryParams);
@@ -162,7 +165,6 @@ const MonitoringBbiChart = (props: Props): React.ReactElement => {
                         value={selectedTime}
                         onChange={handleTimeChartChange}
                         format="HH"
-                        showHour={true}
                         showMinute={false}
                         showSecond={false}
                         hourStep={1}
@@ -177,7 +179,6 @@ const MonitoringBbiChart = (props: Props): React.ReactElement => {
                         format="YYYYMMDD"
                         onChange={onRangePickerChartChange}
                         disabledDate={disabledRangePickerChartDate}
-                        allowClear={false}
                         onOk={onOk}
                     />
                 </Col>
