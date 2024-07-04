@@ -21,6 +21,8 @@ import {encodeQueryData} from "@src/common/utils";
 import './map.css';
 import MonitoringTop100Map from "@src/components/monitoring/map/MonitoringTop100Map";
 
+const {RangePicker} = DatePicker;
+
 type TablePagination<T extends object> = NonNullable<Exclude<TableProps<T>['pagination'], boolean>>;
 type TablePaginationPosition = NonNullable<TablePagination<any>['position']>[number];
 
@@ -41,8 +43,8 @@ const MonitoringTop100Table = (props: Props): React.ReactElement => {
     const [searchedColumn, setSearchedColumn] = useState('');
 
     const [selectedTime, setSelectedTime] = useState<Dayjs | null>(dayjs(now()));
-    const hourOptions = Array.from({length: 24}, (_, i) => ({value: i + 1, label: `${i + 1}`}));
-    const [selectedDate, setSelectedDate] = useState<Dayjs | null>(dayjs(now()).subtract(1, 'day'));
+    const [selectedStartDate, setSelectedStartDate] = useState<Dayjs | null>(dayjs(now()).subtract(1, 'day'));
+    const [selectedEndDate, setSelectedEndDate] = useState<Dayjs | null>(dayjs(now()).subtract(1, 'day'));
     const [bottom, setBottom] = useState<TablePaginationPosition>('bottomCenter');
     const [selectedFilter, setSelectedFilter] = useState('total_bbi')
     const [searchLoading, setSearchLoading] = useState<boolean>(false);
@@ -59,23 +61,26 @@ const MonitoringTop100Table = (props: Props): React.ReactElement => {
     const makeQueryString = () => {
         const queryParams: Record<string, string | null> = {
             hour: selectedTime === null ? null : selectedTime.format("HH"),
-            part_dt: selectedDate.format("YYYYMMDD"),
+            start_date: selectedStartDate.format("YYYYMMDD"),
+            end_date: selectedEndDate.format("YYYYMMDD"),
         };
         return encodeQueryData(queryParams)
     }
 
     const handleClickSearch = () => {
         setSearchLoading(true);
-
         setSearchStatus(true);
         setTimeout(() => setSearchStatus(false), 0); //
-
-
         get<Top100TableDataType[]>(`/api/monitoring/map/top100/${selectedFilter}?` + makeQueryString())
             .then((jsonData) => {
-
-                setTop100DataList(jsonData)
-
+                let rank = 1;
+                const updatedJsonData = jsonData.map((data, key) => {
+                    return {
+                        ...data,
+                        rank: rank++
+                    }
+                })
+                setTop100DataList(updatedJsonData)
             })
             .catch((error) => {
                 NotifyError(error)
@@ -85,16 +90,20 @@ const MonitoringTop100Table = (props: Props): React.ReactElement => {
             });
     }
 
-    const handleDatePickerChange: DatePickerProps['onChange'] = (date: Dayjs, dateString) => {
-        setSelectedDate(date);
-    };
-
     const handleTimePickerChange = (date: Dayjs, dateString: string | string[]) => {
         setSelectedTime(date);
     };
 
-    const disabledDate: RangePickerProps['disabledDate'] = (current) => {
-        return current && current >= dayjs().startOf('day');
+    const handleDateRangePickerChange = (value: RangePickerProps['value'], dateString: [string, string] | string) => {
+        setSelectedStartDate(value[0])
+        setSelectedEndDate(value[1])
+    }
+
+    const disabled7DaysDate: DatePickerProps['disabledDate'] = (current, {from}) => {
+        if (from) {
+            return Math.abs(current.diff(from, 'days')) >= 7;
+        }
+        return false;
     };
 
     const handleSearch = (
@@ -257,10 +266,11 @@ const MonitoringTop100Table = (props: Props): React.ReactElement => {
                             hourStep={1}
                             needConfirm={false}
                         />
-                        <DatePicker
-                            value={selectedDate}
-                            onChange={handleDatePickerChange}
-                            disabledDate={disabledDate}
+                        <RangePicker
+                            value={[selectedStartDate, selectedEndDate]}
+                            onChange={handleDateRangePickerChange}
+                            disabledDate={disabled7DaysDate}
+                            // onOk={onOk}
                         />
                         <Dropdown menu={menuProps}>
                             <Button>

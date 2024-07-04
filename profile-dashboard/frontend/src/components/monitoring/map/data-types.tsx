@@ -2,17 +2,13 @@ import {TableProps} from "antd/es/table";
 
 export interface Top100TableDataType {
     part_dt: string;
+    start_date: string;
+    end_date: string;
     addr_cd: string;
     hour: string;
     addr: string;
     rank: number;
     behavior_value: number;
-}
-
-export interface TestHexData {
-    no: number,
-    addr: string,
-    hex: string
 }
 
 export interface MapBBIHexData {
@@ -192,7 +188,7 @@ export const bbiColumns: TableProps<BBIMetaData>['columns'] = [
         dataIndex: 'accel',
         key: 'accel',
         align: 'center',
-
+        render: (value: number) => value.toFixed(2),
     },
     {
         title: 'AC',

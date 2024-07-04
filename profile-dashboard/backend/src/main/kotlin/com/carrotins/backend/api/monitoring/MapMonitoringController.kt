@@ -1,3 +1,5 @@
+@file:Suppress("ktlint:standard:no-wildcard-imports")
+
 package com.carrotins.backend.api.monitoring
 
 import com.carrotins.backend.repository.monitoring.*
@@ -18,22 +20,25 @@ class MapMonitoringController(
     fun getTop100Data(
         @PathVariable("behavior") behavior: String,
         @RequestParam("hour") hour: String?,
-        @RequestParam("part_dt") partDt: String,
-    ): List<Top100TableData> = mapMonitoringService.getTop100Data(behavior, hour, partDt)
+        @RequestParam("start_date") startDate: String?,
+        @RequestParam("end_date") endDate: String?,
+    ): List<Top100TableData> = mapMonitoringService.getTop100Data(behavior, hour, startDate, endDate)
 
     @GetMapping("/bbi")
     fun getMonitoringBBIMapData(
         @RequestParam("addr_cd") addrCd: String,
-        @RequestParam("hour") hour: String?,
-        @RequestParam("part_dt") partDt: String,
-    ): List<Top100BBIMapData> = mapMonitoringService.getMonitoringBBIMapData(addrCd, hour, partDt)
+        @RequestParam("hour") hour: String,
+        @RequestParam("start_date") startDate: String,
+        @RequestParam("end_date") endDate: String,
+    ): List<Top100BBIMapData> = mapMonitoringService.getMonitoringBBIMapData(addrCd, hour, startDate, endDate)
 
     @GetMapping("/meta/bbi")
     fun getMonitoringBBIMapMetaData(
         @RequestParam("hex") hex: String,
-        @RequestParam("hour") hour: String?,
-        @RequestParam("part_dt") partDt: String,
-    ): List<BBIMetaData> = mapMonitoringService.getMonitoringBBIMapMetaData(hex, hour, partDt)
+        @RequestParam("hour") hour: String,
+        @RequestParam("start_date") startDate: String,
+        @RequestParam("end_date") endDate: String,
+    ): List<BBIMetaData> = mapMonitoringService.getMonitoringBBIMapMetaData(hex, hour, startDate, endDate)
 
     //    @GetMapping("/carrot")
 //    fun getMonitoringCarrotMapData(

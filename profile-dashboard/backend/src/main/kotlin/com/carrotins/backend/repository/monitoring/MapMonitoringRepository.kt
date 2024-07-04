@@ -3,6 +3,7 @@ package com.carrotins.backend.repository.monitoring
 import com.carrotins.backend.utils.transformNullToEmptyString
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.stereotype.Repository
+import java.sql.ResultSet
 
 /**
  * Created by alvin on 2024. 6. 13..
@@ -11,74 +12,229 @@ import org.springframework.stereotype.Repository
 class MapMonitoringRepository(
     private val hiveJdbcTemplate: JdbcTemplate,
 ) {
-    fun getTop100data(
-        hour: String?,
-        date: String,
+    fun mapRowToTop100TableData(rs: ResultSet): Top100TableData =
+        Top100TableData(
+            partDt = transformNullToEmptyString(rs.getString("part_dt")),
+            startDate = transformNullToEmptyString(rs.getString("start_date")),
+            endDate = transformNullToEmptyString(rs.getString("end_date")),
+            hour = transformNullToEmptyString(rs.getString("hour")),
+            rank = rs.getInt("rank"),
+            addr = transformNullToEmptyString(rs.getString("addr")),
+            addrCd = transformNullToEmptyString(rs.getString("addr_cd")),
+            behaviorValue = rs.getInt("behavior_value"),
+        )
+
+    fun mapRowToTop100BBIMapData(rs: ResultSet): Top100BBIMapData =
+        Top100BBIMapData(
+            hex = rs.getString("hex"),
+            hour = rs.getString("hour"),
+            addr = rs.getString("addr"),
+            addrCd = rs.getString("addr_cd"),
+            sst = rs.getInt("sst"),
+            sac = rs.getInt("sac"),
+            ssp = rs.getInt("ssp"),
+            sdc = rs.getInt("sdc"),
+            totalBbi = rs.getInt("total_bbi"),
+            traffic = rs.getInt("traffic"),
+            partDt = rs.getString("part_dt"),
+        )
+
+    fun mapRowToBBIMetaData(rs: ResultSet): BBIMetaData =
+        BBIMetaData(
+            hex = rs.getString("hex"),
+            hour = rs.getString("hour"),
+            partDt = rs.getString("part_dt"),
+            behavior = rs.getString("behavior"),
+            tripId = rs.getString("trip_id"),
+            ct = rs.getLong("ct"),
+            sp = rs.getDouble("sp"),
+            fs = rs.getDouble("fs"),
+            durt = rs.getLong("durt"),
+            accel = rs.getDouble("accel"),
+            ac = rs.getDouble("ac"),
+            sa = rs.getDouble("sa"),
+        )
+
+    fun getTop100dataByHour(
+        hour: String,
         behavior: String,
+        startDate: String?,
+        endDate: String?,
     ): List<Top100TableData> {
         var query: String
-
-        if (hour != null) {
+        if (startDate.equals(endDate)) { // 시간 포함 하루만 조회
             query =
                 """
                 SELECT 
                     part_dt, 
                     hour,
+                    '$startDate' as start_date,
+                    '$endDate' as end_date,
                     rank() OVER(PARTITION BY part_dt, hour ORDER BY $behavior desc) AS rank,
                     addr,
                     addr_cd,
                     $behavior as behavior_value
                   FROM dw.swp_bbi_dong_hr
                 WHERE 1=1
-                  AND part_dt = '$date'
+                  AND part_dt = '$startDate'
                   AND hour = '$hour'
                   LIMIT 100
                 """.trimIndent()
-        } else {
+        } else { // 시간 포함 기간 조회
+
+            query =
+                """
+                SELECT 
+                    'period' as part_dt,
+                    '$hour' as hour,
+                    '$startDate' as start_date,
+                    '$endDate' as end_date,
+                    '0' as rank,
+                    addr,
+                    addr_cd,
+                    behavior_value
+                FROM   
+                  (SELECT  addr, addr_cd,
+                        sum($behavior) as behavior_value
+                  FROM dw.swp_bbi_dong_hr
+                  WHERE 1=1
+                  AND part_dt between '$startDate' and '$endDate'
+                  AND hour = '$hour'
+                  GROUP BY addr, addr_cd
+                ) as a 
+                ORDER BY behavior_value desc
+                LIMIT 100
+                """.trimIndent()
+        }
+
+        return hiveJdbcTemplate.query(query) { rs, _ -> mapRowToTop100TableData(rs) }
+    }
+
+    fun getTop100dataByDay(
+        behavior: String,
+        startDate: String?,
+        endDate: String?,
+    ): List<Top100TableData> {
+        var query: String
+
+        if (startDate.equals(endDate)) { // 하루만 조회
             query =
                 """
                 SELECT 
                     part_dt, 
                     'all' as hour,
+                    '$startDate' as start_date,
+                    '$endDate' as end_date,
                     rank() OVER(PARTITION BY part_dt ORDER BY $behavior desc) AS rank,
                     addr,
                     addr_cd,
                     $behavior as behavior_value
                   FROM dw.swp_bbi_dong_hr
                 WHERE 1=1
-                  AND part_dt = '$date'
+                  AND part_dt = '$startDate'
                   LIMIT 100
                 """.trimIndent()
+        } else { // 기간 조회
+            query =
+                """
+                SELECT 
+                    'period' as part_dt,
+                    'all' as hour,
+                    '$startDate' as start_date,
+                    '$endDate' as end_date,
+                    '0' as rank,
+                    addr,
+                    addr_cd,
+                    behavior_value
+                FROM   
+                  (SELECT  addr, addr_cd,
+                        sum($behavior) as behavior_value
+                  FROM dw.swp_bbi_dong_dyb
+                  WHERE 1=1
+                  AND part_dt between '$startDate' and '$endDate'
+                  GROUP BY addr, addr_cd
+                ) as a 
+                ORDER BY behavior_value desc
+                LIMIT 100
+                """.trimIndent()
         }
-
-        return hiveJdbcTemplate.query(query) { rs, _ ->
-            Top100TableData(
-                partDt = transformNullToEmptyString(rs.getString("part_dt")),
-                hour = transformNullToEmptyString(rs.getString("hour")),
-                rank = rs.getInt("rank"),
-                addr = transformNullToEmptyString(rs.getString("addr")),
-                addrCd = transformNullToEmptyString(rs.getString("addr_cd")),
-                behaviorValue = rs.getInt("behavior_value"),
-            )
-        }
+        return hiveJdbcTemplate.query(query) { rs, _ -> mapRowToTop100TableData(rs) }
     }
 
-    fun getBbiMapData(
-        date: String,
-        hour: String?,
+    fun getBbiMapDataByHour(
+        hour: String,
         addrCd: String,
+        startDate: String,
+        endDate: String,
     ): List<Top100BBIMapData> {
         var query: String
-        if (!hour.equals("all")) {
+
+        if (startDate == endDate) {
             query =
                 """
                 SELECT *
                 FROM dw.swp_bbi_hex_hr
                 WHERE 1=1
-                AND part_dt = '$date' 
+                AND part_dt = '$startDate' 
                 AND total_bbi > 0
                 AND hour = '$hour' 
                 AND addr_cd = '$addrCd'
+                
+                """.trimIndent()
+        } else {
+            query =
+                """
+                SELECT hex,
+                    '$hour' as hour,
+                    addr,
+                    addr_cd,
+                    sum(sst) as sst,
+                    sum(sac) as sac,
+                    sum(sdc) as sdc,
+                    sum(ssp) as ssp,
+                    sum(total_bbi) as total_bbi,
+                    sum(traffic) as traffic,
+                    part_dt
+                FROM dw.swp_bbi_hex_hr
+                WHERE 1=1
+                AND part_dt between '$startDate' and '$endDate'
+                AND hour = '$hour' 
+                AND total_bbi > 0
+                AND addr_cd = '$addrCd'
+                GROUP BY hex, part_dt, addr, addr_cd, hour
+                
+                """.trimIndent()
+        }
+
+        return hiveJdbcTemplate.query(query) { rs, _ -> mapRowToTop100BBIMapData(rs) }
+    }
+
+    fun getBbiMapDataByDay(
+        addrCd: String,
+        startDate: String,
+        endDate: String,
+    ): List<Top100BBIMapData> {
+        var query: String
+        if (startDate == endDate) {
+            query =
+                """
+                SELECT hex,
+                    'all' as hour,
+                    addr,
+                    addr_cd,
+                    sum(sst) as sst,
+                    sum(sac) as sac,
+                    sum(sdc) as sdc,
+                    sum(ssp) as ssp,
+                    sum(total_bbi) as total_bbi,
+                    sum(traffic) as traffic,
+                    part_dt
+                FROM dw.swp_bbi_hex_hr
+                WHERE 1=1
+                AND part_dt = '$startDate'
+                AND total_bbi > 0
+                AND addr_cd = '$addrCd'
+                GROUP BY hex, part_dt, addr, addr_cd
                 
                 """.trimIndent()
         } else {
@@ -97,7 +253,7 @@ class MapMonitoringRepository(
                     part_dt
                 FROM dw.swp_bbi_hex_hr
                 WHERE 1=1
-                AND part_dt = '$date'
+                AND part_dt between '$startDate' and '$endDate'
                 AND total_bbi > 0
                 AND addr_cd = '$addrCd'
                 GROUP BY hex, part_dt, addr, addr_cd
@@ -105,21 +261,7 @@ class MapMonitoringRepository(
                 """.trimIndent()
         }
 
-        return hiveJdbcTemplate.query(query) { rs, _ ->
-            Top100BBIMapData(
-                hex = rs.getString("hex"),
-                hour = rs.getString("hour"),
-                addr = rs.getString("addr"),
-                addrCd = rs.getString("addr_cd"),
-                sst = rs.getInt("sst"),
-                sac = rs.getInt("sac"),
-                ssp = rs.getInt("ssp"),
-                sdc = rs.getInt("sdc"),
-                totalBbi = rs.getInt("total_bbi"),
-                traffic = rs.getInt("traffic"),
-                partDt = rs.getString("part_dt"),
-            )
-        }
+        return hiveJdbcTemplate.query(query) { rs, _ -> mapRowToTop100BBIMapData(rs) }
     }
 
     fun getPublicMapData(addrCd: String): List<Top100PublicMapData> {
@@ -169,20 +311,20 @@ class MapMonitoringRepository(
         date: String,
     ): List<Top100AiMapData> = listOf()
 
-    fun getBbiMapMetaData(
+    fun getBbiMapMetaDataByHour(
         hex: String,
         hour: String?,
-        partDt: String,
+        startDate: String,
+        endDate: String,
     ): List<BBIMetaData> {
         var query: String
-
-        if (!hour.equals("all")) {
+        if (startDate == endDate) {
             query =
                 """
                 SELECT *
                 FROM dw.meta_hex_hr
                  WHERE 1=1
-                 AND part_dt = '$partDt' 
+                 AND part_dt = '$startDate' 
                  AND hour = '$hour' 
                  AND hex = '$hex'
                 
@@ -193,26 +335,42 @@ class MapMonitoringRepository(
                 SELECT *
                 FROM dw.meta_hex_hr
                 WHERE 1=1
-                AND part_dt = '$partDt' 
+                AND part_dt between '$startDate' and '$endDate'
+                AND hour = '$hour' 
                 AND hex = '$hex'
                 ORDER BY hour asc
                 """.trimIndent()
         }
-        return hiveJdbcTemplate.query(query) { rs, _ ->
-            BBIMetaData(
-                hex = rs.getString("hex"),
-                hour = rs.getString("hour"),
-                partDt = rs.getString("part_dt"),
-                behavior = rs.getString("behavior"),
-                tripId = rs.getString("trip_id"),
-                ct = rs.getLong("ct"),
-                sp = rs.getDouble("sp"),
-                fs = rs.getDouble("fs"),
-                durt = rs.getLong("durt"),
-                accel = rs.getDouble("accel"),
-                ac = rs.getDouble("ac"),
-                sa = rs.getDouble("sa"),
-            )
+        return hiveJdbcTemplate.query(query) { rs, _ -> mapRowToBBIMetaData(rs) }
+    }
+
+    fun getBbiMapMetaDataByDay(
+        hex: String,
+        startDate: String,
+        endDate: String,
+    ): List<BBIMetaData> {
+        var query: String
+        if (startDate == endDate) {
+            query =
+                """
+                SELECT *
+                FROM dw.meta_hex_hr
+                 WHERE 1=1
+                 AND part_dt = '$startDate' 
+                 AND hex = '$hex'
+                
+                """.trimIndent()
+        } else {
+            query =
+                """
+                SELECT *
+                FROM dw.meta_hex_hr
+                WHERE 1=1
+                AND part_dt between '$startDate' and '$endDate'
+                AND hex = '$hex'
+                ORDER BY hour asc
+                """.trimIndent()
         }
+        return hiveJdbcTemplate.query(query) { rs, _ -> mapRowToBBIMetaData(rs) }
     }
 }

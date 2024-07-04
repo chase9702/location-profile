@@ -58,7 +58,7 @@ authApi.interceptors.response.use(
             clearLocalStorage()
             logoutApi()
         } else if (error.response.status === 400) {
-            NotifyError(error.response.data);
+            NotifyError(error.responsㅌe.data);
         }
 
         return Promise.reject(error);

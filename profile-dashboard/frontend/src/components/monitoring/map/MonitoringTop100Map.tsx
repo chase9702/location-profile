@@ -56,17 +56,22 @@ const MonitoringTop100Map = (props: Props): React.ReactElement => {
     const [publicLayerVisibility, setPublicLayerVisibility] = useState(false);
 
     const [bbiHexDataList, setBbiHexDataList] = useState<MapBBIHexData[]>([]);
+    const [bbiHexDataLoading, setBbiHexDataLoading] = useState(false);
     const [csvFormattedBBIData, setCSVFormattedBBIData] = useState<string>('');
     const [aiHexDataList, setAiHexDataList] = useState<MapAIHexData[]>([]);
+    const [aiHexDataLoading, setAiHexDataLoading] = useState(false);
     const [csvFormattedAIData, setCsvFormattedAIData] = useState<string>('');
     const [publicHexDataList, setPublicHexDataList] = useState<MapPublicHexData[]>([]);
+    const [publicHexDataLoading, setPublicHexDataLoading] = useState(false);
     const [csvFormattedPublicData, setCSVFormattedPublicData] = useState<string>('');
     const [carrotHexDataList, setCarrotHexDataList] = useState<MapAIHexData[]>([]);
+
+    const buttonLoading = bbiHexDataLoading || aiHexDataLoading || publicHexDataLoading;
 
     const [bbiMetaList, setBBIBbiMetaList] = useState<BBIMetaData[]>([]);
     const [publicMetaList, setPublicMetaList] = useState<ExtendedPublicMetaData[]>([]);
     const [aiMetaList, setAiMetaList] = useState<AiMetaData[]>([]);
-
+    const [metaTableLoading, setMetaTableLoading] = useState(false)
 
     useEffect(() => {
         store.dispatch(updateMap({
@@ -103,10 +108,13 @@ const MonitoringTop100Map = (props: Props): React.ReactElement => {
             return;
         }
 
+        setMetaTableLoading(true)
+
         get<BBIMetaData[]>(`/api/monitoring/map/meta/bbi?${encodeQueryData({
             hex: bbiHexItem.hex,
             hour: selectedTop100.hour,
-            part_dt: selectedTop100.part_dt
+            start_date: selectedTop100.start_date,
+            end_date: selectedTop100.end_date
         })}`)
             .then((jsonData) => {
                 console.log(jsonData);
@@ -117,7 +125,7 @@ const MonitoringTop100Map = (props: Props): React.ReactElement => {
                 NotifyError(error)
             })
             .finally(() => {
-
+                setMetaTableLoading(false)
             });
     }
 
@@ -294,11 +302,13 @@ const MonitoringTop100Map = (props: Props): React.ReactElement => {
         return encodeQueryData({
             addr_cd: selectedTop100.addr_cd,
             hour: selectedTop100.hour,
-            part_dt: selectedTop100.part_dt
+            start_date: selectedTop100.start_date,
+            end_date: selectedTop100.end_date
         })
     }
 
     const handleSearchBBIMapData = () => {
+        setBbiHexDataLoading(true)
         get<MapBBIHexData[]>(`/api/monitoring/map/bbi?${mapQuery()}`)
             .then((jsonData) => {
                 console.log(jsonData);
@@ -311,12 +321,13 @@ const MonitoringTop100Map = (props: Props): React.ReactElement => {
                 NotifyError(error)
             })
             .finally(() => {
-
+                setBbiHexDataLoading(false)
             });
 
     }
 
     const handleSearchAIMapData = () => {
+        setAiHexDataLoading(true)
         get<MapAIHexData[]>(`/api/monitoring/map/acc?${mapQuery()}`)
             .then((jsonData) => {
                 console.log(jsonData);
@@ -329,15 +340,7 @@ const MonitoringTop100Map = (props: Props): React.ReactElement => {
                 NotifyError(error)
             })
             .finally(() => {
-                store.dispatch(wrapToMap(addDataToMap({
-                    datasets: {
-                        info: {
-                            label: 'AI',
-                            id: aiDataId
-                        },
-                        data: processCsvData(aiDataId)
-                    }
-                })));
+                setAiHexDataLoading(false)
 
                 //carrot 사고는 마지막에 조회 하도록
                 // handleSearchCarrotMapData()
@@ -345,6 +348,7 @@ const MonitoringTop100Map = (props: Props): React.ReactElement => {
     }
 
     const handleSearchPublicMapData = () => {
+        setPublicHexDataLoading(true)
         get<MapPublicHexData[]>(`/api/monitoring/map/public?${mapQuery()}`)
             .then((jsonData) => {
                 console.log(jsonData);
@@ -357,6 +361,7 @@ const MonitoringTop100Map = (props: Props): React.ReactElement => {
                 NotifyError(error)
             })
             .finally(() => {
+                setPublicHexDataLoading(false)
             });
     }
 
@@ -450,6 +455,7 @@ const MonitoringTop100Map = (props: Props): React.ReactElement => {
                         <Button
                             onClick={(e) => clickButton(e, 'bbi')}
                             type={bbiButtonType}
+                            loading={buttonLoading}
                             disabled={buttonDisabled()}
                         >
                             BBI
@@ -457,6 +463,7 @@ const MonitoringTop100Map = (props: Props): React.ReactElement => {
                         <Button
                             onClick={(e) => clickButton(e, 'acc')}
                             type={aiButtonType}
+                            loading={buttonLoading}
                             disabled={buttonDisabled()}
                         >
                             사고인지
@@ -464,6 +471,7 @@ const MonitoringTop100Map = (props: Props): React.ReactElement => {
                         <Button
                             onClick={(e) => clickButton(e, 'public')}
                             type={publicButtonType}
+                            loading={buttonLoading}
                             disabled={buttonDisabled()}
                         >
                             공공사고
@@ -480,6 +488,7 @@ const MonitoringTop100Map = (props: Props): React.ReactElement => {
                 <Col span={24}>
                     <Space>
                         <MonitoringMetaTable
+                            loading={metaTableLoading}
                             bbiMetaList={bbiMetaList}
                             publicMetaList={publicMetaList}
                             aiMetaList={aiMetaList}
