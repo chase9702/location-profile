@@ -10,12 +10,13 @@ import org.springframework.stereotype.Service
 class BbiMonitoringService(
     private val bbiMonitoringRepository: BbiMonitoringRepository
 ) {
-    fun buildBbiAbnormalQueryParams(startDate: String?, endDate: String?, metric: String?, threshold: String?, id: String?): String {
+    fun buildBbiAbnormalQueryParams(startDate: String?, endDate: String?, metric: String?, threshold: String?, distance: String?, id: String?): String {
         return listOfNotNull(
             startDate.takeUnless { it == null }?.let { "part_dt>='$it'" },
             endDate.takeUnless { it == null }?.let { "part_dt<='$it'" },
             metric.takeUnless { it == null || it == "total" }?.let { "metric='$it'" },
             threshold.takeUnless { it == null || it == "total" }?.let { "threshold='$it'" },
+            distance.takeUnless { it == null}?.let { "time_or_dst='$it'" },
             id.takeUnless { it == null}?.let { "unit='$it'" },
         ).joinToString(" and ")
     }
@@ -34,9 +35,10 @@ class BbiMonitoringService(
         endDate: String?,
         metric: String?,
         threshold: String?,
+        distance: String?,
         id: String?,
     ): List<BbiAbnormalData> {
-        val queryParams = buildBbiAbnormalQueryParams(startDate, endDate, metric, threshold, id)
+        val queryParams = buildBbiAbnormalQueryParams(startDate, endDate, metric, threshold, distance, id)
         print(id)
         print(queryParams)
         return bbiMonitoringRepository.getBbiAbnormalData(queryParams)

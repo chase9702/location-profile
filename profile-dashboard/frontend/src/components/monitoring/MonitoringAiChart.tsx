@@ -32,23 +32,10 @@ const MonitoringAiChart = (props: Props): React.ReactElement => {
     const [buttonDisabled, setButtonDisabled] = useState(false);
 
     useEffect(() => {
-        setAiDetectionLoading(true);
-        get<[]>(`/api/monitoring/ai/detection/?start_date=20240619&end_date=20240625`)
-            .then((jsonData) => {
-                console.log(jsonData)
-                const transformedData = transformData(jsonData);
-                setAiDetectionData(transformedData)
-            })
-            .catch((error) => {
-                console.error('Error fetching AI detection data:', error);
-            })
-            .finally(() => {
-                setAiDetectionLoading(false);
-                setButtonDisabled(false);
-            });
+        aiDetectionFetch();
     }, []);
 
-    const aiDetectionFetch = (queryString: string) => {
+    const aiDetectionFetch = (queryString: string = `start_date=20240601&end_date=20240605`) => {
         setAiDetectionLoading(true);
         get<[]>(`/api/monitoring/ai/detection/?${queryString}`)
             .then((jsonData) => {
@@ -62,6 +49,7 @@ const MonitoringAiChart = (props: Props): React.ReactElement => {
             })
             .finally(() => {
                 setAiDetectionLoading(false);
+                setButtonDisabled(false);
             });
     };
 
@@ -108,18 +96,6 @@ const MonitoringAiChart = (props: Props): React.ReactElement => {
             setButtonDisabled(true);
         }
     };
-    //
-    // const onRangePickerAiChange = (dateString: (string | number | dayjs.Dayjs | Date)[]) => {
-    //     const startDate = dayjs(dateString[0]);
-    //     const endDate = dayjs(dateString[1]);
-    //
-    //     console.log(startDate)
-    //     console.log(endDate)
-    //
-    //     setSelectedStartDate(startDate);
-    //     setSelectedEndDate(endDate);
-    //     setButtonDisabled(false);
-    // };
 
     const onOk = (value: RangePickerProps['value']) => {
         console.log('onOk: ', value);
@@ -147,8 +123,6 @@ const MonitoringAiChart = (props: Props): React.ReactElement => {
         label: string;
     }[]) => {
         console.log(`selected ${value}`);
-        // setClickGetData(false);
-        // dispatch(setSelectDeviceGb(value))
         setSelectedStatus(value);
     };
 
@@ -174,6 +148,7 @@ const MonitoringAiChart = (props: Props): React.ReactElement => {
         xField: 'part_dt',
         yField: 'count',
         seriesField: 'level',
+        slider: { y: true },
     };
 
     return (

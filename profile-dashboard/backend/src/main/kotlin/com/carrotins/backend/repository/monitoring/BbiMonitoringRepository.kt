@@ -14,7 +14,9 @@ class BbiMonitoringRepository(
                   metric,
                   threshold,
                   unit,
+                  time_or_dst,
                   value,
+                  total,
                   part_dt
                FROM dw.swp_abn_summary
               WHERE 1=1
@@ -28,7 +30,9 @@ class BbiMonitoringRepository(
                 metric = transformNullToEmptyString(rs.getString("metric")),
                 threshold = transformNullToEmptyString(rs.getString("threshold")),
                 unit = transformNullToEmptyString(rs.getString("unit")),
-                value = rs.getDouble("value"),
+                timeOrDst = transformNullToEmptyString("time_or_dst"),
+                value = rs.getInt("value"),
+                total = rs.getInt("total"),
                 partDt = transformNullToEmptyString(rs.getString("part_dt")),
             )
         }

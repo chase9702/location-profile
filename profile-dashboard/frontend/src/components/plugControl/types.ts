@@ -45,6 +45,11 @@ export const bbiUnitFilter = [
     {value: 'member', label: 'mem_id'},
 ]
 
+export const bbiDistanceFilter = [
+    {value: 'dst', label: '거리'},
+    {value: 'time', label: '시간'},
+]
+
 export const bbiThresholdFilter = [
     {value: 'total', label: 'Threshold 전체'},
     {value: '0_1', label: '0.1'},
