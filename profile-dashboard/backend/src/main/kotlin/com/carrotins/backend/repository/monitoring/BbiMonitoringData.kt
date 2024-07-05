@@ -8,7 +8,9 @@ data class BbiAbnormalData(
     val metric: String,
     val threshold: String,
     val unit: String,
-    val value: Double,
+    val timeOrDst: String,
+    val value: Int,
+    val total: Int,
     val partDt: String,
 )
 

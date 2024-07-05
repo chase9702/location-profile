@@ -21,9 +21,10 @@ class BbiMonitoringController(
         @RequestParam("end_date") endDate: String?,
         @RequestParam("metric") metric: String?,
         @RequestParam("threshold") threshold: String?,
+        @RequestParam("distance") distance: String?,
         @RequestParam("unit") id: String?,
         ): List<BbiAbnormalData> {
-        return bbiMonitoringService.getBbiAbnormal(startDate, endDate, metric, threshold, id)
+        return bbiMonitoringService.getBbiAbnormal(startDate, endDate, metric, threshold, distance, id)
     }
 
     @GetMapping("/detection")

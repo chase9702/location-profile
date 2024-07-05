@@ -137,11 +137,7 @@ const MonitoringBbiChart = (props: Props): React.ReactElement => {
         xField: 'part_dt',
         yField: 'count',
         seriesField: 'behavior',
-        meta: {
-            part_dt: {
-                alias: '일자',
-            },
-        },
+        slider: { y: true },
     });
 
     return (
@@ -205,6 +201,7 @@ const MonitoringBbiChart = (props: Props): React.ReactElement => {
                 {!bbiDetectionLoading && bbiDetectionData.length > 0 && (
                     <Violin {...config} />
                 )}
+
             </Spin>
         </div>
     )

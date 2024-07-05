@@ -4,7 +4,7 @@ import {get} from "@src/api";
 import {Button, Col, Row} from "antd";
 import TimePicker from "antd/lib/time-picker";
 import Select from "antd/lib/select";
-import {bbiMetricFilter,bbiThresholdFilter, bbiUnitFilter} from "@src/components/plugControl/types";
+import {bbiMetricFilter, bbiThresholdFilter, bbiDistanceFilter, bbiUnitFilter} from "@src/components/plugControl/types";
 import {encodeQueryData} from "@src/common/utils";
 import moment from "moment";
 import {RangePickerProps} from "antd/es/date-picker";
@@ -26,6 +26,7 @@ const MonitoringDeviceChart = (props:Props): React.ReactElement => {
     const [selectedEndDate, setSelectedEndDate] = useState<Dayjs | null>(dayjs().subtract(1, 'day'));
     const [selectedMetric, setSelectedMetric] = useState('total');
     const [selectedThreshold, setSelectedThreshold] = useState('total');
+    const [selectedDistance, setSelectedDistance] = useState('time')
     const [selectedUnit, setSelectedUnit] = useState('trip');
 
     useEffect(() => {
@@ -120,6 +121,14 @@ const MonitoringDeviceChart = (props:Props): React.ReactElement => {
         setSelectedUnit(value)
     };
 
+    const handleDistanceSelectChange = (value: string, option: { value: string; label: string; } | {
+        value: string;
+        label: string;
+    }[]) => {
+        console.log(`selected ${value}`);
+        setSelectedDistance(value)
+    };
+
     const onRangePickerChartChange = (dates: [Dayjs | null, Dayjs | null], dateStrings: [string, string]) => {
         if (dates) {
             const startDate = dates[0];
@@ -157,6 +166,7 @@ const MonitoringDeviceChart = (props:Props): React.ReactElement => {
             end_date:selectedEndDate === null ? null : selectedEndDate.format('YYYYMMDD'),
             metric: selectedMetric,
             threshold: selectedThreshold,
+            distance: selectedDistance,
             unit: selectedUnit,
         };
         return encodeQueryData(queryParams)
@@ -239,7 +249,25 @@ const MonitoringDeviceChart = (props:Props): React.ReactElement => {
                         ))}
                     </Select>
                 </Col>
-                <Col span={4}>
+                <Col span={3}>
+                    <Select
+                        className={"h3-margin"}
+                        showSearch
+                        placeholder="Time 선택"
+                        optionFilterProp="children"
+                        style={{ width: '100%' }}
+                        onChange={handleDistanceSelectChange}
+                        defaultValue={'time'}
+                        options={bbiDistanceFilter}
+                    >
+                        {bbiUnitFilter.map((data, index) => (
+                            <Select.Option value={data.value} key={index}>
+                                {data.value}
+                            </Select.Option>
+                        ))}
+                    </Select>
+                </Col>
+                <Col span={3}>
                     <Select
                         className={"h3-margin"}
                         showSearch
@@ -247,7 +275,7 @@ const MonitoringDeviceChart = (props:Props): React.ReactElement => {
                         optionFilterProp="children"
                         style={{ width: '100%' }}
                         onChange={handleUnitSelectChange}
-                        defaultValue={'total'}
+                        defaultValue={'trip'}
                         options={bbiUnitFilter}
                     >
                         {bbiUnitFilter.map((data, index) => (
