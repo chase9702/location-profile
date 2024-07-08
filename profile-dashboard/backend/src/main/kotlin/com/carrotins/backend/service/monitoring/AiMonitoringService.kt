@@ -28,13 +28,6 @@ class AiMonitoringService (
     ): List<AiDetectionData> {
         val queryParams = buildQueryParams(hour, startDate, endDate, status)
 
-        when (id) {
-            "trip_id" -> print("trip_id\n")
-            "dvc_id" -> print("dvc_id\n")
-            "member_id" -> print("member_id\n")
-        }
-        print(queryParams)
-
         return when (id) {
             "trip_id" -> aiMonitoringRepository.getAiDetectionTripData(queryParams)
             "dvc_id" -> aiMonitoringRepository.getAiDetectionDeviceIdData(queryParams)
