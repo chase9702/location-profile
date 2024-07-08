@@ -53,8 +53,9 @@ class MapMonitoringController(
     fun getMonitoringAiMapData(
         @RequestParam("addr_cd") addrCd: String,
         @RequestParam("hour") hour: String,
-        @RequestParam("part_dt") partDt: String,
-    ): List<Top100AiMapData> = mapMonitoringService.getMonitoringAiMapData(addrCd, hour, partDt)
+        @RequestParam("start_date") startDate: String,
+        @RequestParam("end_date") endDate: String,
+    ): List<Top100AiMapData> = mapMonitoringService.getMonitoringAiMapData(addrCd, hour, startDate, endDate)
 
     @GetMapping("/public")
     fun getMonitoringPublicMapData(
