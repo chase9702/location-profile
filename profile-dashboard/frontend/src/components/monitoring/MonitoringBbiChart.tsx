@@ -35,6 +35,19 @@ const MonitoringBbiChart = (props: Props): React.ReactElement => {
     useEffect(() => {
         bbiDetectionFetch();
     }, []);
+    // useEffect(() => {
+    //     setBbiDetectionLoading(true);
+    //     get<[]>(`/api/monitoring/bbi/detection/?start_date=20240601&end_date=20240607`)
+    //         .then((jsonData) => {
+    //             const transformedData = transformData(jsonData)
+    //             console.log(transformedData)
+    //             setBbiDetectionData(transformedData);
+    //         })
+    //         .finally(() => {
+    //             setBbiDetectionLoading(false);
+    //             setButtonDisabled(false);
+    //         });
+    // }, []);
 
     const bbiDetectionFetch = (queryString: string = `hour=${selectedTime.format("HH")}&start_date=${selectedStartDate.format('YYYYMMDD')}&end_date=${selectedEndDate.format('YYYYMMDD')}`) => {
         setBbiDetectionLoading(true);
@@ -56,10 +69,10 @@ const MonitoringBbiChart = (props: Props): React.ReactElement => {
         }
 
         const transformedData = data.flatMap((item: { part_dt: any; sac: any; sdc: any; ssp: any; sst: any; }) => [
-            {일자: item.part_dt, behavior: '급가속', count: item.sac},
-            {일자: item.part_dt, behavior: '급감속', count: item.sdc},
-            {일자: item.part_dt, behavior: '급정지', count: item.ssp},
-            {일자: item.part_dt, behavior: '급출발', count: item.sst},
+            { 일자: item.part_dt, behavior: '급가속', count: item.sac },
+            { 일자: item.part_dt, behavior: '급감속', count: item.sdc },
+            { 일자: item.part_dt, behavior: '급정지', count: item.ssp },
+            { 일자: item.part_dt, behavior: '급출발', count: item.sst },
         ]);
 
         transformedData.sort((a: { 일자: number; }, b: { 일자: number; }) => {
@@ -109,8 +122,8 @@ const MonitoringBbiChart = (props: Props): React.ReactElement => {
     const makeQueryChartString = () => {
         const queryParams: Record<string, string | null> = {
             hour: selectedTime === null ? null : selectedTime.format("HH"),
-            start_date: selectedStartDate === null ? null : selectedStartDate.format('YYYYMMDD'),
-            end_date: selectedEndDate === null ? null : selectedEndDate.format('YYYYMMDD'),
+            start_date:selectedStartDate === null ? null : selectedStartDate.format('YYYYMMDD'),
+            end_date:selectedEndDate === null ? null : selectedEndDate.format('YYYYMMDD'),
             id: bbiTripValue,
         };
         return encodeQueryData(queryParams);
@@ -127,7 +140,7 @@ const MonitoringBbiChart = (props: Props): React.ReactElement => {
         xField: '일자',
         yField: 'count',
         seriesField: 'behavior',
-        slider: {y: true},
+        slider: { y: true },
     });
 
     return (
@@ -160,7 +173,7 @@ const MonitoringBbiChart = (props: Props): React.ReactElement => {
                 <Col span={12}>
                     <RangePicker
                         className={"h3-margin"}
-                        value={[selectedStartDate, selectedEndDate]}
+                        value={[selectedStartDate,selectedEndDate]}
                         style={{width: '100%'}}
                         format="YYYYMMDD"
                         onChange={onRangePickerChartChange}
@@ -187,13 +200,12 @@ const MonitoringBbiChart = (props: Props): React.ReactElement => {
                     </Select>
                 </Col>
             </Row>
-            <div style={{width: '697px', height: '492px'}}>
-                <Spin spinning={bbiDetectionLoading} indicator={<LoadingOutlined/>} tip="로딩 중...">
-                    {!bbiDetectionLoading && bbiDetectionData.length > 0 && (
-                        <Violin {...config} />
-                    )}
-                </Spin>
-            </div>
+            <Spin spinning={bbiDetectionLoading} indicator={<LoadingOutlined/>} tip="로딩 중...">
+                {!bbiDetectionLoading && bbiDetectionData.length > 0 && (
+                    <Violin {...config} />
+                )}
+
+            </Spin>
         </div>
     )
 };

@@ -128,8 +128,8 @@ const MonitoringAiChart = (props: Props): React.ReactElement => {
     const makeQueryChartString = () => {
         const queryParams: Record<string, string | null> = {
             hour: selectedTime === null ? null : selectedTime.format("HH"),
-            start_date: selectedStartDate === null ? null : selectedStartDate.format('YYYYMMDD'),
-            end_date: selectedEndDate === null ? null : selectedEndDate.format('YYYYMMDD'),
+            start_date:selectedStartDate === null ? null : selectedStartDate.format('YYYYMMDD'),
+            end_date:selectedEndDate === null ? null : selectedEndDate.format('YYYYMMDD'),
             id: selectedId,
             status: selectedStatus,
         };
@@ -142,7 +142,7 @@ const MonitoringAiChart = (props: Props): React.ReactElement => {
         xField: '일자',
         yField: 'count',
         seriesField: 'level',
-        slider: {y: true},
+        slider: { y: true },
     };
 
     return (
@@ -220,13 +220,11 @@ const MonitoringAiChart = (props: Props): React.ReactElement => {
                     </Select>
                 </Col>
             </Row>
-            <div style={{width: '697px', height: '492px'}}>
-                <Spin spinning={aiDetectionLoading} indicator={<LoadingOutlined/>} tip="로딩 중...">
-                    {!aiDetectionLoading && aiDetectionData.length > 0 && (
-                        <Violin {...aiDetectionConfig} />
-                    )}
-                </Spin>
-            </div>
+            <Spin spinning={aiDetectionLoading} indicator={<LoadingOutlined/>} tip="로딩 중...">
+                {!aiDetectionLoading && aiDetectionData.length > 0 && (
+                    <Violin {...aiDetectionConfig} />
+                )}
+            </Spin>
         </div>
     )
 };

@@ -17,7 +17,7 @@ interface Props {
 
 }
 
-const MonitoringDeviceChart = (props: Props): React.ReactElement => {
+const MonitoringDeviceChart = (props:Props): React.ReactElement => {
     const {RangePicker} = DatePicker;
     const [buttonDisabled, setButtonDisabled] = useState(false);
     const [bbiAbnormalLoading, setBbiAbnormalLoading] = useState(false);
@@ -54,7 +54,7 @@ const MonitoringDeviceChart = (props: Props): React.ReactElement => {
             'abn_loc': '이상 위치',
             'abn_sp': '이상 속도(필터 전)',
             'abn_fs': '이상 속도(필터 후)',
-            'fseg': 'dt>2이상'
+            'fseg':'dt>2이상'
         };
 
         data.forEach(item => {
@@ -151,8 +151,8 @@ const MonitoringDeviceChart = (props: Props): React.ReactElement => {
 
     const makeQueryChartString = () => {
         const queryParams: Record<string, string | null> = {
-            start_date: selectedStartDate === null ? null : selectedStartDate.format('YYYYMMDD'),
-            end_date: selectedEndDate === null ? null : selectedEndDate.format('YYYYMMDD'),
+            start_date:selectedStartDate === null ? null : selectedStartDate.format('YYYYMMDD'),
+            end_date:selectedEndDate === null ? null : selectedEndDate.format('YYYYMMDD'),
             metric: selectedMetric,
             threshold: selectedThreshold,
             distance: selectedDistance,
@@ -194,7 +194,7 @@ const MonitoringDeviceChart = (props: Props): React.ReactElement => {
                 <Col span={10}>
                     <RangePicker
                         className={"h3-margin"}
-                        style={{width: '100%'}}
+                        style={{ width: '100%' }}
                         format="YYYYMMDD"
                         onChange={onRangePickerChartChange}
                         disabledDate={disabledRangePickerChartDate}
@@ -208,7 +208,7 @@ const MonitoringDeviceChart = (props: Props): React.ReactElement => {
                         showSearch
                         placeholder="Metric 전체"
                         optionFilterProp="children"
-                        style={{width: '100%'}}
+                        style={{ width: '100%' }}
                         onChange={handleMetricSelectChange}
                         defaultValue={'Metric 전체'}
                         options={bbiMetricFilter}
@@ -226,7 +226,7 @@ const MonitoringDeviceChart = (props: Props): React.ReactElement => {
                         showSearch
                         placeholder="Threshold 선택"
                         optionFilterProp="children"
-                        style={{width: '100%'}}
+                        style={{ width: '100%' }}
                         onChange={handleThresholdSelectChange}
                         defaultValue={'Threshold 전체'}
                         options={bbiThresholdFilter}
@@ -244,7 +244,7 @@ const MonitoringDeviceChart = (props: Props): React.ReactElement => {
                         showSearch
                         placeholder="Time 선택"
                         optionFilterProp="children"
-                        style={{width: '100%'}}
+                        style={{ width: '100%' }}
                         onChange={handleDistanceSelectChange}
                         defaultValue={'time'}
                         options={bbiDistanceFilter}
@@ -262,7 +262,7 @@ const MonitoringDeviceChart = (props: Props): React.ReactElement => {
                         showSearch
                         placeholder="Unit 선택"
                         optionFilterProp="children"
-                        style={{width: '100%'}}
+                        style={{ width: '100%' }}
                         onChange={handleUnitSelectChange}
                         defaultValue={'trip'}
                         options={bbiUnitFilter}
