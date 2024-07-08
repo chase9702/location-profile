@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
-    "allowJs": true, // allow javascript compile
+    "allowJs": true,
+    // allow javascript compile
     "baseUrl": ".",
     "esModuleInterop": true,
     "jsx": "react",
@@ -22,6 +23,6 @@
   ],
   "exclude": [
     "node_modules",
-    "build",
+    "build"
   ]
 }
