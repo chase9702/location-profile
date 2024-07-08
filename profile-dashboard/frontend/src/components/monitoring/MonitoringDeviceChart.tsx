@@ -30,21 +30,10 @@ const MonitoringDeviceChart = (props:Props): React.ReactElement => {
     const [selectedUnit, setSelectedUnit] = useState('trip');
 
     useEffect(() => {
-        setBbiAbnormalLoading(true);
-        get<[]>(`/api/monitoring/bbi/abnormal/?start_date=20240604&end_date=20240608&metric=total&threshold=total&trip=total`)
-            .then((jsonData) => {
-                console.log(jsonData)
-                const transformedData = groupByAndSum(jsonData);
-                console.log(transformedData);
-                setBbiAbnormalData(transformedData);
-            })
-            .finally(() => {
-                setBbiAbnormalLoading(false);
-                setButtonDisabled(false);
-            });
+        bbiAbnormalFetch();
     }, []);
 
-    const bbiAbnormalFetch = (queryString: string) => {
+    const bbiAbnormalFetch = (queryString: string = `start_date=${selectedStartDate.format('YYYYMMDD')}&end_date=${selectedEndDate.format('YYYYMMDD')}`) => {
         setBbiAbnormalLoading(true);
         get<[]>(`/api/monitoring/bbi/abnormal/?${queryString}`)
             .then((jsonData) => {

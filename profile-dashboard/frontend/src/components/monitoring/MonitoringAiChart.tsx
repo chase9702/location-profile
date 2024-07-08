@@ -35,7 +35,7 @@ const MonitoringAiChart = (props: Props): React.ReactElement => {
         aiDetectionFetch();
     }, []);
 
-    const aiDetectionFetch = (queryString: string = `start_date=20240601&end_date=20240605`) => {
+    const aiDetectionFetch = (queryString: string = `hour=${selectedTime.format("HH")}&start_date=${selectedStartDate.format('YYYYMMDD')}&end_date=${selectedEndDate.format('YYYYMMDD')}`) => {
         setAiDetectionLoading(true);
         get<[]>(`/api/monitoring/ai/detection/?${queryString}`)
             .then((jsonData) => {
@@ -58,20 +58,14 @@ const MonitoringAiChart = (props: Props): React.ReactElement => {
             return [];
         }
 
-        const manualData = [
-            {part_dt: '20240430', level: 'level 2', count: 0.00}
-        ];
-
         const transformedData = data.flatMap((item: { part_dt: any; lv_1_cnt: any; lv_2_cnt: any; }) => [
-            {part_dt: item.part_dt, level: 'level 1', count: item.lv_1_cnt},
-            {part_dt: item.part_dt, level: 'level 2', count: item.lv_2_cnt},
+            {일자: item.part_dt, level: 'level 1', count: item.lv_1_cnt},
+            {일자: item.part_dt, level: 'level 2', count: item.lv_2_cnt},
         ]);
 
-        transformedData.push(...manualData);
-
-        transformedData.sort((a: { part_dt: number; }, b: { part_dt: number; }) => {
-            if (a.part_dt < b.part_dt) return -1;
-            if (a.part_dt > b.part_dt) return 1;
+        transformedData.sort((a: { 일자: number; }, b: { 일자: number; }) => {
+            if (a.일자 < b.일자) return -1;
+            if (a.일자 > b.일자) return 1;
             return 0;
         });
 
@@ -145,7 +139,7 @@ const MonitoringAiChart = (props: Props): React.ReactElement => {
     const aiDetectionConfig = {
         violinType: 'normal',
         data: aiDetectionData,
-        xField: 'part_dt',
+        xField: '일자',
         yField: 'count',
         seriesField: 'level',
         slider: { y: true },

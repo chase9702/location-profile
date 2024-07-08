@@ -39,8 +39,7 @@ class BbiMonitoringService(
         id: String?,
     ): List<BbiAbnormalData> {
         val queryParams = buildBbiAbnormalQueryParams(startDate, endDate, metric, threshold, distance, id)
-        print(id)
-        print(queryParams)
+
         return bbiMonitoringRepository.getBbiAbnormalData(queryParams)
     }
 

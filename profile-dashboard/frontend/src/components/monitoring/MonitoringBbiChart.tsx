@@ -33,20 +33,23 @@ const MonitoringBbiChart = (props: Props): React.ReactElement => {
     const [bbiBehaviorValue, setBbiBehaviorValue] = useState(null);
 
     useEffect(() => {
-        setBbiDetectionLoading(true);
-        get<[]>(`/api/monitoring/bbi/detection/?start_date=20240601&end_date=20240607`)
-            .then((jsonData) => {
-                const transformedData = transformData(jsonData)
-                console.log(transformedData)
-                setBbiDetectionData(transformedData);
-            })
-            .finally(() => {
-                setBbiDetectionLoading(false);
-                setButtonDisabled(false);
-            });
+        bbiDetectionFetch();
     }, []);
+    // useEffect(() => {
+    //     setBbiDetectionLoading(true);
+    //     get<[]>(`/api/monitoring/bbi/detection/?start_date=20240601&end_date=20240607`)
+    //         .then((jsonData) => {
+    //             const transformedData = transformData(jsonData)
+    //             console.log(transformedData)
+    //             setBbiDetectionData(transformedData);
+    //         })
+    //         .finally(() => {
+    //             setBbiDetectionLoading(false);
+    //             setButtonDisabled(false);
+    //         });
+    // }, []);
 
-    const bbiDetectionFetch = (queryString: string) => {
+    const bbiDetectionFetch = (queryString: string = `hour=${selectedTime.format("HH")}&start_date=${selectedStartDate.format('YYYYMMDD')}&end_date=${selectedEndDate.format('YYYYMMDD')}`) => {
         setBbiDetectionLoading(true);
         get<[]>(`/api/monitoring/bbi/detection/?${queryString}`)
             .then((jsonData) => {
@@ -65,16 +68,16 @@ const MonitoringBbiChart = (props: Props): React.ReactElement => {
             return [];
         }
 
-        const transformedData = data.flatMap((item) => [
-            { part_dt: item.part_dt, behavior: '급가속', count: item.sac },
-            { part_dt: item.part_dt, behavior: '급감속', count: item.sdc },
-            { part_dt: item.part_dt, behavior: '급정지', count: item.ssp },
-            { part_dt: item.part_dt, behavior: '급출발', count: item.sst },
+        const transformedData = data.flatMap((item: { part_dt: any; sac: any; sdc: any; ssp: any; sst: any; }) => [
+            { 일자: item.part_dt, behavior: '급가속', count: item.sac },
+            { 일자: item.part_dt, behavior: '급감속', count: item.sdc },
+            { 일자: item.part_dt, behavior: '급정지', count: item.ssp },
+            { 일자: item.part_dt, behavior: '급출발', count: item.sst },
         ]);
 
-        transformedData.sort((a: { part_dt: number; }, b: { part_dt: number; }) => {
-            if (a.part_dt < b.part_dt) return -1;
-            if (a.part_dt > b.part_dt) return 1;
+        transformedData.sort((a: { 일자: number; }, b: { 일자: number; }) => {
+            if (a.일자 < b.일자) return -1;
+            if (a.일자 > b.일자) return 1;
             return 0;
         });
 
@@ -134,7 +137,7 @@ const MonitoringBbiChart = (props: Props): React.ReactElement => {
     const config = ({
         violinType: 'normal',
         data: bbiDetectionData,
-        xField: 'part_dt',
+        xField: '일자',
         yField: 'count',
         seriesField: 'behavior',
         slider: { y: true },
