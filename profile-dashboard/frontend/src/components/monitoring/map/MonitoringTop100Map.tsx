@@ -51,12 +51,8 @@ const MonitoringTop100Map = (): React.ReactElement => {
   const [aiButtonType, setAiButtonType] = useState<ButtonType>('default');
   const [publicButtonType, setPublicButtonType] =
     useState<ButtonType>('default');
-  const [carrotButtonType, setCarrotButtonType] =
-    useState<ButtonType>('default');
-
   const [bbiLayerVisibility, setBbiLayerVisibility] = useState(true);
   const [accLayerVisibility, setAccLayerVisibility] = useState(true);
-  const [carrotLayerVisibility, setCarrotLayerVisibility] = useState(false);
   const [publicLayerVisibility, setPublicLayerVisibility] = useState(false);
 
   const [bbiHexDataList, setBbiHexDataList] = useState<MapBBIHexData[]>([]);
@@ -87,6 +83,15 @@ const MonitoringTop100Map = (): React.ReactElement => {
   >([]);
   const [aiMetaList, setAiMetaList] = useState<AiMetaData[]>([]);
   const [metaTableLoading, setMetaTableLoading] = useState(false);
+
+  useEffect(() => {
+    store.dispatch(
+      updateMap({
+        latitude: 37.5658,
+        longitude: 126.9889, // 캐롯 좌표
+      })
+    );
+  }, []);
 
   const initialState = () => {
     store.dispatch(
@@ -126,15 +131,6 @@ const MonitoringTop100Map = (): React.ReactElement => {
       handleSearchPublicMapData();
     }
   }, [aiButtonType, publicButtonType]);
-
-  useEffect(() => {
-    store.dispatch(
-      updateMap({
-        latitude: 37.5658,
-        longitude: 126.9889, // 캐롯 좌표
-      })
-    );
-  }, []);
 
   const findLayer = () => {
     const layer = mapData.visState.layers.find(
@@ -297,6 +293,8 @@ const MonitoringTop100Map = (): React.ReactElement => {
         )
       );
     }
+  }, [csvFormattedBBIData]);
+  useEffect(() => {
     if (csvFormattedPublicData.length !== 0) {
       store.dispatch(removeDataset(publicDataId));
       store.dispatch(
@@ -313,6 +311,8 @@ const MonitoringTop100Map = (): React.ReactElement => {
         )
       );
     }
+  }, [csvFormattedPublicData]);
+  useEffect(() => {
     if (csvFormattedAIData.length !== 0) {
       store.dispatch(removeDataset(aiDataId));
       store.dispatch(
@@ -329,49 +329,51 @@ const MonitoringTop100Map = (): React.ReactElement => {
         )
       );
     }
-  }, [csvFormattedBBIData, csvFormattedPublicData, csvFormattedAIData]);
-
-  const bbiH3FormatData = (data: Data[]): string => {
+  }, [csvFormattedAIData]);
+  // 공통 형식화 함수
+  const formatH3Data = (
+    header: string,
+    data: Data[],
+    mapper: (item: Data) => string
+  ): string => {
     if (data.length === 0) {
       return '';
     }
-    return (
-      'SST, SAC, SSP, SDC, TOTAL_BBI, HEX  \n' +
-      data
-        .map((item) => {
-          return `${item.sst},${item.sac},${item.ssp},${item.sdc},${item.total_bbi},"${item.hex}"`;
-        })
-        .join('\n')
+    return header + '\n' + data.map(mapper).join('\n');
+  };
+
+  // 각 데이터 형식에 맞는 매핑 함수
+  const bbiH3Mapper = (item: Data): string => {
+    return `${item.sst},${item.sac},${item.ssp},${item.sdc},${item.total_bbi},"${item.hex}"`;
+  };
+
+  const publicH3Mapper = (item: Data): string => {
+    return `${item.serious_cnt},${item.slight_cnt},${item.total_cnt},"${item.hex}"`;
+  };
+
+  const aiH3Mapper = (item: Data): string => {
+    return `${item.dtct_dt},${item.lv_1_cnt},${item.lv_2_cnt},"${item.hex}"`;
+  };
+
+  // 각 데이터 형식에 대한 형식화 함수
+  const bbiH3FormatData = (data: Data[]): string => {
+    return formatH3Data(
+      'SST, SAC, SSP, SDC, TOTAL_BBI, HEX',
+      data,
+      bbiH3Mapper
     );
   };
 
   const publicH3FormatData = (data: Data[]): string => {
-    if (data.length === 0) {
-      return '';
-    }
-    return (
-      'SERIOUS_CNT, SLIGHT_CNT, TOTAL_CNT, HEX  \n' +
-      data
-        .map((item) => {
-          return `${item.serious_cnt},${item.slight_cnt},${item.total_cnt},"${item.hex}"`;
-        })
-        .join('\n')
+    return formatH3Data(
+      'SERIOUS_CNT, SLIGHT_CNT, TOTAL_CNT, HEX',
+      data,
+      publicH3Mapper
     );
   };
 
   const aiH3FormatData = (data: Data[]): string => {
-    console.log(data.length);
-    if (data.length === 0) {
-      return '';
-    }
-    return (
-      'DTCT_DT, LV_1_CNT, LV_2_CNT , HEX  \n' +
-      data
-        .map((item) => {
-          return `${item.dtct_dt},${item.lv_1_cnt},${item.lv_2_cnt},"${item.hex}"`;
-        })
-        .join('\n')
-    );
+    return formatH3Data('DTCT_DT, LV_1_CNT, LV_2_CNT, HEX', data, aiH3Mapper);
   };
 
   const mapQuery = () => {
