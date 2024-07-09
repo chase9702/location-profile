@@ -46,14 +46,9 @@ export const bbiUnitFilter = [
 ];
 
 export const bbiDistanceFilter = [
-    {value: 'dst', label: '거리'},
-    {value: 'time', label: '시간'},
-]
-
-export const bbiDistanceFilter = [
-    {value: 'dst', label: '거리'},
-    {value: 'time', label: '시간'},
-]
+  { value: 'dst', label: '거리' },
+  { value: 'time', label: '시간' },
+];
 
 export const bbiThresholdFilter = [
   { value: 'total', label: 'Threshold 전체' },
@@ -86,10 +81,11 @@ export const aiLevelFilter = [
 
 export const aiStatusFilter = [
   { value: '', label: '전체' },
-  { value: '99', label: '99' },
-  { value: '300', label: '300' },
-  { value: '301', label: '301' },
-  { value: '400', label: '400' },
+  { value: '99', label: 'ignore' },
+  { value: '100', label: '접수대기' },
+  { value: '201', label: '접수처리' },
+  { value: '300', label: '완료(사고)' },
+  { value: '301', label: '완료(미사고)' },
 ];
 
 export const deviceTop100Data = [
