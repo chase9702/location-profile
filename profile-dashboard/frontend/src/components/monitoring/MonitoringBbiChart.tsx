@@ -17,6 +17,7 @@ import LoadingOutlined from '@ant-design/icons/lib/icons/LoadingOutlined';
 import Spin from 'antd/lib/spin';
 import dayjs, { Dayjs } from 'dayjs';
 import { now } from 'moment/moment';
+import Plot from 'react-plotly.js';
 
 interface Props {}
 
@@ -147,13 +148,50 @@ const MonitoringBbiChart = (props: Props): React.ReactElement => {
     bbiDetectionFetch(makeQueryChartString());
   };
 
-  const config = {
-    violinType: 'density',
-    data: bbiDetectionData,
-    xField: '일자',
-    yField: 'count',
-    seriesField: 'behavior',
-    slider: { y: true },
+  // const config = {
+  //   violinType: 'normal',
+  //   data: bbiDetectionData,
+  //   xField: '일자',
+  //   yField: 'count',
+  //   seriesField: 'behavior',
+  //   slider: { y: true },
+  //   point: {
+  //     size: 0.1,
+  //     shape: 'circle',
+  //     style: {
+  //       fill: 'red',
+  //       stroke: 'black',
+  //       lineWidth: 0.1,
+  //     },
+  //   },
+  // };
+
+  const data = [
+    {
+      type: 'violin',
+      x: ['A', 'A', 'A', 'B', 'B', 'B', 'B'],
+      y: [10, 15, 13, 17, 20, 18, 16],
+      points: 'all',
+      jitter: 0.3,
+      pointpos: -1.8,
+      marker: {
+        color: 'blue',
+      },
+      line: {
+        color: 'blue',
+      },
+      name: 'Violin plot',
+    },
+  ];
+
+  const layout = {
+    title: 'Violin Plot Example',
+    xaxis: {
+      title: 'Category',
+    },
+    yaxis: {
+      title: 'Value',
+    },
   };
 
   return (
@@ -219,9 +257,10 @@ const MonitoringBbiChart = (props: Props): React.ReactElement => {
           indicator={<LoadingOutlined />}
           tip="로딩 중..."
         >
-          {!bbiDetectionLoading && bbiDetectionData.length > 0 && (
-            <Violin {...config} />
-          )}
+          {/*{!bbiDetectionLoading && bbiDetectionData.length > 0 && (*/}
+          {/*  <Violin {...config} />*/}
+          {/*)}*/}
+          <Plot data={data} layout={layout} config={{ responsive: true }} />
         </Spin>
       </div>
     </div>
