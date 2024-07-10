@@ -27,13 +27,11 @@ import { get } from '@src/api';
 import { NotifyError } from '@src/components/common/Notification';
 import MonitoringMetaTable from '@src/components/monitoring/map/MonitoringMetaTable';
 
-interface Props {}
-
 interface Data {
   [key: string]: any;
 }
 
-const MonitoringTop100Map = (props: Props): React.ReactElement => {
+const MonitoringTop100Map = (): React.ReactElement => {
   const dispatch = useDispatch();
 
   const selectedTop100 = useSelector(
@@ -50,23 +48,22 @@ const MonitoringTop100Map = (props: Props): React.ReactElement => {
   const wrapToMap = wrapTo('topMap');
 
   const [bbiButtonType, setBbiButtonType] = useState<ButtonType>('primary');
-  const [aiButtonType, setAiButtonType] = useState<ButtonType>('primary');
+  const [aiButtonType, setAiButtonType] = useState<ButtonType>('default');
   const [publicButtonType, setPublicButtonType] =
-    useState<ButtonType>('primary');
-  const [carrotButtonType, setCarrotButtonType] =
     useState<ButtonType>('default');
-
   const [bbiLayerVisibility, setBbiLayerVisibility] = useState(true);
   const [accLayerVisibility, setAccLayerVisibility] = useState(true);
-  const [carrotLayerVisibility, setCarrotLayerVisibility] = useState(false);
   const [publicLayerVisibility, setPublicLayerVisibility] = useState(false);
 
   const [bbiHexDataList, setBbiHexDataList] = useState<MapBBIHexData[]>([]);
   const [bbiHexDataLoading, setBbiHexDataLoading] = useState(false);
   const [csvFormattedBBIData, setCSVFormattedBBIData] = useState<string>('');
+  const [clickedAiButton, setClickedAiButton] = useState<boolean>(false);
   const [aiHexDataList, setAiHexDataList] = useState<MapAIHexData[]>([]);
   const [aiHexDataLoading, setAiHexDataLoading] = useState(false);
   const [csvFormattedAIData, setCsvFormattedAIData] = useState<string>('');
+  const [clickedPublicButton, setClickedPublicButton] =
+    useState<boolean>(false);
   const [publicHexDataList, setPublicHexDataList] = useState<
     MapPublicHexData[]
   >([]);
@@ -95,6 +92,45 @@ const MonitoringTop100Map = (props: Props): React.ReactElement => {
       })
     );
   }, []);
+
+  const initialState = () => {
+    store.dispatch(
+      updateMap({
+        latitude: 37.5658,
+        longitude: 126.9889, // 캐롯 좌표
+      })
+    );
+    setAiButtonType('default');
+    setBbiButtonType('primary');
+    setPublicButtonType('default');
+    store.dispatch(removeDataset(bbiDataId));
+    store.dispatch(removeDataset(aiDataId));
+    store.dispatch(removeDataset(publicDataId));
+    setCSVFormattedPublicData('');
+    setCsvFormattedAIData('');
+    setCSVFormattedBBIData('');
+    setBBIBbiMetaList([]);
+    setPublicMetaList([]);
+    setAiMetaList([]);
+    setClickedAiButton(false);
+    setClickedPublicButton(false);
+  };
+
+  useEffect(() => {
+    initialState();
+    if (selectedTop100 !== null) {
+      handleSearchBBIMapData();
+    }
+  }, [selectedTop100]);
+
+  useEffect(() => {
+    if (aiButtonType === 'primary' && clickedAiButton === false) {
+      handleSearchAIMapData();
+    }
+    if (publicButtonType === 'primary' && clickedPublicButton === false) {
+      handleSearchPublicMapData();
+    }
+  }, [aiButtonType, publicButtonType]);
 
   const findLayer = () => {
     const layer = mapData.visState.layers.find(
@@ -136,7 +172,6 @@ const MonitoringTop100Map = (props: Props): React.ReactElement => {
       })}`
     )
       .then((jsonData) => {
-        console.log(jsonData);
         setBBIBbiMetaList(jsonData);
       })
       .catch((error) => {
@@ -149,10 +184,16 @@ const MonitoringTop100Map = (props: Props): React.ReactElement => {
 
   const makeAIMetaDataList = (aiHexItem: MapAIHexData) => {
     //메타 만들기
+
+    if (aiHexItem === null || undefined === aiHexItem) {
+      setAiMetaList([]);
+      return;
+    }
+    return [];
   };
 
   const makePublicMetaDataList = (publicHexItem: MapPublicHexData) => {
-    let metaList: ExtendedPublicMetaData[] = [];
+    const metaList: ExtendedPublicMetaData[] = [];
     if (publicHexItem === null || undefined === publicHexItem) {
       setPublicMetaList(metaList);
       return;
@@ -206,10 +247,10 @@ const MonitoringTop100Map = (props: Props): React.ReactElement => {
   };
   useEffect(() => {
     if (mapData && Object.keys(selectedLayer).length !== 0) {
-      let listIndex = mapIndex === -1 ? 0 : mapIndex;
+      const listIndex = mapIndex === -1 ? 0 : mapIndex;
       const layer = findLayer();
 
-      let hexValue = findHexValue(layer, listIndex);
+      const hexValue = findHexValue(layer, listIndex);
 
       const lists = [
         { list: bbiHexDataList, item: null },
@@ -236,22 +277,6 @@ const MonitoringTop100Map = (props: Props): React.ReactElement => {
   }, [mapIndex, selectedLayer]);
 
   useEffect(() => {
-    setAiButtonType('primary');
-    setBbiButtonType('primary');
-    setPublicButtonType('primary');
-    setCarrotButtonType('primary');
-    setBBIBbiMetaList([]);
-    setPublicMetaList([]);
-    setAiMetaList([]);
-
-    if (selectedTop100 !== null) {
-      handleSearchBBIMapData();
-      // handleSearchAIMapData()
-      handleSearchPublicMapData();
-    }
-  }, [selectedTop100]);
-
-  useEffect(() => {
     if (csvFormattedBBIData.length !== 0) {
       store.dispatch(removeDataset(bbiDataId));
       store.dispatch(
@@ -268,6 +293,8 @@ const MonitoringTop100Map = (props: Props): React.ReactElement => {
         )
       );
     }
+  }, [csvFormattedBBIData]);
+  useEffect(() => {
     if (csvFormattedPublicData.length !== 0) {
       store.dispatch(removeDataset(publicDataId));
       store.dispatch(
@@ -284,42 +311,69 @@ const MonitoringTop100Map = (props: Props): React.ReactElement => {
         )
       );
     }
+  }, [csvFormattedPublicData]);
+  useEffect(() => {
     if (csvFormattedAIData.length !== 0) {
       store.dispatch(removeDataset(aiDataId));
+      store.dispatch(
+        wrapToMap(
+          addDataToMap({
+            datasets: {
+              info: {
+                label: 'Ai',
+                id: aiDataId,
+              },
+              data: processCsvData(csvFormattedAIData),
+            },
+          })
+        )
+      );
     }
-  }, [csvFormattedBBIData, csvFormattedPublicData, csvFormattedAIData]);
-
-  const bbiH3FormatData = (data: Data[]): string => {
+  }, [csvFormattedAIData]);
+  // 공통 형식화 함수
+  const formatH3Data = (
+    header: string,
+    data: Data[],
+    mapper: (item: Data) => string
+  ): string => {
     if (data.length === 0) {
       return '';
     }
-    return data
-      .map((item) => {
-        return `${item.sst},${item.sac},${item.ssp},${item.sdc},${item.total_bbi},"${item.hex}"`;
-      })
-      .join('\n');
+    return header + '\n' + data.map(mapper).join('\n');
+  };
+
+  // 각 데이터 형식에 맞는 매핑 함수
+  const bbiH3Mapper = (item: Data): string => {
+    return `${item.sst},${item.sac},${item.ssp},${item.sdc},${item.total_bbi},"${item.hex}"`;
+  };
+
+  const publicH3Mapper = (item: Data): string => {
+    return `${item.serious_cnt},${item.slight_cnt},${item.total_cnt},"${item.hex}"`;
+  };
+
+  const aiH3Mapper = (item: Data): string => {
+    return `${item.dtct_dt},${item.lv_1_cnt},${item.lv_2_cnt},"${item.hex}"`;
+  };
+
+  // 각 데이터 형식에 대한 형식화 함수
+  const bbiH3FormatData = (data: Data[]): string => {
+    return formatH3Data(
+      'SST, SAC, SSP, SDC, TOTAL_BBI, HEX',
+      data,
+      bbiH3Mapper
+    );
   };
 
   const publicH3FormatData = (data: Data[]): string => {
-    if (data.length === 0) {
-      return '';
-    }
-    return data
-      .map((item) => {
-        return `${item.serious_cnt},${item.slight_cnt},${item.total_cnt},"${item.hex}"`;
-      })
-      .join('\n');
+    return formatH3Data(
+      'SERIOUS_CNT, SLIGHT_CNT, TOTAL_CNT, HEX',
+      data,
+      publicH3Mapper
+    );
   };
 
   const aiH3FormatData = (data: Data[]): string => {
-    if (data.length === 0) {
-      return '';
-    }
-    return data
-      .map((item) => {
-        return `${item.sst},${item.sac},${item.ssp},${item.sdc},${item.total_bbi},"${item.hex}"`;
-      })
-      .join('\n');
+    return formatH3Data('DTCT_DT, LV_1_CNT, LV_2_CNT, HEX', data, aiH3Mapper);
   };
 
   const mapQuery = () => {
@@ -335,10 +389,7 @@ const MonitoringTop100Map = (props: Props): React.ReactElement => {
     setBbiHexDataLoading(true);
     get<MapBBIHexData[]>(`/api/monitoring/map/bbi?${mapQuery()}`)
       .then((jsonData) => {
-        console.log(jsonData);
-        const csvData =
-          'SST, SAC, SSP, SDC, TOTAL_BBI, HEX  \n' + bbiH3FormatData(jsonData);
-        console.log(csvData);
+        const csvData = bbiH3FormatData(jsonData);
         setCSVFormattedBBIData(csvData);
         setBbiHexDataList(jsonData);
       })
@@ -352,21 +403,18 @@ const MonitoringTop100Map = (props: Props): React.ReactElement => {
 
   const handleSearchAIMapData = () => {
     setAiHexDataLoading(true);
-    get<MapAIHexData[]>(`/api/monitoring/map/acc?${mapQuery()}`)
+    get<MapAIHexData[]>(`/api/monitoring/map/ai?${mapQuery()}`)
       .then((jsonData) => {
-        console.log(jsonData);
         setAiHexDataList(jsonData);
-        const csvData =
-          'SST, SAC, SSP, SDC , TOTAL_BBI, HEX  \n' + aiH3FormatData(jsonData);
+        const csvData = aiH3FormatData(jsonData);
+        setCsvFormattedAIData(csvData);
       })
       .catch((error) => {
         NotifyError(error);
       })
       .finally(() => {
+        setClickedAiButton(true);
         setAiHexDataLoading(false);
-
-        //carrot 사고는 마지막에 조회 하도록
-        // handleSearchCarrotMapData()
       });
   };
 
@@ -374,30 +422,17 @@ const MonitoringTop100Map = (props: Props): React.ReactElement => {
     setPublicHexDataLoading(true);
     get<MapPublicHexData[]>(`/api/monitoring/map/public?${mapQuery()}`)
       .then((jsonData) => {
-        console.log(jsonData);
         setPublicHexDataList(jsonData);
-        const csvData =
-          'SERIOUS_CNT, SLIGHT_CNT, TOTAL_CNT, HEX  \n' +
-          publicH3FormatData(jsonData);
+        const csvData = publicH3FormatData(jsonData);
         setCSVFormattedPublicData(csvData);
       })
       .catch((error) => {
         NotifyError(error);
       })
       .finally(() => {
+        setClickedPublicButton(true);
         setPublicHexDataLoading(false);
       });
-  };
-
-  const handleSearchCarrotMapData = () => {
-    get<[]>(`/api/monitoring/map/carrot?${mapQuery()}`)
-      .then((jsonData) => {
-        console.log(jsonData);
-      })
-      .catch((error) => {
-        NotifyError(error);
-      })
-      .finally(() => {});
   };
 
   const clickButton = (
@@ -420,7 +455,7 @@ const MonitoringTop100Map = (props: Props): React.ReactElement => {
           }
         }
         break;
-      case 'acc':
+      case 'ai':
         setAiButtonType((prevType) =>
           prevType === 'primary' ? 'default' : 'primary'
         );
@@ -432,33 +467,6 @@ const MonitoringTop100Map = (props: Props): React.ReactElement => {
             const visibility = !layer.config.isVisible;
             dispatch(layerConfigChange(layer, { isVisible: visibility }));
             setAccLayerVisibility(visibility);
-          }
-        }
-        break;
-      case 'carrot':
-        setCarrotButtonType((prevType) =>
-          prevType === 'primary' ? 'default' : 'primary'
-        );
-        if (carrotButtonType === 'default') {
-          // store.dispatch(wrapToMap(addDataToMap({
-          //     datasets: {
-          //         info: {
-          //             label: 'carrot 사고',
-          //             id: carrotDataId
-          //         },
-          //         data: processCsvData(publicDataList),
-          //
-          //     },
-          // })));
-        }
-        if (mapData) {
-          const layer = mapData.visState.layers.find(
-            (layer) => layer.config.dataId === carrotDataId
-          );
-          if (layer) {
-            const visibility = !layer.config.isVisible;
-            dispatch(layerConfigChange(layer, { isVisible: visibility }));
-            setCarrotLayerVisibility(visibility);
           }
         }
         break;
@@ -499,7 +507,7 @@ const MonitoringTop100Map = (props: Props): React.ReactElement => {
               BBI
             </Button>
             <Button
-              onClick={(e) => clickButton(e, 'acc')}
+              onClick={(e) => clickButton(e, 'ai')}
               type={aiButtonType}
               loading={buttonLoading}
               disabled={buttonDisabled()}

@@ -55,6 +55,18 @@ class MapMonitoringRepository(
             sa = rs.getDouble("sa"),
         )
 
+    fun mapRowToTop100AiMapData(rs: ResultSet): Top100AiMapData =
+        Top100AiMapData(
+            hex = rs.getString("hex"),
+            addr = rs.getString("addr"),
+            addrCd = rs.getString("addr_cd"),
+            partDt = rs.getString("part_dt"),
+            dtctDt = rs.getString("dtct_dt"),
+            dtctHH = rs.getString("dtct_hh"),
+            lv1Cnt = rs.getInt("lv_1_cnt"),
+            lv2Cnt = rs.getInt("lv_2_cnt"),
+        )
+
     fun getTop100dataByHour(
         hour: String,
         behavior: String,
@@ -167,7 +179,7 @@ class MapMonitoringRepository(
         startDate: String,
         endDate: String,
     ): List<Top100BBIMapData> {
-        var query: String
+        val query: String
 
         if (startDate == endDate) {
             query =
@@ -305,11 +317,95 @@ class MapMonitoringRepository(
         }
     }
 
-    fun getAiMapData(
-        addrCd: String,
+    fun getAiMapDataByHour(
         hour: String,
-        date: String,
-    ): List<Top100AiMapData> = listOf()
+        addrCd: String,
+        startDate: String,
+        endDate: String,
+    ): List<Top100AiMapData> {
+        var query: String
+
+        if (startDate == endDate) {
+            query =
+                """
+                SELECT *
+                FROM dw.ai_dtct_hex_hr
+                WHERE 1=1
+                AND part_dt = '$startDate' 
+                AND dtct_hh = '$hour' 
+                AND addr_cd = '$addrCd'
+                
+                """.trimIndent()
+        } else {
+            query =
+                """
+                SELECT hex,
+                    '$hour' as dtct_hh,
+                    addr,
+                    addr_cd,
+                    dtct_dt,
+                    sum(lv_1_cnt) as lv_1_cnt,
+                    sum(lv_2_cnt) as lv_2_cnt,
+                    part_dt
+                FROM dw.ai_dtct_hex_hr
+                WHERE 1=1
+                AND part_dt between '$startDate' and '$endDate'
+                AND dtct_hh = '$hour' 
+                AND addr_cd = '$addrCd'
+                GROUP BY hex, part_dt, addr, addr_cd, dtct_hh, dtct_dt
+                
+                """.trimIndent()
+        }
+
+        return hiveJdbcTemplate.query(query) { rs, _ -> mapRowToTop100AiMapData(rs) }
+    }
+
+    fun getAiMapDataByDay(
+        addrCd: String,
+        startDate: String,
+        endDate: String,
+    ): List<Top100AiMapData> {
+        var query: String
+        if (startDate == endDate) {
+            query =
+                """
+                SELECT hex,
+                    'all' as dtct_hh,
+                    addr,
+                    addr_cd,
+                    dtct_dt,
+                    sum(lv_1_cnt) as lv_1_cnt,
+                    sum(lv_2_cnt) as lv_2_cnt,
+                    part_dt
+                FROM dw.ai_dtct_hex_hr
+                WHERE 1=1
+                AND part_dt = '$startDate'
+                AND addr_cd = '$addrCd'
+                GROUP BY hex, part_dt, addr, addr_cd, dtct_dt
+                
+                """.trimIndent()
+        } else {
+            query =
+                """
+                SELECT hex,
+                    'all' as dtct_hh,
+                    addr,
+                    addr_cd,
+                    dtct_dt,
+                    sum(lv_1_cnt) as lv_1_cnt,
+                    sum(lv_2_cnt) as lv_2_cnt,
+                    part_dt
+                FROM dw.ai_dtct_hex_hr
+                WHERE 1=1
+                AND part_dt between '$startDate' and '$endDate'
+                AND addr_cd = '$addrCd'
+                GROUP BY hex, part_dt, addr, addr_cd, dtct_dt
+                
+                """.trimIndent()
+        }
+
+        return hiveJdbcTemplate.query(query) { rs, _ -> mapRowToTop100AiMapData(rs) }
+    }
 
     fun getBbiMapMetaDataByHour(
         hex: String,

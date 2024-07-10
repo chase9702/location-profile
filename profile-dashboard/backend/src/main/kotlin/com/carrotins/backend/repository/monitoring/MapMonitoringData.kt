@@ -82,5 +82,16 @@ data class Top100PublicMapData(
 )
 
 data class Top100AiMapData(
+    val partDt: String,
+    @JsonProperty("dtct_hh")
+    val dtctHH: String,
+    @JsonProperty("dtct_dt")
+    val dtctDt: String,
+    val hex: String,
     val addr: String,
+    val addrCd: String,
+    @JsonProperty("lv_1_cnt")
+    val lv1Cnt: Int,
+    @JsonProperty("lv_2_cnt")
+    val lv2Cnt: Int,
 )

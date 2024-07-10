@@ -63,8 +63,23 @@ class MapMonitoringService(
     fun getMonitoringAiMapData(
         addrCd: String,
         hour: String,
-        partDt: String,
-    ): List<Top100AiMapData> = mapMonitoringRepository.getAiMapData(addrCd = addrCd, hour = hour, date = partDt)
+        startDate: String,
+        endDate: String,
+    ): List<Top100AiMapData> =
+        if (hour != "all") {
+            mapMonitoringRepository.getAiMapDataByHour(
+                hour = hour,
+                addrCd = addrCd,
+                startDate = startDate,
+                endDate = endDate,
+            )
+        } else { //        2. 시간 조회는 하지 않는 겨우
+            mapMonitoringRepository.getAiMapDataByDay(
+                addrCd = addrCd,
+                startDate = startDate,
+                endDate = endDate,
+            )
+        }
 
     fun getMonitoringBBIMapMetaData(
         hex: String,

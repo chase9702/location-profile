@@ -58,12 +58,11 @@ export interface MapAIHexData {
   hex: string;
   addr: string;
   addr_cd: string;
-  sst: number;
-  sac: number;
-  ssp: number;
-  sdc: number;
-  total_bbi: number;
-  traffic: number;
+  lv_1_cnt: number;
+  lv_2_cnt: number;
+  dtct_hh: string;
+  dtct_dt: string;
+  part_dt: string;
 }
 
 export interface BBIMetaData {
