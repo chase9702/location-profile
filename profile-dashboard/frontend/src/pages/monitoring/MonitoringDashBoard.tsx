@@ -55,20 +55,23 @@ const MonitoringDashBoard = (): React.ReactElement => {
             height: '100vh',
           }}
         >
-          <Row gutter={16}>
-            <Col span={12}>
-              <div style={{ padding: '10px' }}>
-                <MonitoringBbiChart />
-              </div>
-            </Col>
-            <Col span={12}>
-              <div style={{ padding: '10px' }}>
-                <MonitoringAiChart />
-              </div>
-            </Col>
-          </Row>
+          <div
+            style={{
+              padding: '10px',
+              height: '50vh',
+            }}
+          >
+            <MonitoringBbiChart />
+          </div>
+          <div
+            style={{
+              padding: '10px',
+              height: '50vh',
+            }}
+          >
+            <MonitoringAiChart />
+          </div>
         </Card>
-
         <Card
           id="part-3"
           style={{

@@ -59,6 +59,7 @@ const MonitoringBbiChart = (props: Props): React.ReactElement => {
         const transformedData = transformData(jsonData);
         console.log(transformedData);
         const plotlyData = transformDataToPlotly(transformedData);
+        console.log(plotlyData);
         setBbiDetectionData(plotlyData);
       })
       .finally(() => {
@@ -175,7 +176,7 @@ const MonitoringBbiChart = (props: Props): React.ReactElement => {
 
       return {
         type: 'violin',
-        x: behaviorData.map((item) => item.일자),
+        x: behaviorData.map((item) => item.일자.toString()),
         y: behaviorData.map((item) => item.count),
         legendgroup: behavior,
         scalegroup: behavior,
@@ -246,7 +247,7 @@ const MonitoringBbiChart = (props: Props): React.ReactElement => {
         조회
       </Button>
       <Row gutter={16}>
-        <Col span={6}>
+        <Col span={6} style={{ paddingRight: '8px' }}>
           <TimePicker
             className={'h3-margin'}
             value={selectedTime}
@@ -256,9 +257,10 @@ const MonitoringBbiChart = (props: Props): React.ReactElement => {
             showSecond={false}
             hourStep={1}
             needConfirm={false}
+            style={{ width: '100%' }}
           />
         </Col>
-        <Col span={12}>
+        <Col span={12} style={{ paddingLeft: '0px', paddingRight: '8px' }}>
           <RangePicker
             className={'h3-margin'}
             value={[selectedStartDate, selectedEndDate]}
@@ -269,7 +271,7 @@ const MonitoringBbiChart = (props: Props): React.ReactElement => {
             onOk={onOk}
           />
         </Col>
-        <Col span={6}>
+        <Col span={6} style={{ paddingLeft: '8px' }}>
           <Select
             className={'h3-margin'}
             showSearch
@@ -288,26 +290,24 @@ const MonitoringBbiChart = (props: Props): React.ReactElement => {
           </Select>
         </Col>
       </Row>
-      <div style={{ height: '492px' }}>
-        <Spin
-          spinning={bbiDetectionLoading}
-          indicator={<LoadingOutlined />}
-          tip="로딩 중..."
-        >
-          {/*{!bbiDetectionLoading && bbiDetectionData.length > 0 && (*/}
-          {/*  <Violin {...config} />*/}
-          {/*)}*/}
+      <Spin
+        spinning={bbiDetectionLoading}
+        indicator={<LoadingOutlined />}
+        tip="로딩 중..."
+      >
+        <div style={{ width: '100%', height: '100%' }}>
           <Plot
             data={bbiDetectionData}
             layout={{
               title: 'Bbi Detection Violin Plot',
               yaxis: { title: 'Count' },
-              xaxis: { title: '일자' },
+              xaxis: { title: '일자', type: 'category' },
               violinmode: 'group',
             }}
-          />{' '}
-        </Spin>
-      </div>
+            style={{ width: '100%', height: '100%' }}
+          />
+        </div>
+      </Spin>
     </div>
   );
 };

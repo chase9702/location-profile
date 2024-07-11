@@ -17,6 +17,7 @@ import LoadingOutlined from '@ant-design/icons/lib/icons/LoadingOutlined';
 import { encodeQueryData } from '@src/common/utils';
 import dayjs, { Dayjs } from 'dayjs';
 import { now } from 'moment';
+import Plot from 'react-plotly.js';
 
 interface Props {}
 
@@ -55,8 +56,9 @@ const MonitoringAiChart = (props: Props): React.ReactElement => {
       .then((jsonData) => {
         console.log('Fetched data:', jsonData);
         const transformedData = transformData(jsonData);
-        console.log('Transformed data:', transformedData);
-        setAiDetectionData(transformedData);
+        const plotlyData = transformDataToPlotly(transformedData);
+        console.log(plotlyData);
+        setAiDetectionData(plotlyData);
       })
       .catch((error) => {
         console.error('Error fetching AI detection data:', error);
@@ -172,13 +174,43 @@ const MonitoringAiChart = (props: Props): React.ReactElement => {
     return encodeQueryData(queryParams);
   };
 
-  const aiDetectionConfig = {
-    violinType: 'normal',
-    data: aiDetectionData,
-    xField: '일자',
-    yField: 'count',
-    seriesField: 'level',
-    slider: { y: true },
+  // const aiDetectionConfig = {
+  //   violinType: 'normal',
+  //   data: aiDetectionData,
+  //   xField: '일자',
+  //   yField: 'count',
+  //   seriesField: 'level',
+  //   slider: { y: true },
+  // };
+
+  const transformDataToPlotly = (data) => {
+    const levels = ['level 1', 'level 2'];
+    const colors = ['blue', 'red'];
+
+    const plotlyData = levels.map((level, index) => {
+      const levelData = data.filter((item) => item.level === level);
+
+      return {
+        type: 'violin',
+        x: levelData.map((item) => item.일자.toString()),
+        y: levelData.map((item) => item.count),
+        legendgroup: level,
+        scalegroup: level,
+        name: level,
+        points: 'all',
+        box: {
+          visible: true,
+        },
+        line: {
+          color: colors[index],
+        },
+        meanline: {
+          visible: true,
+        },
+      };
+    });
+
+    return plotlyData;
   };
 
   return (
@@ -196,10 +228,11 @@ const MonitoringAiChart = (props: Props): React.ReactElement => {
         조회
       </Button>
       <Row gutter={16}>
-        <Col span={5}>
+        <Col span={5} style={{ paddingRight: '8px' }}>
           <TimePicker
             className={'h3-margin'}
             value={selectedTime}
+            style={{ width: '100%' }}
             onChange={handleTimeChartChange}
             format="HH"
             showMinute={false}
@@ -208,7 +241,7 @@ const MonitoringAiChart = (props: Props): React.ReactElement => {
             needConfirm={false}
           />
         </Col>
-        <Col span={10}>
+        <Col span={10} style={{ paddingLeft: '0px', paddingRight: '8px' }}>
           <RangePicker
             className={'h3-margin'}
             value={[selectedStartDate, selectedEndDate]}
@@ -219,7 +252,7 @@ const MonitoringAiChart = (props: Props): React.ReactElement => {
             onOk={onOk}
           />
         </Col>
-        <Col span={5}>
+        <Col span={5} style={{ paddingLeft: '8px' }}>
           <Select
             className={'h3-margin'}
             showSearch
@@ -237,7 +270,7 @@ const MonitoringAiChart = (props: Props): React.ReactElement => {
             ))}
           </Select>
         </Col>
-        <Col span={4}>
+        <Col span={4} style={{ paddingLeft: '8px' }}>
           <Select
             className={'h3-margin'}
             showSearch
@@ -262,9 +295,23 @@ const MonitoringAiChart = (props: Props): React.ReactElement => {
           indicator={<LoadingOutlined />}
           tip="로딩 중..."
         >
-          {!aiDetectionLoading && aiDetectionData.length > 0 && (
-            <Violin {...aiDetectionConfig} />
-          )}
+          {/*{!aiDetectionLoading && aiDetectionData.length > 0 && (*/}
+          {/*  <Violin {...aiDetectionConfig} />*/}
+          {/*)}*/}
+          <div style={{ width: '100%', height: '100%' }}>
+            <Plot
+              data={aiDetectionData}
+              layout={{
+                title: 'AI Detection Violin Plot',
+                yaxis: { title: 'Count' },
+                xaxis: { title: '일자', type: 'category' },
+                violinmode: 'group',
+                autosize: true,
+              }}
+              useResizeHandler={true}
+              style={{ width: '100%', height: '100%' }}
+            />
+          </div>
         </Spin>
       </div>
     </div>
