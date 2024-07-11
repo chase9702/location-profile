@@ -26,10 +26,10 @@ const MonitoringDeviceChart = (props: Props): React.ReactElement => {
   const [bbiAbnormalLoading, setBbiAbnormalLoading] = useState(false);
   const [bbiAbnormalData, setBbiAbnormalData] = useState(null);
   const [selectedStartDate, setSelectedStartDate] = useState<Dayjs | null>(
-    dayjs().subtract(7, 'day')
+    dayjs().subtract(41, 'day')
   );
   const [selectedEndDate, setSelectedEndDate] = useState<Dayjs | null>(
-    dayjs().subtract(1, 'day')
+    dayjs().subtract(37, 'day')
   );
   const [selectedMetric, setSelectedMetric] = useState('total');
   const [selectedThreshold, setSelectedThreshold] = useState('total');
@@ -43,7 +43,7 @@ const MonitoringDeviceChart = (props: Props): React.ReactElement => {
   const bbiAbnormalFetch = (
     queryString = `start_date=${selectedStartDate.format(
       'YYYYMMDD'
-    )}&end_date=${selectedEndDate.format('YYYYMMDD')}`
+    )}&end_date=${selectedEndDate.format('YYYYMMDD')}&distance=time`
   ) => {
     setBbiAbnormalLoading(true);
     get<[]>(`/api/monitoring/bbi/abnormal/?${queryString}`)

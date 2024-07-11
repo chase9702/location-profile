@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo } from 'react';
-import { Violin } from '@ant-design/plots';
+import { Scatter, Violin } from '@ant-design/plots';
 import TimePicker from 'antd/lib/time-picker';
 import DatePicker from 'antd/lib/date-picker';
 import { RangePickerProps } from 'antd/es/date-picker';
@@ -58,7 +58,8 @@ const MonitoringBbiChart = (props: Props): React.ReactElement => {
         console.log(jsonData);
         const transformedData = transformData(jsonData);
         console.log(transformedData);
-        setBbiDetectionData(transformedData);
+        const plotlyData = transformDataToPlotly(transformedData);
+        setBbiDetectionData(plotlyData);
       })
       .finally(() => {
         setBbiDetectionLoading(false);
@@ -165,34 +166,70 @@ const MonitoringBbiChart = (props: Props): React.ReactElement => {
   //     },
   //   },
   // };
+  const transformDataToPlotly = (data: any[]) => {
+    const behaviors = ['급가속', '급감속', '급정지', '급출발'];
+    const colors = ['blue', 'red', 'green', 'orange'];
 
-  const data = [
-    {
-      type: 'violin',
-      x: ['A', 'A', 'A', 'B', 'B', 'B', 'B'],
-      y: [10, 15, 13, 17, 20, 18, 16],
-      points: 'all',
-      jitter: 0.3,
-      pointpos: -1.8,
-      marker: {
-        color: 'blue',
-      },
-      line: {
-        color: 'blue',
-      },
-      name: 'Violin plot',
-    },
-  ];
+    const plotlyData = behaviors.map((behavior, index) => {
+      const behaviorData = data.filter((item) => item.behavior === behavior);
 
-  const layout = {
-    title: 'Violin Plot Example',
-    xaxis: {
-      title: 'Category',
-    },
-    yaxis: {
-      title: 'Value',
-    },
+      return {
+        type: 'violin',
+        x: behaviorData.map((item) => item.일자),
+        y: behaviorData.map((item) => item.count),
+        legendgroup: behavior,
+        scalegroup: behavior,
+        name: behavior,
+        points: 'all',
+        box: {
+          visible: true,
+        },
+        line: {
+          color: colors[index],
+        },
+        meanline: {
+          visible: true,
+        },
+      };
+    });
+
+    return plotlyData;
   };
+  // const behaviors = ['급가속', '급감속', '급정지', '급출발'];
+  // const colors = ['blue', 'red', 'green', 'orange'];
+  //
+  // const traces = behaviors.map((behavior, index) => {
+  //   const filteredData = bbiDetectionData.filter(
+  //     (item) => item.behavior === behavior
+  //   );
+  //
+  //   return {
+  //     x: filteredData.map((item) => item.일자),
+  //     y: filteredData.map((item) => item.count),
+  //     mode: 'markers',
+  //     legendgroup: behavior,
+  //     scalegroup: behavior,
+  //     name: behavior,
+  //     marker: {
+  //       size: filteredData.map((item) => item.count),
+  //       sizemode: 'area',
+  //       sizeref:
+  //         (2.0 * Math.max(...bbiDetectionData.map((item) => item.count))) /
+  //         40 ** 2,
+  //       color: colors[index],
+  //     },
+  //     name: behavior,
+  //   };
+  // });
+  //
+  // const layout = {
+  //   title: 'Bbi Detection Bubble Chart',
+  //   yaxis: { title: 'Count' },
+  //   xaxis: { title: '일자', type: 'category' },
+  //   showlegend: true,
+  //   height: 600,
+  //   width: 600,
+  // };
 
   return (
     <div>
@@ -260,7 +297,15 @@ const MonitoringBbiChart = (props: Props): React.ReactElement => {
           {/*{!bbiDetectionLoading && bbiDetectionData.length > 0 && (*/}
           {/*  <Violin {...config} />*/}
           {/*)}*/}
-          <Plot data={data} layout={layout} config={{ responsive: true }} />
+          <Plot
+            data={bbiDetectionData}
+            layout={{
+              title: 'Bbi Detection Violin Plot',
+              yaxis: { title: 'Count' },
+              xaxis: { title: '일자' },
+              violinmode: 'group',
+            }}
+          />{' '}
         </Spin>
       </div>
     </div>
